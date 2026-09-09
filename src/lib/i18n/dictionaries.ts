@@ -145,6 +145,13 @@ export const dictionaries = {
     viewSchedule: "ടൈംടേബിൾ കാണുക",
     heroTagline: "വേദിയിൽ നിന്ന് നിങ്ങളുടെ സ്‌ക്രീനിലേക്ക് — തത്സമയം.",
     exploreMore: "കൂടുതൽ പര്യവേക്ഷണം ചെയ്യുക",
+    sectionOverview: "അവലോകനം",
+    sectionResults: "ഫലങ്ങൾ & ഷെഡ്യൂൾ",
+    sectionEditorial: "എഡിറ്റോറിയൽ & മീഡിയ",
+    sectionAdmin: "അഡ്മിൻ",
+    menu: "മെനു",
+    viewSite: "സൈറ്റ് കാണുക",
+    signedInAs: "ലോഗിൻ ചെയ്തത്",
   },
   en: {
     brand: "Kalolsavam Live",
@@ -293,6 +300,13 @@ export const dictionaries = {
     viewSchedule: "View schedule",
     heroTagline: "From the stage to your screen — live.",
     exploreMore: "Explore more",
+    sectionOverview: "Overview",
+    sectionResults: "Results & Schedule",
+    sectionEditorial: "Editorial & Media",
+    sectionAdmin: "Admin",
+    menu: "Menu",
+    viewSite: "View site",
+    signedInAs: "Signed in as",
   },
 } as const;
 

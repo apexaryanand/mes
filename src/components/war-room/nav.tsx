@@ -2,67 +2,217 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { logoutAction } from "@/domains/admin/actions";
 import { useI18n } from "@/lib/i18n/provider";
 import type { AppRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { LanguageToggle } from "@/components/ui/language-toggle";
 
-const NAV: Array<{ href: string; key: string; roles: AppRole[] }> = [
-  { href: "/war-room", key: "dashboard", roles: ["super_admin", "results_operator", "results_verifier", "editor", "media_moderator", "photographer", "reporter"] },
-  { href: "/war-room/results", key: "resultManagement", roles: ["super_admin", "results_operator", "results_verifier"] },
-  { href: "/war-room/schedule", key: "scheduleManagement", roles: ["super_admin", "results_operator", "results_verifier"] },
-  { href: "/war-room/schools", key: "schools", roles: ["super_admin", "results_operator"] },
-  { href: "/war-room/programmes", key: "programmes", roles: ["super_admin", "results_operator"] },
-  { href: "/war-room/stages", key: "stages", roles: ["super_admin"] },
-  { href: "/war-room/live", key: "liveUpdates", roles: ["super_admin", "editor", "reporter"] },
-  { href: "/war-room/media", key: "mediaModeration", roles: ["super_admin", "media_moderator", "photographer"] },
-  { href: "/war-room/articles", key: "articleManagement", roles: ["super_admin", "editor"] },
-  { href: "/war-room/interviews", key: "interviewManagement", roles: ["super_admin", "editor", "photographer"] },
-  { href: "/war-room/users", key: "userManagement", roles: ["super_admin"] },
-  { href: "/war-room/audit", key: "auditLogs", roles: ["super_admin", "results_verifier"] },
-  { href: "/reporter", key: "reporter", roles: ["super_admin", "reporter"] },
+type NavItem = { href: string; key: string; roles: AppRole[]; icon: string };
+type NavGroup = { titleKey: string; items: NavItem[] };
+
+const GROUPS: NavGroup[] = [
+  {
+    titleKey: "sectionOverview",
+    items: [
+      {
+        href: "/war-room",
+        key: "dashboard",
+        roles: ["super_admin", "results_operator", "results_verifier", "editor", "media_moderator", "photographer", "reporter"],
+        icon: "M4 13h6V4H4zM14 20h6V4h-6zM4 20h6v-4H4z",
+      },
+    ],
+  },
+  {
+    titleKey: "sectionResults",
+    items: [
+      { href: "/war-room/results", key: "resultManagement", roles: ["super_admin", "results_operator", "results_verifier"], icon: "M9 11l3 3 8-8M4 6h16M4 12h6M4 18h10" },
+      { href: "/war-room/schedule", key: "scheduleManagement", roles: ["super_admin", "results_operator", "results_verifier"], icon: "M4 5h16v15H4zM4 9h16M8 3v4M16 3v4" },
+      { href: "/war-room/schools", key: "schools", roles: ["super_admin", "results_operator"], icon: "M4 20V9l8-5 8 5v11M9 20v-6h6v6" },
+      { href: "/war-room/programmes", key: "programmes", roles: ["super_admin", "results_operator"], icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
+      { href: "/war-room/stages", key: "stages", roles: ["super_admin"], icon: "M3 7h18l-2 5H5zM5 12v7M19 12v7" },
+    ],
+  },
+  {
+    titleKey: "sectionEditorial",
+    items: [
+      { href: "/war-room/live", key: "liveUpdates", roles: ["super_admin", "editor", "reporter"], icon: "M12 2v6m0 8v6M2 12h6m8 0h6" },
+      { href: "/war-room/media", key: "mediaModeration", roles: ["super_admin", "media_moderator", "photographer"], icon: "M4 6h16v12H4zM8 6l1.5-2h5L16 6M12 15a3 3 0 100-6 3 3 0 000 6z" },
+      { href: "/war-room/articles", key: "articleManagement", roles: ["super_admin", "editor"], icon: "M4 5h16v14H4zM8 9h8M8 13h8M8 17h5" },
+      { href: "/war-room/interviews", key: "interviewManagement", roles: ["super_admin", "editor", "photographer"], icon: "M4 6h16v10H4zM8 20h8M12 16v4" },
+      { href: "/reporter", key: "reporter", roles: ["super_admin", "reporter"], icon: "M12 3v10m0 0l-3-3m3 3l3-3M5 21h14" },
+    ],
+  },
+  {
+    titleKey: "sectionAdmin",
+    items: [
+      { href: "/war-room/users", key: "userManagement", roles: ["super_admin"], icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21v-2a5 5 0 015-5h4a5 5 0 015 5v2" },
+      { href: "/war-room/audit", key: "auditLogs", roles: ["super_admin", "results_verifier"], icon: "M9 5h6M9 5a2 2 0 012-2h2a2 2 0 012 2M5 5h14v16H5zM9 12l2 2 4-4" },
+    ],
+  },
 ];
 
-export function WarRoomNav({
+function NavIcon({ d }: { d: string }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d={d} />
+    </svg>
+  );
+}
+
+export function WarRoomShell({
   role,
   name,
+  children,
 }: {
   role: AppRole;
   name: string;
+  children: React.ReactNode;
 }) {
   const { t } = useI18n();
   const pathname = usePathname();
-  const items = NAV.filter((n) => role === "super_admin" || n.roles.includes(role));
+  const [open, setOpen] = useState(false);
 
-  return (
-    <aside className="flex w-full flex-col border-b border-line bg-kerala-dark text-paper md:min-h-screen md:w-60 md:border-b-0 md:border-r">
-      <div className="px-4 py-4">
-        <p className="text-xs uppercase tracking-widest text-gold">{t.warRoom}</p>
-        <p className="font-display text-lg">{t.brandShort}</p>
-        <p className="mt-2 text-xs text-paper/70">{name}</p>
-        <p className="text-xs text-gold">{role}</p>
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  const groups = GROUPS.map((g) => ({
+    ...g,
+    items: g.items.filter((n) => role === "super_admin" || n.roles.includes(role)),
+  })).filter((g) => g.items.length);
+
+  const activeItem = GROUPS.flatMap((g) => g.items).find((n) =>
+    n.href === "/war-room" ? pathname === n.href : pathname.startsWith(n.href),
+  );
+  const title = activeItem
+    ? (t[activeItem.key as keyof typeof t] as string)
+    : t.warRoom;
+
+  const sidebar = (
+    <div className="flex h-full flex-col">
+      <div className="flex items-center gap-3 px-5 py-5">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 font-display text-lg font-black text-gold-light">
+          ക
+        </span>
+        <div className="min-w-0">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-gold-light">
+            {t.warRoom}
+          </p>
+          <p className="font-display truncate text-lg font-bold text-white">
+            {t.brandShort}
+          </p>
+        </div>
       </div>
-      <nav className="flex-1 overflow-auto px-2 pb-4">
-        {items.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "block rounded px-3 py-2 text-sm",
-              pathname === item.href ? "bg-paper/15 text-white" : "text-paper/80 hover:bg-paper/10",
-            )}
-          >
-            {t[item.key as keyof typeof t] as string}
-          </Link>
+
+      <nav className="flex-1 space-y-5 overflow-y-auto px-3 pb-4">
+        {groups.map((group) => (
+          <div key={group.titleKey}>
+            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+              {t[group.titleKey as keyof typeof t] as string}
+            </p>
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const active =
+                  item.href === "/war-room"
+                    ? pathname === item.href
+                    : pathname.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors",
+                      active
+                        ? "bg-white/15 text-white shadow-sm"
+                        : "text-white/70 hover:bg-white/10 hover:text-white",
+                    )}
+                  >
+                    <span className={cn(active ? "text-gold-light" : "text-white/60")}>
+                      <NavIcon d={item.icon} />
+                    </span>
+                    {t[item.key as keyof typeof t] as string}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
         ))}
       </nav>
-      <div className="flex items-center justify-between gap-2 px-3 py-3">
-        <LanguageToggle compact />
-        <form action={logoutAction}>
-          <button className="text-xs text-paper/80">{t.logout}</button>
-        </form>
+
+      <div className="border-t border-white/10 px-4 py-3">
+        <div className="mb-3 flex items-center gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-deep font-semibold text-white">
+            {name.charAt(0).toUpperCase()}
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-white">{name}</p>
+            <p className="truncate text-xs text-gold-light">{role.replace(/_/g, " ")}</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <LanguageToggle compact />
+          <form action={logoutAction}>
+            <button className="rounded-full px-3 py-1.5 text-xs font-semibold text-white/70 transition-colors hover:bg-white/10 hover:text-white">
+              {t.logout}
+            </button>
+          </form>
+        </div>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <div className="flex min-h-screen bg-[#f1f0ec] text-ink">
+      {/* Desktop sidebar */}
+      <aside className="hidden w-64 shrink-0 [background:var(--grad-hero)] md:block">
+        <div className="sticky top-0 h-screen">{sidebar}</div>
+      </aside>
+
+      {/* Mobile slide-over */}
+      <div className={cn("fixed inset-0 z-50 md:hidden", open ? "pointer-events-auto" : "pointer-events-none")}>
+        <div
+          className={cn("absolute inset-0 bg-black/50 transition-opacity", open ? "opacity-100" : "opacity-0")}
+          onClick={() => setOpen(false)}
+        />
+        <div
+          className={cn(
+            "absolute left-0 top-0 h-full w-72 max-w-[82vw] [background:var(--grad-hero)] shadow-[var(--shadow-lg)] transition-transform duration-300",
+            open ? "translate-x-0" : "-translate-x-full",
+          )}
+        >
+          {sidebar}
+        </div>
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* Top bar */}
+        <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-white/90 px-4 py-3 backdrop-blur md:px-6">
+          <button
+            type="button"
+            className="flex min-h-10 min-w-10 items-center justify-center rounded-xl border border-line text-kerala-dark md:hidden"
+            aria-label={t.menu}
+            onClick={() => setOpen(true)}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
+          <h1 className="font-display flex-1 truncate text-xl font-bold">{title}</h1>
+          <Link
+            href="/"
+            className="hidden items-center gap-1.5 rounded-full border border-line px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:border-gold hover:text-kerala-dark sm:inline-flex"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+            {t.viewSite}
+          </Link>
+        </header>
+
+        <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
+      </div>
+    </div>
   );
 }

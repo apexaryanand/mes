@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { StatCard } from "@/components/ui/stat-card";
 import { getSessionProfile } from "@/lib/auth";
 import * as demo from "@/lib/data/demo";
 import { hydratePublishedResults } from "@/lib/data/queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getLiveUpdates, getScheduledEvents } from "@/lib/data/queries";
+import { cn } from "@/lib/utils";
 
 export default async function WarRoomDashboard() {
   const locale = await getRequestLocale();
@@ -27,77 +29,133 @@ export default async function WarRoomDashboard() {
   return (
     <div className="grid gap-6">
       <div>
-        <h1 className="font-display text-3xl">{t.dashboard}</h1>
-        <p className="text-sm text-muted">{profile?.display_name} · {profile?.role}</p>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat label={t.happeningNow} value={String(live.length)} />
-        <Stat label={t.completed} value={String(completed.length)} />
-        <Stat label={t.awaitingEntry} value={String(awaitingEntry.length)} />
-        <Stat label={t.awaitingVerification} value={String(awaitingVerification.length)} />
-        <Stat label={t.awaitingModeration} value={String(pendingMedia.length)} />
+        <p className="text-sm text-muted">
+          {t.signedInAs} <span className="font-medium text-ink">{profile?.display_name}</span> ·{" "}
+          <span className="text-gold-deep">{profile?.role?.replace(/_/g, " ")}</span>
+        </p>
       </div>
 
-      <section>
-        <h2 className="mb-2 font-semibold">{t.happeningNow}</h2>
-        <ul className="grid gap-2">
-          {live.map((e) => (
-            <li key={e.id} className="flex items-center justify-between rounded border border-line bg-white px-3 py-2 text-sm">
-              <span>
-                {tName(locale, e.stage)} · {tName(locale, e.programme)}
-              </span>
-              <StatusBadge status="live" label={t.live} />
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <StatCard label={t.happeningNow} value={live.length} accent="red" />
+        <StatCard label={t.completed} value={completed.length} accent="green" />
+        <StatCard label={t.awaitingEntry} value={awaitingEntry.length} accent="gold" />
+        <StatCard label={t.awaitingVerification} value={awaitingVerification.length} accent="gold" />
+        <StatCard label={t.awaitingModeration} value={pendingMedia.length} accent="indigo" />
+      </div>
 
-      <section>
-        <h2 className="mb-2 font-semibold">{t.awaitingVerification}</h2>
-        <ul className="grid gap-2">
-          {awaitingVerification.map((s) => {
-            const event = events.find((e) => e.id === s.scheduled_event_id);
-            return (
-              <li key={s.id}>
-                <Link href={`/war-room/results/${s.id}`} className="block rounded border border-line bg-white px-3 py-2 text-sm hover:bg-kerala-soft">
-                  {event ? tName(locale, event.programme) : s.id} · {s.status}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+      <div className="grid gap-5 lg:grid-cols-2">
+        <Panel title={t.happeningNow} accent="red">
+          {live.length ? (
+            <ul className="divide-y divide-line">
+              {live.map((e) => (
+                <li
+                  key={e.id}
+                  className="flex items-center justify-between gap-2 px-4 py-3 text-sm"
+                >
+                  <span className="min-w-0 truncate">
+                    <span className="font-medium">{tName(locale, e.programme)}</span>
+                    <span className="text-muted"> · {tName(locale, e.stage)}</span>
+                  </span>
+                  <StatusBadge status="live" label={t.live} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Empty label={t.noItems} />
+          )}
+        </Panel>
 
-      <section>
-        <h2 className="mb-2 font-semibold">{t.recentPublished}</h2>
-        <ul className="grid gap-2">
-          {published.map((p) => (
-            <li key={p.result_set.id} className="rounded border border-line bg-white px-3 py-2 text-sm">
-              {tName(locale, p.event.programme)} · {tName(locale, p.event.category)}
-            </li>
-          ))}
-        </ul>
-      </section>
+        <Panel title={t.awaitingVerification} accent="gold">
+          {awaitingVerification.length ? (
+            <ul className="divide-y divide-line">
+              {awaitingVerification.map((s) => {
+                const event = events.find((e) => e.id === s.scheduled_event_id);
+                return (
+                  <li key={s.id}>
+                    <Link
+                      href={`/war-room/results/${s.id}`}
+                      className="flex items-center justify-between gap-2 px-4 py-3 text-sm transition-colors hover:bg-kerala-soft/40"
+                    >
+                      <span className="min-w-0 truncate font-medium">
+                        {event ? tName(locale, event.programme) : s.id}
+                      </span>
+                      <StatusBadge status="entered" label={t.entered} />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <Empty label={t.noItems} />
+          )}
+        </Panel>
 
-      <section>
-        <h2 className="mb-2 font-semibold">{t.recentReports}</h2>
-        <ul className="grid gap-2 text-sm">
-          {updates.slice(0, 5).map((u) => (
-            <li key={u.id} className="rounded border border-line bg-white px-3 py-2">
-              {u.reporter_name}: {u.body.slice(0, 120)}
-            </li>
-          ))}
-        </ul>
-      </section>
+        <Panel title={t.recentPublished} accent="green">
+          {published.length ? (
+            <ul className="divide-y divide-line">
+              {published.map((p) => (
+                <li key={p.result_set.id} className="px-4 py-3 text-sm">
+                  <span className="font-medium">{tName(locale, p.event.programme)}</span>
+                  <span className="text-muted"> · {tName(locale, p.event.category)}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Empty label={t.noItems} />
+          )}
+        </Panel>
+
+        <Panel title={t.recentReports} accent="indigo">
+          {updates.length ? (
+            <ul className="divide-y divide-line">
+              {updates.slice(0, 5).map((u) => (
+                <li key={u.id} className="px-4 py-3 text-sm">
+                  <span className="font-medium text-kerala-dark">{u.reporter_name}: </span>
+                  <span className="text-muted">{u.body.slice(0, 120)}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Empty label={t.noItems} />
+          )}
+        </Panel>
+      </div>
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+const accentBar: Record<string, string> = {
+  red: "before:bg-live",
+  green: "before:bg-kerala",
+  gold: "before:[background:var(--grad-gold)]",
+  indigo: "before:bg-indigo",
+};
+
+function Panel({
+  title,
+  accent,
+  children,
+}: {
+  title: string;
+  accent: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="rounded border border-line bg-white p-4">
-      <p className="text-xs uppercase tracking-wide text-muted">{label}</p>
-      <p className="font-display text-3xl">{value}</p>
-    </div>
+    <section className="card overflow-hidden">
+      <h2
+        className={cn(
+          "relative border-b border-line px-4 py-3 pl-5 font-semibold",
+          "before:absolute before:left-0 before:top-0 before:h-full before:w-1.5",
+          accentBar[accent],
+        )}
+      >
+        {title}
+      </h2>
+      {children}
+    </section>
   );
+}
+
+function Empty({ label }: { label: string }) {
+  return <p className="px-4 py-8 text-center text-sm text-muted">{label}</p>;
 }
