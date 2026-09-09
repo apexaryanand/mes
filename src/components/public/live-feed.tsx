@@ -1,7 +1,9 @@
 "use client";
 
+import { WhatsAppShareButton } from "@/components/public/whatsapp-share";
 import { useI18n } from "@/lib/i18n/provider";
 import { tName } from "@/lib/i18n/dictionaries";
+import { absoluteUrl, liveUpdateShareMessage } from "@/lib/share";
 import type { LiveUpdateView } from "@/lib/types";
 import { formatDateTime } from "@/lib/utils";
 
@@ -34,6 +36,17 @@ export function LiveFeed({ updates }: { updates: LiveUpdateView[] }) {
             <p className="mt-2 text-xs text-muted">
               {t.reporter}: {u.reporter_name}
             </p>
+            <div className="mt-3">
+              <WhatsAppShareButton
+                compact
+                text={liveUpdateShareMessage({
+                  locale,
+                  body: u.body,
+                  stage: u.stage ? tName(locale, u.stage) : undefined,
+                  pageUrl: absoluteUrl("/live"),
+                })}
+              />
+            </div>
           </div>
         </li>
       ))}

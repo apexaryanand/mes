@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { EventResultActions } from "@/components/public/event-result-actions";
 import { LiveFeed } from "@/components/public/live-feed";
 import { ResultTable } from "@/components/public/result-table";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -51,7 +52,7 @@ export default async function EventPage({
         <span className="truncate text-ink">{tName(locale, event.programme)}</span>
       </nav>
 
-      <header className="relative overflow-hidden rounded-[var(--radius-lg)] p-6 text-white md:p-8 [background:var(--grad-hero)]">
+      <header className="hero-on-dark relative overflow-hidden rounded-[var(--radius-lg)] p-6 text-white md:p-8 [background:var(--grad-hero)]">
         <div className="kolam-bg absolute inset-0 opacity-[0.1]" aria-hidden />
         <div className="relative">
           <StatusBadge
@@ -62,10 +63,10 @@ export default async function EventPage({
           <h1 className="font-display text-display-md mt-3 font-black">
             {tName(locale, event.programme)}
           </h1>
-          <p className="mt-1 text-lg text-white/80">{tName(locale, event.category)}</p>
-          <p className="mt-4 flex flex-wrap gap-x-2 text-sm text-white/70">
+          <p className="mt-1 text-lg hero-subtext">{tName(locale, event.category)}</p>
+          <p className="mt-4 flex flex-wrap gap-x-2 text-sm hero-muted">
             <span>
-              {t.stage}: <span className="text-gold-light">{tName(locale, event.stage)}</span>
+              {t.stage}: <span className="hero-accent">{tName(locale, event.stage)}</span>
             </span>
             <span aria-hidden>·</span>
             <span>
@@ -78,7 +79,15 @@ export default async function EventPage({
       </header>
 
       {result ? (
-        <ResultTable entries={result.entries} />
+        <>
+          <EventResultActions result={result} />
+          <ResultTable
+            entries={result.entries}
+            eventSlug={event.slug}
+            programmeName={tName(locale, event.programme)}
+            categoryName={tName(locale, event.category)}
+          />
+        </>
       ) : (
         <div className="card p-10 text-center text-muted">{t.noResults}</div>
       )}

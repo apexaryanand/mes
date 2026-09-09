@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { InterviewShare } from "@/components/public/interview-share";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getInterviews } from "@/lib/data/queries";
@@ -31,6 +32,9 @@ export default async function InterviewPage({
           {tName(locale, item.school)} · {tName(locale, item.programme)}
           {item.rank ? ` · ${item.rank}` : ""}
         </p>
+        <div className="mt-3">
+          <InterviewShare item={item} />
+        </div>
       </header>
       <iframe
         title={item.winner_name}

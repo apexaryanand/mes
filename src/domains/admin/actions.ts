@@ -355,6 +355,9 @@ export async function createDraftForEventForm(formData: FormData) {
     entered_at: null,
     verified_at: null,
     published_at: null,
+    appeal_status: "none",
+    official_sheet_url: null,
+    official_sheet_signed_by: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   });

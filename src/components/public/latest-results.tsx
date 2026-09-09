@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { Medal } from "@/components/ui/medal";
+import { WhatsAppShareButton } from "@/components/public/whatsapp-share";
 import { useI18n } from "@/lib/i18n/provider";
 import { tName } from "@/lib/i18n/dictionaries";
+import { absoluteUrl, resultShareMessage } from "@/lib/share";
 import type { PublishedResultView } from "@/lib/types";
 import { cn, formatClock } from "@/lib/utils";
 
@@ -16,7 +18,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
   return (
     <div className="card overflow-hidden">
       {/* Desktop table */}
-      <table className="hidden w-full text-left text-sm lg:table">
+      <table className="hidden w-full text-left text-sm md:table">
         <thead className="bg-kerala-soft text-kerala-dark">
           <tr>
             <th className="px-4 py-3 font-semibold">{t.programme}</th>
@@ -26,6 +28,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
             <th className="px-4 py-3 font-semibold">{t.school}</th>
             <th className="px-4 py-3 text-right font-semibold">{t.marks}</th>
             <th className="px-4 py-3 text-center font-semibold">{t.grade}</th>
+            <th className="px-4 py-3 text-right font-semibold" aria-label={t.shareWhatsApp} />
           </tr>
         </thead>
         <tbody>
@@ -65,17 +68,40 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                 </td>
                 <td className="px-4 py-3 text-right tabular">{first.marks}</td>
                 <td className="px-4 py-3 text-center font-semibold">{first.grade}</td>
+                <td className="px-4 py-3 text-right">
+                  <WhatsAppShareButton
+                    compact
+                    text={resultShareMessage({
+                      locale,
+                      programme: tName(locale, block.event.programme),
+                      category: tName(locale, block.event.category),
+                      winner: first.participant_name ?? undefined,
+                      school: tName(locale, first.school),
+                      rank: first.rank,
+                      pageUrl: absoluteUrl(`/events/${block.event.slug}`),
+                    })}
+                  />
+                </td>
               </tr>
             );
           })}
         </tbody>
       </table>
 
-      {/* Mobile / tablet cards */}
-      <ul className="divide-y divide-line lg:hidden">
+      {/* Mobile cards */}
+      <ul className="divide-y divide-line md:hidden">
         {results.map((block) => {
           const first = block.entries[0];
           if (!first) return null;
+          const shareText = resultShareMessage({
+            locale,
+            programme: tName(locale, block.event.programme),
+            category: tName(locale, block.event.category),
+            winner: first.participant_name ?? undefined,
+            school: tName(locale, first.school),
+            rank: first.rank,
+            pageUrl: absoluteUrl(`/events/${block.event.slug}`),
+          });
           return (
             <li key={block.result_set.id} className="p-4">
               <div className="flex items-start justify-between gap-3">
@@ -104,6 +130,9 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                   <p className="tabular font-semibold">{first.marks}</p>
                   <p className="text-muted">{first.grade}</p>
                 </div>
+              </div>
+              <div className="mt-3">
+                <WhatsAppShareButton text={shareText} />
               </div>
             </li>
           );

@@ -242,9 +242,14 @@ function addSet(
   publishedAt: string | null,
   version = 1,
 ) {
+  const event = scheduledEvents[eventIndex];
+  const appealByIndex: Record<number, ResultSet["appeal_status"]> = {
+    2: "under_review",
+    5: "closed",
+  };
   const set: ResultSet = {
     id: uid("rst", resultSets.length + 1),
-    scheduled_event_id: scheduledEvents[eventIndex].id,
+    scheduled_event_id: event.id,
     version,
     status,
     supersedes_id: null,
@@ -257,11 +262,18 @@ function addSet(
         ? "2026-09-08T12:20:00+05:30"
         : null,
     published_at: publishedAt,
+    appeal_status:
+      status === "published" ? (appealByIndex[eventIndex] ?? "none") : "none",
+    official_sheet_url:
+      status === "published"
+        ? `/documents/official-results/${event.slug}`
+        : null,
+    official_sheet_signed_by:
+      status === "published" ? "Convener, Sub-District Kalolsavam" : null,
     created_at: "2026-09-08T11:40:00+05:30",
     updated_at: publishedAt ?? "2026-09-08T12:00:00+05:30",
   };
   resultSets.push(set);
-  const event = scheduledEvents[eventIndex];
   const programme = programmes.find((p) => p.id === event.programme_id)!;
   const schoolCount = 5 + (eventIndex % 4);
   const chosen = pickSchools(eventIndex, schoolCount);

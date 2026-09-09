@@ -68,60 +68,68 @@ export default async function HomePage() {
   const tickerItems = updates.slice(0, 8).map((u) => u.body);
 
   return (
-    <div className="grid gap-12 md:gap-16">
-      {/* Hero (full-bleed) */}
-      <section className="relative -mt-6 mx-[calc(50%-50vw)] w-screen overflow-hidden text-white [background:var(--grad-hero)]">
+    <div className="grid gap-8 md:gap-10">
+      {/* Compact hero + inline stats (above the fold) */}
+      <section
+        className="hero-on-dark relative -mt-6 mx-[calc(50%-50vw)] w-screen overflow-hidden text-white [background:var(--grad-hero)]"
+      >
         <div className="kolam-bg absolute inset-0 opacity-[0.12]" aria-hidden />
         <div
-          className="absolute -right-24 -top-24 h-96 w-96 rounded-full opacity-30 blur-3xl [background:var(--grad-gold)]"
+          className="absolute -right-24 -top-24 h-72 w-72 rounded-full opacity-25 blur-3xl [background:var(--grad-gold)]"
           aria-hidden
         />
-        <div className="relative mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
-          <div className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="section-eyebrow text-gold-light before:[background:var(--grad-gold)]">
-                {t.official}
-              </span>
-              <StatusBadge
-                status={isLive ? "live" : "completed"}
-                label={isLive ? t.live : t.completed}
-                dark
-              />
+        <div className="relative mx-auto w-full max-w-6xl px-4 py-5 md:px-6 md:py-7">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0 max-w-2xl">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="section-eyebrow hero-accent before:[background:var(--grad-gold)]">
+                  {t.official}
+                </span>
+                <StatusBadge
+                  status={isLive ? "live" : "completed"}
+                  label={isLive ? t.live : t.completed}
+                  dark
+                />
+              </div>
+              <h1 className="font-display text-display-hero-compact mt-2 font-black text-white">
+                {locale === "ml" ? settings.name_ml : settings.name_en}
+              </h1>
+              <p className="mt-1.5 flex flex-wrap items-center gap-x-2 text-sm hero-muted">
+                <span className="font-semibold hero-accent">
+                  {locale === "ml" ? settings.venue_ml : settings.venue_en}
+                </span>
+                <span aria-hidden>&middot;</span>
+                <span>
+                  {t.day} {currentDay} · {settings.start_date} – {settings.end_date}
+                </span>
+              </p>
             </div>
-            <h1 className="font-display text-display-xl mt-5 font-black text-white">
-              {locale === "ml" ? settings.name_ml : settings.name_en}
-            </h1>
-            <p className="mt-4 max-w-xl text-lg text-white/80">{t.heroTagline}</p>
-            <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/70">
-              <span className="font-semibold text-gold-light">
-                {locale === "ml" ? settings.venue_ml : settings.venue_en}
-              </span>
-              <span aria-hidden>&middot;</span>
-              <span>{locale === "ml" ? settings.location_ml : settings.location_en}</span>
-              <span aria-hidden>&middot;</span>
-              <span>
-                {t.day} {currentDay} · {settings.start_date} – {settings.end_date}
-              </span>
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/results" variant="gold" size="lg">
+            <div className="hidden shrink-0 gap-2 sm:flex">
+              <ButtonLink href="/results" variant="gold" size="md">
                 {t.exploreResults}
               </ButtonLink>
               <ButtonLink
                 href="/schedule"
                 variant="outline"
-                size="lg"
-                className="border-white/30 bg-white/10 text-white hover:border-gold-light hover:text-gold-light"
+                size="md"
+                className="border-white/40 bg-white/10 text-white hover:border-[#fde68a] hover:text-[#fde68a]"
               >
                 {t.viewSchedule}
               </ButtonLink>
             </div>
           </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <StatCard label={t.schoolsCompeting} value={schools.length} accent="green" className="!bg-white/95" />
+            <StatCard label={t.eventsToday} value={todayEvents.length} accent="gold" className="!bg-white/95" />
+            <StatCard label={t.resultsPublished} value={results.length} accent="indigo" className="!bg-white/95" />
+            <StatCard label={t.liveNow} value={liveCount} accent="red" className="!bg-white/95" />
+          </div>
         </div>
 
         {tickerItems.length ? (
-          <div className="ticker-viewport relative border-t border-white/15 bg-black/20 py-3">
-            <div className="ticker-track px-4 text-sm text-white/80">
+          <div className="ticker-viewport relative border-t border-white/20 bg-black/25 py-2">
+            <div className="ticker-track px-4 text-sm hero-muted">
               {[...tickerItems, ...tickerItems].map((item, i) => (
                 <span key={i} className="inline-flex items-center gap-3">
                   <span className="live-dot shrink-0" />
@@ -131,14 +139,6 @@ export default async function HomePage() {
             </div>
           </div>
         ) : null}
-      </section>
-
-      {/* Stats strip */}
-      <section className="-mt-6 grid grid-cols-2 gap-3 md:-mt-8 md:grid-cols-4">
-        <StatCard label={t.schoolsCompeting} value={schools.length} accent="green" />
-        <StatCard label={t.eventsToday} value={todayEvents.length} accent="gold" />
-        <StatCard label={t.resultsPublished} value={results.length} accent="indigo" />
-        <StatCard label={t.liveNow} value={liveCount} accent="red" />
       </section>
 
       <Reveal as="section">

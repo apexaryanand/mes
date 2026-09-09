@@ -24,6 +24,8 @@ export type ResultSetStatus =
   | "archived"
   | "correction_draft";
 
+export type AppealStatus = "none" | "open" | "under_review" | "closed";
+
 export type GradeCode = "A" | "B" | "C";
 export type ItemKind = "individual" | "group";
 export type MediaKind = "photo" | "video";
@@ -131,6 +133,9 @@ export type ResultSet = {
   entered_at: string | null;
   verified_at: string | null;
   published_at: string | null;
+  appeal_status: AppealStatus;
+  official_sheet_url: string | null;
+  official_sheet_signed_by: string | null;
   created_at: string;
   updated_at: string;
 };
