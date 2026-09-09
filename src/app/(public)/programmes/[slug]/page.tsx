@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { getDictionary, tName } from "@/lib/i18n/dictionaries";
+import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getProgrammeBySlug, getScheduledEvents } from "@/lib/data/queries";
 
@@ -18,22 +18,33 @@ export default async function ProgrammePage({
   const events = (await getScheduledEvents()).filter((e) => e.programme_id === programme.id);
 
   return (
-    <div className="grid gap-4">
-      <p className="text-sm">
-        <Link href="/programmes">{t.programmes}</Link>
-      </p>
-      <h1 className="font-display text-4xl">{tName(locale, programme)}</h1>
-      {events.map((e) => (
-        <Link key={e.id} href={`/events/${e.slug}`} className="flex items-center justify-between rounded border border-line bg-paper-white p-4">
-          <div>
-            <p className="font-medium">{tName(locale, e.category)}</p>
-            <p className="text-sm text-muted">
-              {tName(locale, e.stage)} · {t.day} {e.day_number}
-            </p>
-          </div>
-          <StatusBadge status={e.status} label={e.status} />
+    <div className="grid gap-6">
+      <nav className="flex items-center gap-1.5 text-sm text-muted">
+        <Link href="/programmes" className="hover:text-kerala-dark">
+          {t.programmes}
         </Link>
-      ))}
+        <span aria-hidden>/</span>
+        <span className="truncate text-ink">{tName(locale, programme)}</span>
+      </nav>
+      <h1 className="font-display text-display-md font-bold">{tName(locale, programme)}</h1>
+      <ul className="card divide-y divide-line overflow-hidden">
+        {events.map((e) => (
+          <li key={e.id}>
+            <Link
+              href={`/events/${e.slug}`}
+              className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-kerala-soft/50"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-medium">{tName(locale, e.category)}</p>
+                <p className="text-sm text-muted">
+                  {tName(locale, e.stage)} · {t.day} {e.day_number}
+                </p>
+              </div>
+              <StatusBadge status={e.status} label={statusLabel(locale, e.status)} />
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

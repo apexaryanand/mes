@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ResultTable } from "@/components/public/result-table";
+import { PageHeader } from "@/components/ui/page-header";
 import { tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -57,9 +58,9 @@ export default async function ResultsPage({
   }
 
   return (
-    <div className="grid gap-6">
-      <h1 className="font-display text-3xl">{t.results}</h1>
-      <form className="grid gap-3 rounded border border-line bg-paper-white p-4 md:grid-cols-3">
+    <div className="grid gap-8">
+      <PageHeader eyebrow={t.official} title={t.results} />
+      <form className="card grid gap-4 p-5 md:grid-cols-3">
         <FilterSelect
           name="school"
           label={t.school}
@@ -106,36 +107,39 @@ export default async function ResultsPage({
             ["delayed", t.delayed],
           ]}
         />
-        <button className="min-h-11 rounded bg-kerala px-4 text-paper-white md:col-span-3">
+        <button className="min-h-11 rounded-full bg-kerala-dark px-5 font-semibold text-white transition-colors hover:bg-kerala-deep md:col-span-3">
           {t.filter}
         </button>
       </form>
 
-      <div className="grid gap-8">
-        {filtered.length === 0 ? <p className="text-muted">{t.noResults}</p> : null}
+      <div className="grid gap-10">
+        {filtered.length === 0 ? (
+          <div className="card p-10 text-center text-muted">{t.noResults}</div>
+        ) : null}
         {filtered.map((block) => (
-          <section key={block.result_set.id} className="grid gap-3">
+          <section key={block.result_set.id} className="grid gap-4">
             <div>
-              <Link href={`/events/${block.event.slug}`} className="font-display text-2xl hover:underline">
+              <Link
+                href={`/events/${block.event.slug}`}
+                className="font-display text-display-md font-bold hover:underline"
+              >
                 {tName(locale, block.event.programme)}
               </Link>
-              <p className="text-sm text-muted">
-                {tName(locale, block.event.category)} · {tName(locale, block.event.stage)} · {t.day}{" "}
-                {block.event.day_number}
+              <p className="mt-1 text-sm text-muted">
+                {tName(locale, block.event.category)} · {tName(locale, block.event.stage)} ·{" "}
+                {t.day} {block.event.day_number}
               </p>
-              <p className="mt-1 text-xs">
-                <Link href={href({ school: undefined, programme: block.event.programme.slug })} className="text-kerala-dark">
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Link href={href({ programme: block.event.programme.slug })} className="chip">
                   {t.programme}
                 </Link>
-                {" · "}
-                <Link href={href({ category: block.event.category.code })} className="text-kerala-dark">
+                <Link href={href({ category: block.event.category.code })} className="chip">
                   {t.category}
                 </Link>
-                {" · "}
-                <Link href={href({ stage: block.event.stage.slug })} className="text-kerala-dark">
+                <Link href={href({ stage: block.event.stage.slug })} className="chip">
                   {t.stage}
                 </Link>
-              </p>
+              </div>
             </div>
             <ResultTable entries={block.entries} />
           </section>
@@ -159,12 +163,12 @@ function FilterSelect({
   options: Array<[string, string] | string[]>;
 }) {
   return (
-    <label className="grid gap-1 text-sm">
+    <label className="grid gap-1.5 text-sm font-medium">
       {label}
       <select
         name={name}
         defaultValue={value ?? ""}
-        className="min-h-11 rounded border border-line bg-paper-white px-2"
+        className="min-h-11 rounded-xl border border-line bg-paper-white px-3 font-normal transition-colors focus:border-gold"
       >
         <option value="">{allLabel}</option>
         {options.map(([v, l]) => (

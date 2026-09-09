@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { LiveFeed } from "@/components/public/live-feed";
 import { ResultTable } from "@/components/public/result-table";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { getDictionary, tName } from "@/lib/i18n/dictionaries";
+import { ButtonLink } from "@/components/ui/button";
+import { SectionHeader } from "@/components/ui/section-header";
+import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import {
   getArticles,
@@ -40,43 +42,72 @@ export default async function EventPage({
   const relatedInterviews = interviews.filter((i) => i.scheduled_event_id === event.id);
 
   return (
-    <div className="grid gap-6">
-      <p className="text-sm">
-        <Link href="/results">{t.results}</Link> / {tName(locale, event.programme)}
-      </p>
-      <header className="grid gap-2">
-        <StatusBadge status={event.status} label={t[event.status === "live" ? "live" : event.status === "delayed" ? "delayed" : event.status === "completed" ? "completed" : event.status === "cancelled" ? "cancelled" : "upcoming"]} />
-        <h1 className="font-display text-4xl">{tName(locale, event.programme)}</h1>
-        <p className="text-lg text-muted">{tName(locale, event.category)}</p>
-        <p className="text-sm">
-          {t.stage}: {tName(locale, event.stage)} · {t.day} {event.day_number} ·{" "}
-          {formatTime(event.start_time, locale)}
-        </p>
+    <div className="grid gap-8">
+      <nav className="flex items-center gap-1.5 text-sm text-muted">
+        <Link href="/results" className="hover:text-kerala-dark">
+          {t.results}
+        </Link>
+        <span aria-hidden>/</span>
+        <span className="truncate text-ink">{tName(locale, event.programme)}</span>
+      </nav>
+
+      <header className="relative overflow-hidden rounded-[var(--radius-lg)] p-6 text-white md:p-8 [background:var(--grad-hero)]">
+        <div className="kolam-bg absolute inset-0 opacity-[0.1]" aria-hidden />
+        <div className="relative">
+          <StatusBadge
+            status={event.status}
+            label={statusLabel(locale, event.status)}
+            dark
+          />
+          <h1 className="font-display text-display-md mt-3 font-black">
+            {tName(locale, event.programme)}
+          </h1>
+          <p className="mt-1 text-lg text-white/80">{tName(locale, event.category)}</p>
+          <p className="mt-4 flex flex-wrap gap-x-2 text-sm text-white/70">
+            <span>
+              {t.stage}: <span className="text-gold-light">{tName(locale, event.stage)}</span>
+            </span>
+            <span aria-hidden>·</span>
+            <span>
+              {t.day} {event.day_number}
+            </span>
+            <span aria-hidden>·</span>
+            <span>{formatTime(event.start_time, locale)}</span>
+          </p>
+        </div>
       </header>
 
       {result ? (
         <ResultTable entries={result.entries} />
       ) : (
-        <p className="text-muted">{t.noResults}</p>
+        <div className="card p-10 text-center text-muted">{t.noResults}</div>
       )}
 
       {relatedInterviews[0] ? (
-        <Link
-          href={`/interviews/${relatedInterviews[0].slug}`}
-          className="inline-flex min-h-12 items-center justify-center rounded bg-kerala px-4 text-paper-white"
-        >
+        <ButtonLink href={`/interviews/${relatedInterviews[0].slug}`} variant="gold" size="lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
           {t.watchInterview}
-        </Link>
+        </ButtonLink>
       ) : null}
 
       {relatedMedia.length ? (
         <section>
-          <h2 className="font-display mb-3 text-2xl">{t.latestMedia}</h2>
+          <SectionHeader eyebrow={t.photos} title={t.latestMedia} />
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
             {relatedMedia.map((item) => (
-              <Link key={item.id} href={item.kind === "video" ? "/videos" : "/photos"}>
+              <Link
+                key={item.id}
+                href={item.kind === "video" ? "/videos" : "/photos"}
+                className="group overflow-hidden rounded-[var(--radius)] border border-line"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.thumbnail_url ?? item.url} alt="" className="aspect-[4/3] w-full rounded border border-line object-cover" />
+                <img
+                  src={item.thumbnail_url ?? item.url}
+                  alt=""
+                  className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               </Link>
             ))}
           </div>
@@ -85,18 +116,21 @@ export default async function EventPage({
 
       {relatedUpdates.length ? (
         <section>
-          <h2 className="font-display mb-3 text-2xl">{t.liveUpdates}</h2>
+          <SectionHeader eyebrow={t.reporter} title={t.liveUpdates} />
           <LiveFeed updates={relatedUpdates} />
         </section>
       ) : null}
 
       {relatedArticles.length ? (
         <section>
-          <h2 className="font-display mb-3 text-2xl">{t.news}</h2>
+          <SectionHeader eyebrow={t.news} title={t.news} />
           <ul className="grid gap-2">
             {relatedArticles.map((a) => (
               <li key={a.id}>
-                <Link href={`/news/${a.slug}`} className="hover:underline">
+                <Link
+                  href={`/news/${a.slug}`}
+                  className="card card-hover block p-4 font-medium hover:text-kerala-dark"
+                >
                   {locale === "ml" ? a.title_ml : a.title_en}
                 </Link>
               </li>

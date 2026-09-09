@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { getDictionary, tName } from "@/lib/i18n/dictionaries";
+import { PageHeader } from "@/components/ui/page-header";
+import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getScheduledEvents, getStages } from "@/lib/data/queries";
-import { formatTime } from "@/lib/utils";
+import { cn, formatTime } from "@/lib/utils";
 
 export default async function SchedulePage({
   searchParams,
@@ -27,37 +28,48 @@ export default async function SchedulePage({
   })).filter((g) => g.items.length);
 
   return (
-    <div className="grid gap-6">
-      <h1 className="font-display text-3xl">{t.schedule}</h1>
-      <div className="sticky top-16 z-10 flex flex-wrap gap-2 bg-paper py-2">
+    <div className="grid gap-8">
+      <PageHeader eyebrow={t.stages} title={t.schedule} />
+      <div className="surface-glass sticky top-[68px] z-10 -mx-4 flex flex-wrap gap-2 rounded-none border-y border-line px-4 py-3 md:mx-0 md:rounded-full md:border md:px-4">
         {[1, 2, 3].map((d) => (
           <Link
             key={d}
             href={`/schedule?day=${d}${stage ? `&stage=${stage}` : ""}`}
-            className={`min-h-10 rounded border px-3 py-2 text-sm ${dayNum === d ? "border-kerala bg-kerala text-white" : "border-line bg-paper-white"}`}
+            className={cn("chip", dayNum === d && "chip-active")}
           >
             {t.day} {d}
           </Link>
         ))}
-        <Link href="/schedule" className="min-h-10 rounded border border-line bg-paper-white px-3 py-2 text-sm">
+        <Link href="/schedule" className={cn("chip", !dayNum && !stage && "chip-active")}>
           {t.allDays}
         </Link>
       </div>
+      {byStage.length === 0 ? (
+        <div className="card p-10 text-center text-muted">{t.noItems}</div>
+      ) : null}
       {byStage.map((group) => (
         <section key={group.stage.id}>
-          <h2 className="font-display mb-3 text-2xl">{tName(locale, group.stage)}</h2>
-          <ol className="grid gap-2">
+          <h2 className="font-display mb-4 flex items-center gap-2 text-2xl font-bold">
+            <span className="h-5 w-1.5 rounded-full [background:var(--grad-gold)]" />
+            {tName(locale, group.stage)}
+          </h2>
+          <ol className="card divide-y divide-line overflow-hidden">
             {group.items.map((e) => (
               <li key={e.id}>
-                <Link href={`/events/${e.slug}`} className="flex items-center gap-3 rounded border border-line bg-paper-white px-4 py-3">
-                  <span className="w-20 tabular text-sm font-semibold">
+                <Link
+                  href={`/events/${e.slug}`}
+                  className="flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-kerala-soft/50"
+                >
+                  <span className="w-20 shrink-0 tabular text-sm font-bold text-kerala-dark">
                     {formatTime(e.start_time, locale)}
                   </span>
-                  <span className="flex-1">
-                    <span className="block font-medium">{tName(locale, e.programme)}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-medium">
+                      {tName(locale, e.programme)}
+                    </span>
                     <span className="text-xs text-muted">{tName(locale, e.category)}</span>
                   </span>
-                  <StatusBadge status={e.status} label={e.status} />
+                  <StatusBadge status={e.status} label={statusLabel(locale, e.status)} />
                 </Link>
               </li>
             ))}

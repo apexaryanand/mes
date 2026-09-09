@@ -13,8 +13,8 @@ export default async function SearchPage({
   const { q } = await searchParams;
   const hits = q ? await searchPublic(q) : [];
   return (
-    <div className="grid gap-4">
-      <h1 className="font-display text-3xl">{t.search}</h1>
+    <div className="grid gap-6">
+      <h1 className="font-display text-display-md font-bold">{t.search}</h1>
       <SearchResults query={q ?? ""} hits={hits} />
     </div>
   );

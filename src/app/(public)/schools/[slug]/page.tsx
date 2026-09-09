@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Medal } from "@/components/ui/medal";
+import { StatCard } from "@/components/ui/stat-card";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getPublishedResults, getSchoolBySlug, getStandings } from "@/lib/data/queries";
@@ -24,40 +26,63 @@ export default async function SchoolPage({
   );
 
   return (
-    <div className="grid gap-6">
-      <p className="text-sm">
-        <Link href="/schools">{t.schools}</Link>
-      </p>
-      <h1 className="font-display text-4xl">{tName(locale, school)}</h1>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Stat label={t.overallRank} value={standing?.overall_rank ? `#${standing.overall_rank}` : "—"} />
-        <Stat label={t.points} value={String(standing?.total_points ?? 0)} />
-        <Stat label={t.aGrades} value={String(standing?.grade_a_count ?? 0)} />
-        <Stat label={t.wins} value={String(standing?.wins_count ?? 0)} />
-      </div>
-      <ul className="grid gap-2">
-        {schoolResults.map(({ block, entry }) => (
-          <li key={entry.id} className="rounded border border-line bg-paper-white px-4 py-3">
-            <Link href={`/events/${block.event.slug}`} className="font-medium hover:underline">
-              {tName(locale, block.event.programme)}
-            </Link>
-            <p className="text-sm text-muted">
-              {tName(locale, block.event.category)} · {entry.rank}
-              {locale === "en" ? " place" : " സ്ഥാനം"} · {entry.grade} {t.grade}
-              {entry.participant_name ? ` · ${entry.participant_name}` : ""}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+    <div className="grid gap-8">
+      <nav className="flex items-center gap-1.5 text-sm text-muted">
+        <Link href="/schools" className="hover:text-kerala-dark">
+          {t.schools}
+        </Link>
+        <span aria-hidden>/</span>
+        <span className="truncate text-ink">{tName(locale, school)}</span>
+      </nav>
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded border border-line bg-paper-white p-4">
-      <p className="text-xs uppercase tracking-wide text-muted">{label}</p>
-      <p className="mt-1 font-display text-2xl">{value}</p>
+      <header className="flex items-center gap-4">
+        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-kerala-soft font-display text-2xl font-black text-kerala-dark">
+          {tName(locale, school).charAt(0)}
+        </span>
+        <div className="min-w-0">
+          <h1 className="font-display text-display-md font-bold">{tName(locale, school)}</h1>
+          <p className="text-sm text-muted">{school.code}</p>
+        </div>
+      </header>
+
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <StatCard
+          label={t.overallRank}
+          value={standing?.overall_rank ? `#${standing.overall_rank}` : "—"}
+          accent="gold"
+        />
+        <StatCard label={t.points} value={standing?.total_points ?? 0} accent="green" />
+        <StatCard label={t.aGrades} value={standing?.grade_a_count ?? 0} accent="indigo" />
+        <StatCard label={t.wins} value={standing?.wins_count ?? 0} accent="red" />
+      </div>
+
+      {schoolResults.length ? (
+        <ul className="card divide-y divide-line overflow-hidden">
+          {schoolResults.map(({ block, entry }) => (
+            <li key={entry.id}>
+              <Link
+                href={`/events/${block.event.slug}`}
+                className="flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-kerala-soft/50"
+              >
+                <Medal rank={entry.rank} className="h-9 w-9 text-sm" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium">{tName(locale, block.event.programme)}</p>
+                  <p className="text-sm text-muted">
+                    {tName(locale, block.event.category)}
+                    {entry.grade ? ` · ${entry.grade} ${t.grade}` : ""}
+                    {entry.participant_name ? ` · ${entry.participant_name}` : ""}
+                  </p>
+                </div>
+                <span className="tabular text-sm font-semibold text-kerala-dark">
+                  {entry.points} {t.points}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="card p-10 text-center text-muted">{t.noResults}</div>
+      )}
     </div>
   );
 }

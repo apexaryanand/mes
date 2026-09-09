@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils";
 export function LanguageToggle({ compact = false }: { compact?: boolean }) {
   const { locale, setLocale, t } = useI18n();
   return (
-    <div className="inline-flex rounded border border-line bg-paper-white p-0.5 text-sm">
+    <div className="inline-flex rounded-full border border-line bg-paper-white p-0.5 text-sm font-semibold">
       <button
         type="button"
         onClick={() => setLocale("ml")}
         className={cn(
-          "rounded px-2.5 py-1 min-h-9",
-          locale === "ml" ? "bg-kerala text-paper-white" : "text-muted",
+          "min-h-9 rounded-full px-3 py-1 transition-colors",
+          locale === "ml" ? "bg-kerala-dark text-white shadow-sm" : "text-muted hover:text-ink",
         )}
         aria-pressed={locale === "ml"}
       >
@@ -22,8 +22,8 @@ export function LanguageToggle({ compact = false }: { compact?: boolean }) {
         type="button"
         onClick={() => setLocale("en")}
         className={cn(
-          "rounded px-2.5 py-1 min-h-9",
-          locale === "en" ? "bg-kerala text-paper-white" : "text-muted",
+          "min-h-9 rounded-full px-3 py-1 transition-colors",
+          locale === "en" ? "bg-kerala-dark text-white shadow-sm" : "text-muted hover:text-ink",
         )}
         aria-pressed={locale === "en"}
       >

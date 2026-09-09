@@ -7,7 +7,7 @@ export function DemoBanner() {
   const { t } = useI18n();
   if (isSupabaseConfigured()) return null;
   return (
-    <div className="bg-gold/30 px-4 py-2 text-center text-xs text-ink">
+    <div className="[background:var(--grad-gold)] px-4 py-2 text-center text-xs font-medium text-white">
       {t.demoBanner}
     </div>
   );
