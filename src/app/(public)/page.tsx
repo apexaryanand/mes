@@ -120,10 +120,10 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <StatCard label={t.schoolsCompeting} value={schools.length} accent="green" className="!bg-white/95" />
-            <StatCard label={t.eventsToday} value={todayEvents.length} accent="gold" className="!bg-white/95" />
-            <StatCard label={t.resultsPublished} value={results.length} accent="indigo" className="!bg-white/95" />
-            <StatCard label={t.liveNow} value={liveCount} accent="red" className="!bg-white/95" />
+            <StatCard label={t.schoolsCompeting} value={schools.length} accent="green" className="border-white/25 bg-white shadow-md" />
+            <StatCard label={t.eventsToday} value={todayEvents.length} accent="gold" className="border-white/25 bg-white shadow-md" />
+            <StatCard label={t.resultsPublished} value={results.length} accent="indigo" className="border-white/25 bg-white shadow-md" />
+            <StatCard label={t.liveNow} value={liveCount} accent="red" className="border-white/25 bg-white shadow-md" />
           </div>
         </div>
 
