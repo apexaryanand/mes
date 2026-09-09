@@ -1,7 +1,22 @@
-export function isSupabaseConfigured(): boolean {
+/** Vercel ↔ Supabase integration may set any of these publishable key env names. */
+export function getSupabaseUrl(): string | undefined {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  return Boolean(url && key && url.startsWith("http") && !url.includes("your-"));
+  if (!url || url.includes("your-")) return undefined;
+  return url;
+}
+
+export function getSupabaseAnonKey(): string | undefined {
+  return (
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
+  );
+}
+
+export function isSupabaseConfigured(): boolean {
+  const url = getSupabaseUrl();
+  const key = getSupabaseAnonKey();
+  return Boolean(url && key && url.startsWith("http"));
 }
 
 export function formatTime(time: string, locale: "ml" | "en"): string {

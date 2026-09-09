@@ -4,7 +4,9 @@ import { isSupabaseConfigured } from "@/lib/utils";
 
 export async function requireServerSupabase() {
   if (!isSupabaseConfigured()) {
-    throw new Error("Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
+    throw new Error(
+      "Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and a publishable/anon key (NEXT_PUBLIC_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY).",
+    );
   }
   const sb = await createServerSupabase();
   if (!sb) {
