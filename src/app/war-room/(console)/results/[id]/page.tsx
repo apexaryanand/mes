@@ -47,11 +47,11 @@ export default async function ResultEditorPage({
     "rounded-lg border border-line bg-paper-white px-2.5 py-1.5 text-sm focus:border-gold disabled:bg-paper disabled:text-muted";
 
   return (
-    <div className="grid gap-5">
-      <div className="card p-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h2 className="font-display text-2xl font-bold">{tName(locale, event.programme)}</h2>
+    <div className="grid gap-3 sm:gap-5">
+      <div className="card p-3 sm:p-5">
+        <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-3">
+          <div className="min-w-0">
+            <h2 className="font-display text-lg font-bold sm:text-2xl">{tName(locale, event.programme)}</h2>
             <p className="text-sm text-muted">
               {tName(locale, event.category)} · {tName(locale, event.stage)}
             </p>
@@ -60,23 +60,24 @@ export default async function ResultEditorPage({
         </div>
 
         {/* State stepper */}
-        <ol className="mt-5 flex items-center gap-1">
+        <ol className="mt-4 flex items-center gap-0.5 sm:mt-5 sm:gap-1">
           {steps.map((step, i) => {
             const done = activeStep >= 0 && i <= activeStep;
             return (
-              <li key={step.key} className="flex flex-1 items-center gap-1 last:flex-none">
-                <div className="flex items-center gap-2">
+              <li key={step.key} className="flex flex-1 items-center gap-0.5 last:flex-none sm:gap-1">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <span
                     className={cn(
-                      "flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold",
+                      "flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold sm:h-7 sm:w-7 sm:text-xs",
                       done ? "bg-kerala-dark text-white" : "bg-line text-muted",
                     )}
+                    title={step.label}
                   >
                     {i + 1}
                   </span>
                   <span
                     className={cn(
-                      "text-xs font-semibold",
+                      "hidden text-xs font-semibold sm:inline",
                       done ? "text-kerala-dark" : "text-muted",
                     )}
                   >
@@ -97,7 +98,7 @@ export default async function ResultEditorPage({
         </ol>
       </div>
 
-      <form action={saveResultDraftForm} className="card p-4">
+      <form action={saveResultDraftForm} className="card mobile-bleed p-3 max-sm:rounded-none max-sm:border-x-0 sm:p-4">
         <input type="hidden" name="resultSetId" value={set.id} />
         <input type="hidden" name="count" value={Math.max(entries.length, 1)} />
         <div className="overflow-x-auto">

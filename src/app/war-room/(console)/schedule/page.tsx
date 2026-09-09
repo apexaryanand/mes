@@ -30,14 +30,14 @@ export default async function ScheduleAdminPage() {
           <tbody>
             {events.map((e, i) => (
               <tr key={e.id} className={cn("border-t border-line", i % 2 === 1 && "bg-paper/40")}>
-                <td className="px-4 py-3 tabular">{e.day_number}</td>
-                <td className="px-4 py-3 tabular">{e.start_time}</td>
-                <td className="px-4 py-3">{tName(locale, e.stage)}</td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-2 sm:px-4 sm:py-3 tabular">{e.day_number}</td>
+                <td className="px-3 py-2 sm:px-4 sm:py-3 tabular">{e.start_time}</td>
+                <td className="px-3 py-2 sm:px-4 sm:py-3">{tName(locale, e.stage)}</td>
+                <td className="px-3 py-2 sm:px-4 sm:py-3">
                   <span className="font-medium">{tName(locale, e.programme)}</span>
                   <span className="text-muted"> · {tName(locale, e.category)}</span>
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-2 sm:px-4 sm:py-3">
                   <div className="flex items-center gap-2">
                     <StatusBadge status={e.status} label={statusLabel(locale, e.status)} />
                     <form action={updateEventStatusForm} className="flex gap-1.5">

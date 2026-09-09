@@ -36,16 +36,16 @@ export default async function ResultsIndexPage() {
                   key={event.id}
                   className={cn("border-t border-line", i % 2 === 1 && "bg-paper/40")}
                 >
-                  <td className="px-4 py-3 font-medium">{tName(locale, event.programme)}</td>
-                  <td className="px-4 py-3">{tName(locale, event.category)}</td>
-                  <td className="px-4 py-3">{tName(locale, event.stage)}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-2 sm:px-4 sm:py-3 font-medium">{tName(locale, event.programme)}</td>
+                  <td className="px-3 py-2 sm:px-4 sm:py-3">{tName(locale, event.category)}</td>
+                  <td className="px-3 py-2 sm:px-4 sm:py-3">{tName(locale, event.stage)}</td>
+                  <td className="px-3 py-2 sm:px-4 sm:py-3">
                     <StatusBadge
                       status={set?.status ?? "draft"}
                       label={set ? statusLabel(locale, set.status) : "—"}
                     />
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-3 py-2 sm:px-4 sm:py-3 text-right">
                     {set ? (
                       <Link
                         href={`/war-room/results/${set.id}`}

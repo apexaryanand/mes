@@ -14,7 +14,7 @@ export default async function MediaAdminPage() {
       {items.map((item) => (
         <article
           key={item.id}
-          className="card grid gap-3 overflow-hidden p-4 sm:grid-cols-[160px_1fr]"
+          className="card grid gap-2 overflow-hidden p-3 sm:grid-cols-[160px_1fr] sm:gap-3 sm:p-4"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

@@ -25,8 +25,8 @@ export default async function InterviewsAdminPage() {
   const field =
     "min-h-11 rounded-xl border border-line bg-paper-white px-3 text-sm focus:border-gold";
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-      <form action={createInterview} className="card grid h-fit gap-3 p-5">
+    <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1fr_1fr]">
+      <form action={createInterview} className="card grid h-fit gap-3 p-3 sm:p-5">
         <p className="section-eyebrow">{t.create}</p>
         <input name="winner_name" placeholder="Winner name" required className={field} />
         <div className="grid gap-3 sm:grid-cols-2">
@@ -55,7 +55,7 @@ export default async function InterviewsAdminPage() {
       </form>
       <ul className="grid h-fit gap-2">
         {demo.interviews.map((i) => (
-          <li key={i.id} className="card flex items-center gap-3 px-4 py-3">
+          <li key={i.id} className="card flex items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-kerala-soft text-kerala-dark">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5v14l11-7z" />

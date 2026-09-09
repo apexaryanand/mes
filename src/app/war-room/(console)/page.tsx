@@ -27,7 +27,7 @@ export default async function WarRoomDashboard() {
   const updates = await getLiveUpdates();
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-4 sm:gap-6">
       <div>
         <p className="text-sm text-muted">
           {t.signedInAs} <span className="font-medium text-ink">{profile?.display_name}</span> ·{" "}
@@ -35,7 +35,7 @@ export default async function WarRoomDashboard() {
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-3 xl:grid-cols-5">
         <StatCard label={t.happeningNow} value={live.length} accent="red" />
         <StatCard label={t.completed} value={completed.length} accent="green" />
         <StatCard label={t.awaitingEntry} value={awaitingEntry.length} accent="gold" />
@@ -43,14 +43,14 @@ export default async function WarRoomDashboard() {
         <StatCard label={t.awaitingModeration} value={pendingMedia.length} accent="indigo" />
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-3 sm:gap-5 lg:grid-cols-2">
         <Panel title={t.happeningNow} accent="red">
           {live.length ? (
             <ul className="divide-y divide-line">
               {live.map((e) => (
                 <li
                   key={e.id}
-                  className="flex items-center justify-between gap-2 px-4 py-3 text-sm"
+                  className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm sm:px-4 sm:py-3"
                 >
                   <span className="min-w-0 truncate">
                     <span className="font-medium">{tName(locale, e.programme)}</span>
@@ -74,7 +74,7 @@ export default async function WarRoomDashboard() {
                   <li key={s.id}>
                     <Link
                       href={`/war-room/results/${s.id}`}
-                      className="flex items-center justify-between gap-2 px-4 py-3 text-sm transition-colors hover:bg-kerala-soft/40"
+                      className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm transition-colors hover:bg-kerala-soft/40 sm:px-4 sm:py-3"
                     >
                       <span className="min-w-0 truncate font-medium">
                         {event ? tName(locale, event.programme) : s.id}
@@ -94,7 +94,7 @@ export default async function WarRoomDashboard() {
           {published.length ? (
             <ul className="divide-y divide-line">
               {published.map((p) => (
-                <li key={p.result_set.id} className="px-4 py-3 text-sm">
+                <li key={p.result_set.id} className="px-3 py-2.5 text-sm sm:px-4 sm:py-3">
                   <span className="font-medium">{tName(locale, p.event.programme)}</span>
                   <span className="text-muted"> · {tName(locale, p.event.category)}</span>
                 </li>
@@ -109,7 +109,7 @@ export default async function WarRoomDashboard() {
           {updates.length ? (
             <ul className="divide-y divide-line">
               {updates.slice(0, 5).map((u) => (
-                <li key={u.id} className="px-4 py-3 text-sm">
+                <li key={u.id} className="px-3 py-2.5 text-sm sm:px-4 sm:py-3">
                   <span className="font-medium text-kerala-dark">{u.reporter_name}: </span>
                   <span className="text-muted">{u.body.slice(0, 120)}</span>
                 </li>
@@ -144,8 +144,8 @@ function Panel({
     <section className="card overflow-hidden">
       <h2
         className={cn(
-          "relative border-b border-line px-4 py-3 pl-5 font-semibold",
-          "before:absolute before:left-0 before:top-0 before:h-full before:w-1.5",
+          "relative border-b border-line px-3 py-2.5 pl-4 text-sm font-semibold sm:px-4 sm:py-3 sm:pl-5 sm:text-base",
+          "before:absolute before:left-0 before:top-0 before:h-full before:w-1 sm:before:w-1.5",
           accentBar[accent],
         )}
       >
@@ -157,5 +157,5 @@ function Panel({
 }
 
 function Empty({ label }: { label: string }) {
-  return <p className="px-4 py-8 text-center text-sm text-muted">{label}</p>;
+  return <p className="px-3 py-6 text-center text-sm text-muted sm:px-4 sm:py-8">{label}</p>;
 }

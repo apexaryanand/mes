@@ -18,28 +18,28 @@ export default async function ReporterPage() {
     <div className="min-h-screen bg-[#f1f0ec]">
       <header className="relative overflow-hidden text-white [background:var(--grad-hero)]">
         <div className="kolam-bg absolute inset-0 opacity-[0.12]" aria-hidden />
-        <div className="relative mx-auto flex max-w-lg items-center justify-between px-4 py-6">
+        <div className="relative mx-auto flex max-w-lg items-center justify-between px-3 py-4 sm:px-4 sm:py-6">
           <div>
-            <p className="section-eyebrow text-gold-light before:[background:var(--grad-gold)]">
+            <p className="section-eyebrow text-gold-light before:[background:var(--grad-gold)] max-sm:text-[0.65rem]">
               {t.reporter}
             </p>
-            <h1 className="font-display mt-1 text-3xl font-black">{t.liveUpdates}</h1>
+            <h1 className="font-display mt-1 text-2xl font-black sm:text-3xl">{t.liveUpdates}</h1>
           </div>
           <LanguageToggle compact />
         </div>
       </header>
 
-      <div className="mx-auto max-w-lg px-4 py-6">
-        <p className="mb-4 rounded-xl bg-kerala-soft px-4 py-3 text-sm text-kerala-dark">
+      <div className="mx-auto max-w-lg px-3 py-4 sm:px-4 sm:py-6">
+        <p className="mb-3 rounded-xl bg-kerala-soft px-3 py-2.5 text-sm text-kerala-dark sm:mb-4 sm:px-4 sm:py-3">
           {t.reporterHelp}
         </p>
-        <form action={publishLiveUpdateForm} className="grid gap-4">
+        <form action={publishLiveUpdateForm} className="grid gap-3 sm:gap-4">
           <label className="grid gap-1.5 text-sm font-semibold">
             {t.selectStage}
             <select
               name="stageId"
               required
-              className="min-h-14 rounded-xl border border-line bg-paper-white px-3 text-base font-normal focus:border-gold"
+              className="min-h-12 rounded-xl border border-line bg-paper-white px-3 text-base font-normal focus:border-gold sm:min-h-14"
             >
               {stages.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -52,7 +52,7 @@ export default async function ReporterPage() {
             {t.selectEvent}
             <select
               name="eventId"
-              className="min-h-14 rounded-xl border border-line bg-paper-white px-3 text-base font-normal focus:border-gold"
+              className="min-h-12 rounded-xl border border-line bg-paper-white px-3 text-base font-normal focus:border-gold sm:min-h-14"
             >
               <option value="">—</option>
               {today.map((e) => (
@@ -71,7 +71,7 @@ export default async function ReporterPage() {
               className="rounded-xl border border-line bg-paper-white px-3 py-3 text-base font-normal focus:border-gold"
             />
           </label>
-          <button className="min-h-14 rounded-full bg-kerala-dark text-lg font-semibold text-white shadow-[var(--shadow-md)] transition-colors hover:bg-kerala-deep">
+          <button className="min-h-12 rounded-full bg-kerala-dark text-base font-semibold text-white shadow-[var(--shadow-md)] transition-colors hover:bg-kerala-deep sm:min-h-14 sm:text-lg">
             {t.publishUpdate}
           </button>
         </form>

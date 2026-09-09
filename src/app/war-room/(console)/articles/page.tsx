@@ -29,8 +29,8 @@ export default async function ArticlesAdminPage() {
   const field =
     "min-h-11 rounded-xl border border-line bg-paper-white px-3 text-sm focus:border-gold";
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
-      <form action={createArticle} className="card grid h-fit gap-3 p-5">
+    <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1fr_1.1fr]">
+      <form action={createArticle} className="card grid h-fit gap-3 p-3 sm:p-5">
         <p className="section-eyebrow">{t.create}</p>
         <div className="grid gap-3 sm:grid-cols-2">
           <input name="title_en" placeholder="Title (EN)" className={field} required />
@@ -51,7 +51,7 @@ export default async function ArticlesAdminPage() {
       </form>
       <ul className="grid h-fit gap-2">
         {demo.articles.map((a) => (
-          <li key={a.id} className="card flex items-center justify-between gap-3 px-4 py-3">
+          <li key={a.id} className="card flex items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
             <p className="min-w-0 truncate font-medium">
               {locale === "ml" ? a.title_ml : a.title_en}
             </p>

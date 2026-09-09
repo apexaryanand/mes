@@ -9,7 +9,7 @@ export default async function StagesAdminPage() {
       {demo.stages.map((s) => (
         <div
           key={s.id}
-          className="card relative overflow-hidden p-4 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-1.5 before:[background:var(--grad-gold)]"
+          className="card relative overflow-hidden p-3 pl-4 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:[background:var(--grad-gold)] sm:p-4 sm:pl-5 sm:before:w-1.5"
         >
           <p className="font-display text-lg font-bold">{tName(locale, s)}</p>
           <p className="text-sm text-muted">

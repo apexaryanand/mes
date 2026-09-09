@@ -16,7 +16,7 @@ export default async function LiveAdminPage() {
       {updates.map((u) => (
         <article
           key={u.id}
-          className={`card p-4 ${u.is_removed ? "opacity-50" : ""}`}
+          className={`card p-3 sm:p-4 ${u.is_removed ? "opacity-50" : ""}`}
         >
           <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gold-deep">
             {formatDateTime(u.created_at, locale)}

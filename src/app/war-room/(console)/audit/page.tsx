@@ -12,7 +12,7 @@ export default async function AuditPage() {
       {demo.auditLogs.map((log) => (
         <li key={log.id} className="relative pb-4 last:pb-0">
           <span className="absolute -left-[31px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-gold bg-paper-white" />
-          <div className="card px-4 py-3 text-sm">
+          <div className="card px-3 py-2.5 text-sm sm:px-4 sm:py-3">
             <p className="font-semibold text-kerala-dark">{log.action}</p>
             <p className="mt-0.5 text-muted">
               {log.actor_name} · {log.entity_type} · {formatDateTime(log.created_at, locale)}

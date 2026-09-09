@@ -94,8 +94,8 @@ export function WarRoomShell({
 
   const sidebar = (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-3 px-5 py-5">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 font-display text-lg font-black text-gold-light">
+      <div className="flex items-center gap-2.5 px-4 py-4 sm:gap-3 sm:px-5 sm:py-5">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 font-display text-base font-black text-gold-light sm:h-10 sm:w-10 sm:text-lg">
           ക
         </span>
         <div className="min-w-0">
@@ -143,7 +143,7 @@ export function WarRoomShell({
         ))}
       </nav>
 
-      <div className="border-t border-white/10 px-4 py-3">
+      <div className="border-t border-white/10 px-3 py-2.5 sm:px-4 sm:py-3">
         <div className="mb-3 flex items-center gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-deep font-semibold text-white">
             {name.charAt(0).toUpperCase()}
@@ -190,10 +190,10 @@ export function WarRoomShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-white/90 px-4 py-3 backdrop-blur md:px-6">
+        <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-white/90 px-3 py-2 backdrop-blur sm:gap-3 sm:px-4 sm:py-3 md:px-6">
           <button
             type="button"
-            className="flex min-h-10 min-w-10 items-center justify-center rounded-xl border border-line text-kerala-dark md:hidden"
+            className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-line text-kerala-dark md:hidden"
             aria-label={t.menu}
             onClick={() => setOpen(true)}
           >
@@ -201,19 +201,21 @@ export function WarRoomShell({
               <path d="M4 7h16M4 12h16M4 17h16" />
             </svg>
           </button>
-          <h1 className="font-display flex-1 truncate text-xl font-bold">{title}</h1>
+          <h1 className="font-display flex-1 truncate text-base font-bold sm:text-xl">{title}</h1>
           <Link
             href="/"
-            className="hidden items-center gap-1.5 rounded-full border border-line px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:border-gold hover:text-kerala-dark sm:inline-flex"
+            aria-label={t.viewSite}
+            className="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:border-gold hover:text-kerala-dark sm:gap-1.5 sm:px-3.5 sm:py-2 sm:text-sm"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
-            {t.viewSite}
+            <span className="hidden sm:inline">{t.viewSite}</span>
+            <span className="sm:hidden" aria-hidden>↗</span>
           </Link>
         </header>
 
-        <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
+        <main className="min-w-0 flex-1 p-3 sm:p-4 md:p-6">{children}</main>
       </div>
     </div>
   );

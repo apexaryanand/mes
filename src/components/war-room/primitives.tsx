@@ -8,8 +8,13 @@ export function TableCard({
   className?: string;
 }) {
   return (
-    <div className={cn("card overflow-hidden", className)}>
-      <div className="overflow-x-auto">{children}</div>
+    <div
+      className={cn(
+        "card overflow-hidden max-sm:mobile-bleed max-sm:rounded-none max-sm:border-x-0",
+        className,
+      )}
+    >
+      <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:thin]">{children}</div>
     </div>
   );
 }
@@ -24,7 +29,7 @@ export function Th({
   return (
     <th
       className={cn(
-        "px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-muted",
+        "px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-muted sm:px-4 sm:py-3 sm:text-xs",
         className,
       )}
     >

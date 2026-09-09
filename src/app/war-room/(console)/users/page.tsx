@@ -30,7 +30,7 @@ export default async function UsersPage() {
         <form
           key={p.id}
           action={saveRole}
-          className="card flex flex-wrap items-center gap-3 px-4 py-3"
+          className="card flex flex-wrap items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3"
         >
           <input type="hidden" name="id" value={p.id} />
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-deep font-semibold text-white">

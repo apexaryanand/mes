@@ -18,8 +18,8 @@ export default async function SchoolsAdminPage() {
         <tbody>
           {demo.schools.map((s, i) => (
             <tr key={s.id} className={cn("border-t border-line", i % 2 === 1 && "bg-paper/40")}>
-              <td className="px-4 py-3 font-mono text-xs font-semibold text-gold-deep">{s.code}</td>
-              <td className="px-4 py-3 font-medium">{tName(locale, s)}</td>
+              <td className="px-3 py-2 sm:px-4 sm:py-3 font-mono text-xs font-semibold text-gold-deep">{s.code}</td>
+              <td className="px-3 py-2 sm:px-4 sm:py-3 font-medium">{tName(locale, s)}</td>
             </tr>
           ))}
         </tbody>

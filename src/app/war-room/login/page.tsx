@@ -30,16 +30,16 @@ export default async function LoginPage() {
       </div>
 
       {/* Form panel */}
-      <div className="flex items-center justify-center bg-[#f1f0ec] px-4 py-10">
+      <div className="flex items-center justify-center bg-[#f1f0ec] px-3 py-6 sm:px-4 sm:py-10">
         <div className="w-full max-w-md">
-          <div className="mb-6 flex items-start justify-between gap-3">
+          <div className="mb-4 flex items-start justify-between gap-3 sm:mb-6">
             <div>
               <p className="section-eyebrow">{t.warRoom}</p>
               <h1 className="font-display text-display-md mt-1 font-bold">{t.login}</h1>
             </div>
             <LanguageToggle compact />
           </div>
-          <div className="card p-6">
+          <div className="card p-4 sm:p-6">
             <Suspense>
               <LoginForm />
             </Suspense>
