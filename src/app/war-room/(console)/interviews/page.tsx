@@ -22,31 +22,46 @@ export default async function InterviewsAdminPage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
 
+  const field =
+    "min-h-11 rounded-xl border border-line bg-paper-white px-3 text-sm focus:border-gold";
   return (
-    <div className="grid gap-6">
-      <h1 className="font-display text-3xl">{t.interviewManagement}</h1>
-      <form action={createInterview} className="grid gap-3 rounded border border-line bg-white p-4">
-        <input name="winner_name" placeholder="Winner name" required className="min-h-11 rounded border border-line px-3" />
-        <select name="school_id" className="min-h-11 rounded border border-line px-3">
-          {demo.schools.map((s) => (
-            <option key={s.id} value={s.id}>{tName(locale, s)}</option>
-          ))}
-        </select>
-        <select name="programme_id" className="min-h-11 rounded border border-line px-3">
-          {demo.programmes.map((p) => (
-            <option key={p.id} value={p.id}>{tName(locale, p)}</option>
-          ))}
-        </select>
-        <input name="rank" type="number" defaultValue={1} className="min-h-11 rounded border border-line px-3" />
-        <input name="video_url" placeholder="https://www.youtube.com/embed/..." required className="min-h-11 rounded border border-line px-3" />
-        <textarea name="description_en" placeholder="Description EN" className="rounded border border-line px-3 py-2" />
-        <textarea name="description_ml" placeholder="വിവരണം" className="rounded border border-line px-3 py-2" />
-        <button className="min-h-11 rounded bg-kerala text-white">{t.create}</button>
+    <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+      <form action={createInterview} className="card grid h-fit gap-3 p-5">
+        <p className="section-eyebrow">{t.create}</p>
+        <input name="winner_name" placeholder="Winner name" required className={field} />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <select name="school_id" className={field}>
+            {demo.schools.map((s) => (
+              <option key={s.id} value={s.id}>
+                {tName(locale, s)}
+              </option>
+            ))}
+          </select>
+          <select name="programme_id" className={field}>
+            {demo.programmes.map((p) => (
+              <option key={p.id} value={p.id}>
+                {tName(locale, p)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <input name="rank" type="number" defaultValue={1} className={field} />
+        <input name="video_url" placeholder="https://www.youtube.com/embed/..." required className={field} />
+        <textarea name="description_en" placeholder="Description EN" className={`${field} py-2`} />
+        <textarea name="description_ml" placeholder="വിവരണം" className={`${field} py-2`} />
+        <button className="min-h-11 rounded-full bg-kerala-dark font-semibold text-white transition-colors hover:bg-kerala-deep">
+          {t.create}
+        </button>
       </form>
-      <ul className="grid gap-2">
+      <ul className="grid h-fit gap-2">
         {demo.interviews.map((i) => (
-          <li key={i.id} className="rounded border border-line bg-white px-4 py-3">
-            {i.winner_name}
+          <li key={i.id} className="card flex items-center gap-3 px-4 py-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-kerala-soft text-kerala-dark">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+            <span className="font-medium">{i.winner_name}</span>
           </li>
         ))}
       </ul>

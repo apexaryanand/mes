@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { logoutAction } from "@/domains/admin/actions";
 import { useI18n } from "@/lib/i18n/provider";
 import type { AppRole } from "@/lib/types";
@@ -73,10 +73,12 @@ export function WarRoomShell({
   const { t } = useI18n();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [lastPath, setLastPath] = useState(pathname);
 
-  useEffect(() => {
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   const groups = GROUPS.map((g) => ({
     ...g,

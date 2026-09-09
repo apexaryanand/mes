@@ -26,20 +26,34 @@ export default async function UsersPage() {
   const t = getDictionary(locale);
   return (
     <div className="grid gap-3">
-      <h1 className="font-display text-3xl">{t.userManagement}</h1>
       {demo.profiles.map((p) => (
-        <form key={p.id} action={saveRole} className="flex flex-wrap items-center gap-3 rounded border border-line bg-white px-4 py-3">
+        <form
+          key={p.id}
+          action={saveRole}
+          className="card flex flex-wrap items-center gap-3 px-4 py-3"
+        >
           <input type="hidden" name="id" value={p.id} />
-          <div className="flex-1">
-            <p className="font-medium">{p.display_name}</p>
-            <p className="text-xs text-muted">{p.email}</p>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-deep font-semibold text-white">
+            {p.display_name.charAt(0).toUpperCase()}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-medium">{p.display_name}</p>
+            <p className="truncate text-xs text-muted">{p.email}</p>
           </div>
-          <select name="role" defaultValue={p.role} className="min-h-10 rounded border border-line px-2">
+          <select
+            name="role"
+            defaultValue={p.role}
+            className="min-h-10 rounded-xl border border-line bg-paper-white px-2.5 text-sm focus:border-gold"
+          >
             {ROLES.map((r) => (
-              <option key={r} value={r}>{r}</option>
+              <option key={r} value={r}>
+                {r.replace(/_/g, " ")}
+              </option>
             ))}
           </select>
-          <button className="min-h-10 rounded bg-zinc-800 px-3 text-white">{t.edit}</button>
+          <button className="min-h-10 rounded-full bg-ink px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90">
+            {t.edit}
+          </button>
         </form>
       ))}
     </div>

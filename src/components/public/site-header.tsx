@@ -11,10 +11,12 @@ export function SiteHeader() {
   const { t } = useI18n();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [lastPath, setLastPath] = useState(pathname);
 
-  useEffect(() => {
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";

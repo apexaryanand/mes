@@ -13,20 +13,28 @@ export default async function LiveAdminPage() {
 
   return (
     <div className="grid gap-3">
-      <h1 className="font-display text-3xl">{t.liveUpdates}</h1>
       {updates.map((u) => (
-        <article key={u.id} className={`rounded border border-line bg-white p-4 ${u.is_removed ? "opacity-50" : ""}`}>
-          <p className="text-xs text-muted">
-            {formatDateTime(u.created_at, locale)} · {u.reporter_name}
+        <article
+          key={u.id}
+          className={`card p-4 ${u.is_removed ? "opacity-50" : ""}`}
+        >
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gold-deep">
+            {formatDateTime(u.created_at, locale)}
+            <span className="text-line" aria-hidden>
+              &bull;
+            </span>
+            <span className="text-kerala-dark">{u.reporter_name}</span>
           </p>
-          <p className="mt-2">{u.body}</p>
+          <p className="mt-2 leading-relaxed">{u.body}</p>
           {!u.is_removed ? (
-            <form action={removeLiveUpdateForm} className="mt-2">
+            <form action={removeLiveUpdateForm} className="mt-3">
               <input type="hidden" name="id" value={u.id} />
-              <button className="text-sm text-live">{t.remove}</button>
+              <button className="rounded-full border border-live px-3 py-1.5 text-xs font-semibold text-live transition-colors hover:bg-live-soft">
+                {t.remove}
+              </button>
             </form>
           ) : (
-            <p className="text-xs text-muted">removed</p>
+            <p className="mt-2 text-xs italic text-muted">removed</p>
           )}
         </article>
       ))}

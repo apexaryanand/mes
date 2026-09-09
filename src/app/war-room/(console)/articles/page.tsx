@@ -1,4 +1,5 @@
 import { saveArticle } from "@/domains/admin/actions";
+import { StatusBadge } from "@/components/ui/status-badge";
 import * as demo from "@/lib/data/demo";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
@@ -25,27 +26,39 @@ export default async function ArticlesAdminPage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
 
+  const field =
+    "min-h-11 rounded-xl border border-line bg-paper-white px-3 text-sm focus:border-gold";
   return (
-    <div className="grid gap-6">
-      <h1 className="font-display text-3xl">{t.articleManagement}</h1>
-      <form action={createArticle} className="grid gap-3 rounded border border-line bg-white p-4">
-        <input name="title_en" placeholder="Title (EN)" className="min-h-11 rounded border border-line px-3" required />
-        <input name="title_ml" placeholder="തലക്കെട്ട്" className="min-h-11 rounded border border-line px-3" required />
-        <input name="excerpt_en" placeholder="Excerpt (EN)" className="min-h-11 rounded border border-line px-3" />
-        <input name="excerpt_ml" placeholder="സംഗ്രഹം" className="min-h-11 rounded border border-line px-3" />
-        <textarea name="body_en" rows={5} placeholder="Body (EN)" className="rounded border border-line px-3 py-2" />
-        <textarea name="body_ml" rows={5} placeholder="ഉള്ളടക്കം" className="rounded border border-line px-3 py-2" />
-        <input name="category" defaultValue="News" className="min-h-11 rounded border border-line px-3" />
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="publish" /> {t.publish}
+    <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
+      <form action={createArticle} className="card grid h-fit gap-3 p-5">
+        <p className="section-eyebrow">{t.create}</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <input name="title_en" placeholder="Title (EN)" className={field} required />
+          <input name="title_ml" placeholder="തലക്കെട്ട്" className={field} required />
+          <input name="excerpt_en" placeholder="Excerpt (EN)" className={field} />
+          <input name="excerpt_ml" placeholder="സംഗ്രഹം" className={field} />
+        </div>
+        <textarea name="body_en" rows={5} placeholder="Body (EN)" className={`${field} py-2`} />
+        <textarea name="body_ml" rows={5} placeholder="ഉള്ളടക്കം" className={`${field} py-2`} />
+        <input name="category" defaultValue="News" className={field} />
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input type="checkbox" name="publish" className="h-4 w-4 rounded accent-[var(--kerala-green)]" />
+          {t.publish}
         </label>
-        <button className="min-h-11 rounded bg-kerala text-white">{t.create}</button>
+        <button className="min-h-11 rounded-full bg-kerala-dark font-semibold text-white transition-colors hover:bg-kerala-deep">
+          {t.create}
+        </button>
       </form>
-      <ul className="grid gap-2">
+      <ul className="grid h-fit gap-2">
         {demo.articles.map((a) => (
-          <li key={a.id} className="rounded border border-line bg-white px-4 py-3">
-            <p className="font-medium">{locale === "ml" ? a.title_ml : a.title_en}</p>
-            <p className="text-xs text-muted">{a.is_published ? t.published : t.draft}</p>
+          <li key={a.id} className="card flex items-center justify-between gap-3 px-4 py-3">
+            <p className="min-w-0 truncate font-medium">
+              {locale === "ml" ? a.title_ml : a.title_en}
+            </p>
+            <StatusBadge
+              status={a.is_published ? "published" : "draft"}
+              label={a.is_published ? t.published : t.draft}
+            />
           </li>
         ))}
       </ul>

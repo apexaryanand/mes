@@ -15,15 +15,13 @@ export function Reveal({
   as?: React.ElementType;
 }) {
   const ref = useRef<HTMLElement | null>(null);
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState(
+    () => typeof IntersectionObserver === "undefined",
+  );
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setShown(true);
-      return;
-    }
+    if (!node || typeof IntersectionObserver === "undefined") return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
