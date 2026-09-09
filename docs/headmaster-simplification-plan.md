@@ -1,4 +1,4 @@
-# Kalolsavam Live — Simplification Plan
+# Kalolsavam Live — Simplification Plan (v2)
 
 **For:** Headmaster approval · MES HSS Irimbiliyam  
 **Prepared:** 9 September 2026  
@@ -8,267 +8,307 @@
 
 ## 1. Executive summary
 
-Kalolsavam Live is a **public website** (results, schedule, live updates, photos) plus a **War Room** (student-operated back office). The system works, but it was designed with **too many staff roles and too many steps** — similar to a large newsroom, not a school festival run by a small Little KITES team.
+Kalolsavam Live is a **public website** (results, schedule, photos, videos, what’s happening now) plus **staff logins** for students and teachers running the festival.
 
-**Proposal:** Reduce to **2 staff roles + public**, merge workflows into one War Room login, and replace the separate “verifier” person with a **mandatory review-and-confirm step** before any result goes live. Every publish action is logged with the student’s name.
+The current system has **too many role types** and features we don’t need — especially **text “live reports”** from scouts. In practice:
 
-**Outcome:** Same public experience, fewer passwords, clearer responsibility, easier to train in one session.
+- **Scout / JRC** tell the **War Room** what’s happening → War Room updates **event status** (live, completed, delayed) on the schedule.
+- **Live Media team** posts **video / live coverage** to the site (not text tweets).
+- **Gallery Media team** uploads **photos and videos** to the gallery (and handles public submissions).
 
----
-
-## 2. What we have today (too complex)
-
-| Area | Today | Problem |
-|------|--------|---------|
-| **Staff roles** | 7 types: super_admin, results_operator, results_verifier, reporter, editor, media_moderator, photographer | Too many logins and permission rules to explain |
-| **Results** | 4 steps: draft → entered → **verified by another person** → published | Needs two students for every result sheet |
-| **Live reports** | Separate `/reporter` app + War Room “Live” page | Two places for the same job |
-| **Media** | Public upload → moderator approves; photographer role exists but barely used | Extra role for one button |
-| **News / interviews** | Editor + photographer roles, separate pages | Nice-to-have during live festival; adds training load |
-| **Admin setup** | Categories, stages, settings locked to super_admin only | Fine, but scattered across many nav items |
+**Proposal:** **4 staff roles + public** — Admin, War Room, Live Media, Gallery Media. Results use **enter → review & confirm** (no separate verifier). No text live-report login.
 
 ---
 
-## 3. What we propose (simple)
+## 2. What we remove
 
-### 3.1 Only two kinds of login
-
-| Role | Who | Count (suggested) | Can do |
-|------|-----|-------------------|--------|
-| **Admin** | Teacher / festival coordinator | 1–2 accounts | Festival settings, schools, categories, programmes, stages, schedule, create/disable War Room accounts, view full audit log |
-| **War Room** | Little KITES students on duty | 4–8 accounts (shared shifts) | Enter results → **review & confirm** → publish; approve/reject public photos & videos; post live stage reports; mark schedule items live/completed |
-
-**Removed roles:** results_operator, results_verifier, reporter, editor, media_moderator, photographer (all merged into **War Room** or **Admin**).
-
-**Public:** No login. Anyone can view the site and submit photos/videos (pending until War Room approves).
-
-### 3.2 Recommended login count
-
-| Role | Accounts | Notes |
-|------|----------|-------|
-| Admin | 2 | Main coordinator + backup (e.g. ICT teacher) |
-| War Room | 6 | ~2 students per shift × 3 shifts/day; same password per shift optional, or individual accounts for audit |
-| **Total** | **8** | Down from a theoretical 7 role types × multiple people |
+| Removed | Why |
+|---------|-----|
+| Text live reports (`/reporter`, live ticker posts) | Scout/JRC pass info to War Room verbally — not posted as text on the site |
+| Results verifier role | Same War Room student reviews & confirms before publish |
+| Editor, photographer, media_moderator, reporter roles | Replaced by two clear media teams |
+| News articles & winner interviews (Phase 1) | Not needed for festival week |
 
 ---
 
-## 4. Result workflow (new)
+## 3. The four logins
 
-### Today
+| Role | Team | Who | Suggested accounts | Responsibility |
+|------|------|-----|-------------------|----------------|
+| **Admin** | Teachers | Festival coordinator, ICT teacher | **2** | Festival setup, schools, schedule, categories, programmes, stages, create all staff logins, full audit log |
+| **War Room** | Little KITES | Results desk students | **4–6** | Enter results → review & confirm → publish; update **event status** on schedule when Scout/JRC report (live / completed / delayed) |
+| **Live Media** | Media team A | Students covering live video | **2–3** | Upload/post **live media reports** (short videos, clips, links) — what’s happening on stage **now** |
+| **Gallery Media** | Media team B | Photo/video desk | **2–3** | Upload **photos and videos** to the gallery; approve/reject **public submissions** from visitors |
+
+**Public:** No login. View everything published. Can submit photos/videos (goes to Gallery Media queue).
+
+**Suggested total: ~12 accounts** (2 + 6 + 3 + 3) — four clear teams, not seven overlapping roles.
+
+---
+
+## 4. How information flows (Scout/JRC → website)
+
 ```
-Student A enters marks → submits for verification
-Student B (different login) verifies → publishes
-```
-Requires two trained people and a “verifier” role.
+  Scout / JRC (on the ground, no login)
+           │
+           │  tells War Room verbally / on paper
+           ▼
+  ┌─────────────────────┐
+  │      WAR ROOM       │
+  │  Updates schedule:  │
+  │  · LIVE             │
+  │  · COMPLETED        │
+  │  · DELAYED          │
+  └──────────┬──────────┘
+             │
+             ▼
+  Public site "Now happening" + schedule show correct status
 
-### Proposed — same person, forced second check
+  (No text posts from scouts on the website.)
+```
+
+War Room does **not** write news-style reports. They only update **official schedule status** and **results**.
+
+---
+
+## 5. Result workflow (War Room)
+
+### No verifier — mandatory confirm step
+
 ```
 Step 1 — ENTER
-  Student fills result sheet (school, participant, marks, grade, rank)
-  Saves as "Draft" (not public)
+  War Room student enters marks from official sheet
+  Saved as Draft (not public)
 
-Step 2 — REVIEW & CONFIRM (required)
-  Same student (or any War Room student on duty) opens "Pending confirmation"
-  Sees read-only summary: programme, category, all rows, totals
-  Must tick: "I have checked this sheet against the official paper"
-  Clicks "Confirm & publish to website"
+Step 2 — REVIEW & CONFIRM
+  Same or another War Room student opens "Pending confirmation"
+  Read-only summary of the full sheet
+  Tick: "Checked against official paper"
+  Click "Confirm & publish"
 
 Step 3 — LIVE
-  Result appears on public site and school rankings update
-  Audit log records: who entered, who confirmed, timestamp
+  On public results + school points table
+  Audit log: who entered, who confirmed, when
 ```
 
-**No separate verifier login.** The **two-step UI** replaces the second person — but audit still shows who did each step.
-
-### If a mistake is published
-- Admin or War Room uses **“Unpublish / correct”** → creates a new draft version
-- Old version archived; correction also needs review & confirm
-- Audit trail kept (who changed what)
+Corrections: unpublish → edit → confirm again. Full audit trail.
 
 ---
 
-## 5. Media workflow (new)
+## 6. Live Media workflow (Media Team A)
+
+**Purpose:** Show the festival as it happens — video coverage, not text.
 
 ```
-Public visitor → /submit → uploads photo/video
-                         ↓
-              Status: Pending (not on website)
-                         ↓
-War Room → Media queue → Approve or Reject
-                         ↓
-              Approved → visible on /photos and /videos
+Live Media student logs in
+        ↓
+Upload short video / clip OR paste video link (YouTube, etc.)
+Add caption + stage / event (optional)
+        ↓
+Publish to "Live" section on public site
+        ↓
+Appears on home page + /live page
 ```
 
-One queue, one approve button, one role. No photographer/editor split.
+- **No approval queue** for Live Media (trusted team) — or optional Admin preview if sir prefers.
+- Audit log records every post and who uploaded it.
+
+**Public sees:** Video/media feed of what’s happening — not a text ticker from scouts.
 
 ---
 
-## 6. Live stage reports (new)
+## 7. Gallery Media workflow (Media Team B)
 
-**Remove** separate `/reporter` login.
+**Purpose:** Photo and video gallery for the festival.
 
-War Room students post updates from **one screen** inside War Room (stage, optional event, short text). Posts go public immediately — same as today, but no second app or role.
+### A) Staff uploads
+```
+Gallery Media logs in → Upload photo or video → Add caption → Publish to gallery
+```
 
-Optional safeguard (Phase 2): short cooldown or “preview before post” if headmaster wants tighter control.
+### B) Public submissions (optional)
+```
+Visitor → /submit → uploads photo/video
+        ↓
+   Pending (not on site)
+        ↓
+Gallery Media → Approve or Reject
+        ↓
+   Approved → /photos and /videos
+```
 
----
-
-## 7. What stays on the public website (unchanged)
-
-- Home dashboard, live “now happening”, latest results, school points table  
-- Full schedule, schools list, programme list  
-- Search  
-- Submit photo/video (moderated)  
-- Malayalam / English toggle  
-- WhatsApp share on results  
-
-**No login required for visitors.**
-
----
-
-## 8. What we simplify or postpone
-
-| Feature | Decision |
-|---------|----------|
-| Articles / News | **Phase 2** — not needed on Day 1 of festival; Admin can add later if wanted |
-| Winner interviews | **Phase 2** — same |
-| Appeal status on results | **Hide** until officially needed |
-| Official PDF upload on result sheets | **Phase 2** — paper sheets can be scanned later |
-| Separate reporter phones | **Remove** — use War Room on one tablet/laptop per desk |
-| 7-role user management | **Replace** with Admin + War Room dropdown only |
+War Room does **not** handle media — only Gallery Media team.
 
 ---
 
-## 9. War Room navigation (after simplification)
+## 8. What each team sees (menus)
 
-**Admin sees:**
+### Admin
 - Dashboard  
-- Settings (festival name, dates, live status)  
-- Schools · Participants · Categories · Programmes · Stages · Schedule  
-- Users (create War Room accounts)  
-- Audit log (full history)  
+- Settings · Schools · Participants · Categories · Programmes · Stages · Schedule  
+- Users (create accounts for all teams)  
+- Audit log  
 
-**War Room sees:**
-- Dashboard (what’s live, what’s pending confirmation, pending media count)  
-- Results (enter + **pending confirmation** queue)  
-- Schedule (view + update status: upcoming / live / done)  
-- Media (approve / reject)  
-- Live reports (post updates)  
+### War Room
+- Dashboard (pending results to confirm, today’s schedule)  
+- **Results** (enter + confirmation queue)  
+- **Schedule** (update status: upcoming → live → completed / delayed)  
 
-**~6 menu items** for students instead of 12+ spread across roles.
+### Live Media
+- Dashboard  
+- **Live coverage** (upload video / post live media report)  
+- My recent posts  
+
+### Gallery Media
+- Dashboard  
+- **Gallery** (upload photos & videos)  
+- **Public submissions** (approve / reject queue)  
+
+---
+
+## 9. Public website (what visitors see)
+
+| Section | Source |
+|---------|--------|
+| Results & points table | War Room (confirmed) |
+| Schedule & “now happening” status | War Room (from Scout/JRC info) |
+| Live coverage (video) | Live Media team |
+| Photos & videos gallery | Gallery Media team (+ approved public uploads) |
+| Submit your photo/video | → Gallery Media queue |
+| Schools, programmes, search | Admin setup |
+
+**Removed from public site:** Text live-report ticker from reporters.
 
 ---
 
 ## 10. Accountability (audit log)
 
-Every sensitive action recorded with **name + time**:
+| Action | Team | Logged |
+|--------|------|--------|
+| Result draft saved | War Room | ✓ |
+| Result confirmed & published | War Room | ✓ |
+| Schedule status changed (live/completed) | War Room | ✓ |
+| Live media posted / removed | Live Media | ✓ |
+| Gallery upload published | Gallery Media | ✓ |
+| Public submission approved/rejected | Gallery Media | ✓ |
+| Admin catalog or settings change | Admin | ✓ |
 
-| Action | Logged |
-|--------|--------|
-| Result saved as draft | ✓ |
-| Result confirmed & published | ✓ |
-| Result corrected / unpublished | ✓ |
-| Media approved / rejected | ✓ |
-| Live report posted / removed | ✓ |
-| Schedule status changed | ✓ |
-| Admin changes settings or catalog | ✓ |
-
-Visible to **Admin** (full log). War Room students see **their own** actions optional — policy decision.
+Admin sees full log. Each team sees their own work (optional).
 
 ---
 
-## 11. Training plan (one session, ~45 minutes)
+## 11. What we postpone (Phase 2)
 
-1. **Admin (15 min):** Upload schools CSV, add categories/programmes/stages, build schedule, create War Room logins  
-2. **War Room (20 min):** Enter one practice result → review screen → confirm; approve one practice photo; post one live update  
-3. **Everyone (10 min):** Show public site updating in real time; show audit log entry  
-
-Practice data cleared before festival.
+- News articles  
+- Winner interview pages  
+- Appeal tracking on results  
+- Official PDF scan upload per result sheet  
 
 ---
 
-## 12. Implementation phases
+## 12. Training plan (~1 hour, by team)
 
-### Phase A — Approval (this meeting)
-- Headmaster signs off on: 2 roles, result confirm flow, media moderation in War Room, defer articles/interviews
+| Team | Time | Practice |
+|------|------|----------|
+| Admin | 15 min | Load schools, build schedule, create logins |
+| War Room | 15 min | Enter result → confirm; mark one event “live” then “completed” |
+| Live Media | 10 min | Upload one test video to live section |
+| Gallery Media | 10 min | Upload one photo; approve one public test submission |
+| All together | 10 min | Refresh public site; check audit log |
+
+---
+
+## 13. Implementation phases
+
+### Phase A — Headmaster approval (tomorrow)
+Sign off on: 4 roles, no text live reports, War Room = results + schedule status, two media teams.
 
 ### Phase B — Build (after approval)
-- Collapse 7 roles → 2 in database and UI  
-- New “Pending confirmation” results queue and confirm screen  
-- Merge reporter into War Room  
-- Simplify nav and user management  
-- Extend audit log to media + live updates  
+- Replace 7 roles with 4 in database and UI  
+- Remove `/reporter` and text live-feed from public site  
+- Add Live Media upload console  
+- Split Gallery Media upload + public moderation  
+- War Room: results confirm flow + schedule status only  
+- Audit log for all teams  
 
 ### Phase C — Festival eve
-- Admin loads real schools, schedule, participants  
-- Dry run with 2–3 War Room students  
+- Admin loads real data  
+- 30-minute dry run per team  
 - Go live  
 
 ---
 
-## 13. Risks and mitigations
+## 14. Risks and mitigations
 
 | Risk | Mitigation |
 |------|------------|
-| Student publishes wrong result | Mandatory review screen; audit shows who confirmed; Admin can unpublish |
-| Too many students sharing one login | Prefer individual accounts (audit); or one login per shift with sign-in sheet |
-| Public uploads inappropriate content | Nothing goes live until War Room approves |
-| Internet down | Results still entered in War Room; sync when back (Supabase offline strategy — discuss if needed) |
+| Wrong result published | Confirm screen + audit; Admin can unpublish |
+| Scout info delayed | War Room updates status when info arrives; schedule shows last known state |
+| Inappropriate public upload | Gallery Media must approve before visible |
+| Live Media posts wrong clip | Audit + Admin can remove; trusted small team |
+| Too many passwords | 4 team types, ~3 accounts each; one login per shift possible |
 
 ---
 
-## 14. Decision checklist for headmaster
+## 15. Decision checklist for headmaster
 
-Please tick approval:
-
-- [ ] **Two roles only:** Admin + War Room (remove 5 other role types)  
-- [ ] **Results:** Enter → review & confirm → publish (no separate verifier)  
-- [ ] **Media:** Public submit → War Room approve  
-- [ ] **Live reports:** Inside War Room only (remove reporter login)  
-- [ ] **Defer:** News articles and winner interviews to after festival unless time allows  
-- [ ] **Audit log:** Keep for accountability  
-- [ ] **Suggested accounts:** 2 Admin + 6 War Room  
+- [ ] **Four roles:** Admin · War Room · Live Media · Gallery Media  
+- [ ] **No text live reports** — Scout/JRC inform War Room; War Room updates schedule status only  
+- [ ] **Results:** Enter → review & confirm → publish (no verifier role)  
+- [ ] **Live Media team:** Own login for live video coverage  
+- [ ] **Gallery Media team:** Own login for photos/videos + public submission approval  
+- [ ] **War Room does not handle media**  
+- [ ] **Audit log** for all teams  
+- [ ] **Defer** news articles and interviews to after festival  
+- [ ] **Account count:** ~2 Admin + ~6 War Room + ~3 Live Media + ~3 Gallery Media  
 
 **Approved by:** _________________________  **Date:** _____________
 
 ---
 
-## 15. One-page diagram
+## 16. System diagram
 
 ```
-                    ┌─────────────────────────────────────┐
-                    │         PUBLIC WEBSITE              │
-                    │  (no login — everyone can view)     │
-                    │  results · schedule · live · media  │
-                    └──────────────┬──────────────────────┘
-                                   │
-              ┌────────────────────┼────────────────────┐
-              │                    │                    │
-              ▼                    ▼                    ▼
-        View published      Submit photo/video    Search schools
-              │                    │
-              │                    ▼
-              │            ┌───────────────┐
-              │            │ PENDING queue │
-              │            └───────┬───────┘
-              │                    │
-              ▼                    ▼
-    ┌─────────────────────────────────────────────┐
-    │              WAR ROOM (student login)        │
-    │  · Enter results → Review & confirm → Live   │
-    │  · Approve / reject public media             │
-    │  · Post live stage reports                   │
-    │  · Update schedule status                    │
-    └─────────────────────┬───────────────────────┘
-                          │ audit log
-                          ▼
-    ┌─────────────────────────────────────────────┐
-    │              ADMIN (teacher login)           │
-    │  · Festival setup · schools · schedule       │
-    │  · Manage War Room accounts · full audit     │
-    └─────────────────────────────────────────────┘
+                         ┌──────────────────────────────┐
+                         │       PUBLIC WEBSITE          │
+                         │  results · schedule · live   │
+                         │  photos · videos · submit     │
+                         └──────────────┬───────────────┘
+                                        │
+         ┌──────────────────────────────┼──────────────────────────────┐
+         │                              │                              │
+         ▼                              ▼                              ▼
+   View results              View live videos              View gallery
+   & schedule                & event status                & submit photo
+         ▲                              ▲                              │
+         │                              │                              ▼
+         │                              │                    ┌─────────────────┐
+         │                              │                    │ PENDING (public) │
+         │                              │                    └────────┬────────┘
+         │                              │                             │
+  ┌──────┴───────┐              ┌───────┴────────┐            ┌───────┴────────┐
+  │  WAR ROOM    │              │  LIVE MEDIA    │            │ GALLERY MEDIA  │
+  │              │              │                │            │                │
+  │ · Results    │              │ · Live video   │            │ · Upload       │
+  │   enter +    │              │   coverage     │            │   photos/vids  │
+  │   confirm    │              │                │            │ · Approve      │
+  │ · Schedule   │              │                │            │   public subs  │
+  │   status     │              │                │            │                │
+  │   (Scout/JRC │              │                │            │                │
+  │    info)     │              │                │            │                │
+  └──────┬───────┘              └────────────────┘            └────────────────┘
+         │
+         │ audit
+         ▼
+  ┌──────────────┐
+  │    ADMIN     │
+  │ setup · users│
+  │ · audit log  │
+  └──────────────┘
+
+  Scout / JRC ──(verbal)──► War Room   (no website login)
 ```
 
 ---
 
-*Document version 1.0 — for discussion only. Implementation begins after written approval.*
+*Document version 2.0 — updated per team structure: War Room + Live Media + Gallery Media, no text live reports.*
