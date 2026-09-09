@@ -4,6 +4,10 @@ import { LatestResults } from "@/components/public/latest-results";
 import { LeadingSchools } from "@/components/public/leading-schools";
 import { LiveFeed } from "@/components/public/live-feed";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { ButtonLink } from "@/components/ui/button";
+import { SectionHeader } from "@/components/ui/section-header";
+import { StatCard } from "@/components/ui/stat-card";
+import { Reveal } from "@/components/ui/reveal";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import {
@@ -11,23 +15,43 @@ import {
   getMedia,
   getPublishedResults,
   getScheduledEvents,
+  getSchools,
   getSettings,
   getStandings,
 } from "@/lib/data/queries";
 
+const NAV_ICONS: Record<string, string> = {
+  "/results": "M3 5h18M3 10h18M3 15h12",
+  "/schools": "M4 20V9l8-5 8 5v11M9 20v-6h6v6",
+  "/programmes": "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+  "/schedule": "M4 5h16v15H4zM4 9h16M8 3v4M16 3v4",
+  "/stages": "M3 7h18l-2 5H5zM5 12v7M19 12v7",
+  "/live": "M12 2v6m0 8v6M2 12h6m8 0h6",
+  "/news": "M4 5h16v14H4zM8 9h8M8 13h8M8 17h5",
+  "/photos": "M4 6h16v12H4zM8 6l1.5-2h5L16 6M12 15a3 3 0 100-6 3 3 0 000 6z",
+  "/videos": "M4 6h16v12H4zM10 9l5 3-5 3z",
+  "/interviews": "M4 5h16v10H4zM8 19h8M12 15v4",
+};
+
 export default async function HomePage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
-  const [settings, events, results, standings, updates, media] = await Promise.all([
-    getSettings(),
-    getScheduledEvents(),
-    getPublishedResults(),
-    getStandings(),
-    getLiveUpdates(),
-    getMedia(),
-  ]);
+  const [settings, events, results, standings, updates, media, schools] =
+    await Promise.all([
+      getSettings(),
+      getScheduledEvents(),
+      getPublishedResults(),
+      getStandings(),
+      getLiveUpdates(),
+      getMedia(),
+      getSchools(),
+    ]);
 
-  const todayEvents = events.filter((e) => e.day_number === (settings.current_day ?? 2));
+  const currentDay = settings.current_day ?? 2;
+  const todayEvents = events.filter((e) => e.day_number === currentDay);
+  const liveCount = events.filter((e) => e.status === "live").length;
+  const isLive = settings.live_status === "live";
+
   const nav = [
     [t.results, "/results"],
     [t.schools, "/schools"],
@@ -41,112 +65,190 @@ export default async function HomePage() {
     [t.interviews, "/interviews"],
   ] as const;
 
+  const tickerItems = updates.slice(0, 8).map((u) => u.body);
+
   return (
-    <div className="grid gap-10">
-      <section className="border border-line bg-paper-white px-4 py-6 md:px-8">
-        <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-gold-deep">
-          <span>{t.official}</span>
-          <StatusBadge
-            status={settings.live_status === "live" ? "live" : "completed"}
-            label={settings.live_status === "live" ? t.live : t.completed}
-          />
+    <div className="grid gap-12 md:gap-16">
+      {/* Hero (full-bleed) */}
+      <section className="relative -mt-6 mx-[calc(50%-50vw)] w-screen overflow-hidden text-white [background:var(--grad-hero)]">
+        <div className="kolam-bg absolute inset-0 opacity-[0.12]" aria-hidden />
+        <div
+          className="absolute -right-24 -top-24 h-96 w-96 rounded-full opacity-30 blur-3xl [background:var(--grad-gold)]"
+          aria-hidden
+        />
+        <div className="relative mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
+          <div className="max-w-3xl">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="section-eyebrow text-gold-light before:[background:var(--grad-gold)]">
+                {t.official}
+              </span>
+              <StatusBadge
+                status={isLive ? "live" : "completed"}
+                label={isLive ? t.live : t.completed}
+                dark
+              />
+            </div>
+            <h1 className="font-display text-display-xl mt-5 font-black text-white">
+              {locale === "ml" ? settings.name_ml : settings.name_en}
+            </h1>
+            <p className="mt-4 max-w-xl text-lg text-white/80">{t.heroTagline}</p>
+            <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-white/70">
+              <span className="font-semibold text-gold-light">
+                {locale === "ml" ? settings.venue_ml : settings.venue_en}
+              </span>
+              <span aria-hidden>&middot;</span>
+              <span>{locale === "ml" ? settings.location_ml : settings.location_en}</span>
+              <span aria-hidden>&middot;</span>
+              <span>
+                {t.day} {currentDay} · {settings.start_date} – {settings.end_date}
+              </span>
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <ButtonLink href="/results" variant="gold" size="lg">
+                {t.exploreResults}
+              </ButtonLink>
+              <ButtonLink
+                href="/schedule"
+                variant="outline"
+                size="lg"
+                className="border-white/30 bg-white/10 text-white hover:border-gold-light hover:text-gold-light"
+              >
+                {t.viewSchedule}
+              </ButtonLink>
+            </div>
+          </div>
         </div>
-        <h1 className="font-display mt-3 text-3xl leading-tight md:text-5xl">
-          {locale === "ml" ? settings.name_ml : settings.name_en}
-        </h1>
-        <p className="mt-2 text-lg text-muted">
-          {locale === "ml" ? settings.venue_ml : settings.venue_en} ·{" "}
-          {locale === "ml" ? settings.location_ml : settings.location_en}
-        </p>
-        <p className="mt-4 text-sm">
-          {t.currentDay}: {t.day} {settings.current_day ?? 2} · {settings.start_date} –{" "}
-          {settings.end_date}
-        </p>
+
+        {tickerItems.length ? (
+          <div className="ticker-viewport relative border-t border-white/15 bg-black/20 py-3">
+            <div className="ticker-track px-4 text-sm text-white/80">
+              {[...tickerItems, ...tickerItems].map((item, i) => (
+                <span key={i} className="inline-flex items-center gap-3">
+                  <span className="live-dot shrink-0" />
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </section>
 
-      <section>
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="font-display text-2xl">{t.happeningNow}</h2>
-          <Link href="/schedule" className="text-sm text-kerala-dark">
-            {t.viewAll}
-          </Link>
-        </div>
+      {/* Stats strip */}
+      <section className="-mt-6 grid grid-cols-2 gap-3 md:-mt-8 md:grid-cols-4">
+        <StatCard label={t.schoolsCompeting} value={schools.length} accent="green" />
+        <StatCard label={t.eventsToday} value={todayEvents.length} accent="gold" />
+        <StatCard label={t.resultsPublished} value={results.length} accent="indigo" />
+        <StatCard label={t.liveNow} value={liveCount} accent="red" />
+      </section>
+
+      <Reveal as="section">
+        <SectionHeader
+          eyebrow={t.live}
+          title={t.happeningNow}
+          linkHref="/schedule"
+          linkLabel={t.viewAll}
+        />
         <HappeningNow events={todayEvents} />
-      </section>
+      </Reveal>
 
-      <section>
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="font-display text-2xl">{t.latestResults}</h2>
-          <Link href="/results" className="text-sm text-kerala-dark">
-            {t.viewAll}
-          </Link>
-        </div>
+      <Reveal as="section">
+        <SectionHeader
+          eyebrow={t.results}
+          title={t.latestResults}
+          linkHref="/results"
+          linkLabel={t.viewAll}
+        />
         <LatestResults results={results.slice(0, 8)} />
-      </section>
+      </Reveal>
 
-      <section>
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="font-display text-2xl">{t.leadingSchools}</h2>
-          <Link href="/schools" className="text-sm text-kerala-dark">
-            {t.viewAll}
-          </Link>
-        </div>
+      <Reveal as="section">
+        <SectionHeader
+          eyebrow={t.points}
+          title={t.leadingSchools}
+          linkHref="/schools"
+          linkLabel={t.viewAll}
+        />
         <LeadingSchools standings={standings} />
-      </section>
+      </Reveal>
 
-      <section className="grid gap-8 lg:grid-cols-2">
-        <div>
-          <div className="mb-4 flex items-end justify-between">
-            <h2 className="font-display text-2xl">{t.liveUpdates}</h2>
-            <Link href="/live" className="text-sm text-kerala-dark">
-              {t.viewAll}
-            </Link>
-          </div>
+      <section className="grid gap-10 lg:grid-cols-2">
+        <Reveal>
+          <SectionHeader
+            eyebrow={t.reporter}
+            title={t.liveUpdates}
+            linkHref="/live"
+            linkLabel={t.viewAll}
+          />
           <LiveFeed updates={updates.slice(0, 5)} />
-        </div>
-        <div>
-          <div className="mb-4 flex items-end justify-between">
-            <h2 className="font-display text-2xl">{t.latestMedia}</h2>
-            <Link href="/photos" className="text-sm text-kerala-dark">
-              {t.viewAll}
-            </Link>
-          </div>
+        </Reveal>
+        <Reveal delay={120}>
+          <SectionHeader
+            eyebrow={t.photos}
+            title={t.latestMedia}
+            linkHref="/photos"
+            linkLabel={t.viewAll}
+          />
           <div className="grid grid-cols-2 gap-3">
             {media.slice(0, 4).map((item) => (
               <Link
                 key={item.id}
                 href={item.kind === "video" ? "/videos" : "/photos"}
-                className="overflow-hidden rounded border border-line bg-paper-white"
+                className="group relative overflow-hidden rounded-[var(--radius)] border border-line bg-paper-white shadow-[var(--shadow-sm)]"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={item.thumbnail_url ?? item.url}
                   alt={locale === "ml" ? item.title_ml : item.title_en}
-                  className="aspect-[4/3] w-full object-cover"
+                  className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <p className="p-2 text-sm">
-                  {locale === "ml" ? item.title_ml : item.title_en}
-                </p>
+                {item.kind === "video" ? (
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-kerala-dark shadow-lg">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </span>
+                  </span>
+                ) : null}
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                  <p className="text-sm font-medium text-white">
+                    {locale === "ml" ? item.title_ml : item.title_en}
+                  </p>
+                </div>
               </Link>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
 
-      <section>
-        <h2 className="font-display mb-4 text-2xl">{t.quickNav}</h2>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <Reveal as="section">
+        <SectionHeader eyebrow={t.exploreMore} title={t.quickNav} />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {nav.map(([label, href]) => (
             <Link
               key={href}
               href={href}
-              className="min-h-12 rounded border border-line bg-paper-white px-3 py-3 text-center text-sm font-medium"
+              className="card card-hover group flex min-h-24 flex-col items-start justify-between gap-3 p-4"
             >
-              {label}
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-kerala-soft text-kerala-dark transition-colors group-hover:bg-kerala-dark group-hover:text-white">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d={NAV_ICONS[href] ?? "M4 12h16"} />
+                </svg>
+              </span>
+              <span className="text-sm font-semibold">{label}</span>
             </Link>
           ))}
         </div>
-      </section>
+      </Reveal>
     </div>
   );
 }

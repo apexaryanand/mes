@@ -14,7 +14,7 @@ const ui = Source_Sans_3({
 const display = Source_Serif_4({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["600", "700", "900"],
 });
 
 const malayalam = Manjari({

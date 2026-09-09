@@ -1,61 +1,114 @@
 "use client";
 
 import Link from "next/link";
+import { Medal } from "@/components/ui/medal";
 import { useI18n } from "@/lib/i18n/provider";
 import { tName } from "@/lib/i18n/dictionaries";
 import type { PublishedResultView } from "@/lib/types";
-import { formatClock } from "@/lib/utils";
+import { cn, formatClock } from "@/lib/utils";
 
 export function LatestResults({ results }: { results: PublishedResultView[] }) {
   const { locale, t } = useI18n();
 
-  if (!results.length) return <p className="text-muted">{t.noResults}</p>;
+  if (!results.length)
+    return <div className="card p-8 text-center text-muted">{t.noResults}</div>;
 
   return (
-    <div className="overflow-x-auto rounded border border-line bg-paper-white">
-      <table className="w-full min-w-[640px] text-left text-sm">
-        <thead className="border-b border-line bg-kerala-soft text-kerala-dark">
+    <div className="card overflow-hidden">
+      {/* Desktop table */}
+      <table className="hidden w-full text-left text-sm lg:table">
+        <thead className="bg-kerala-soft text-kerala-dark">
           <tr>
-            <th className="px-3 py-2 font-semibold">{t.programme}</th>
-            <th className="px-3 py-2 font-semibold">{t.category}</th>
-            <th className="px-3 py-2 font-semibold">{t.rank}</th>
-            <th className="px-3 py-2 font-semibold">{t.participant}</th>
-            <th className="px-3 py-2 font-semibold">{t.school}</th>
-            <th className="px-3 py-2 font-semibold">{t.marks}</th>
-            <th className="px-3 py-2 font-semibold">{t.grade}</th>
+            <th className="px-4 py-3 font-semibold">{t.programme}</th>
+            <th className="px-4 py-3 font-semibold">{t.category}</th>
+            <th className="px-4 py-3 text-center font-semibold">{t.rank}</th>
+            <th className="px-4 py-3 font-semibold">{t.participant}</th>
+            <th className="px-4 py-3 font-semibold">{t.school}</th>
+            <th className="px-4 py-3 text-right font-semibold">{t.marks}</th>
+            <th className="px-4 py-3 text-center font-semibold">{t.grade}</th>
           </tr>
         </thead>
         <tbody>
-          {results.map((block) => {
+          {results.map((block, i) => {
             const first = block.entries[0];
             if (!first) return null;
             return (
-              <tr key={block.result_set.id} className="border-b border-line/70">
-                <td className="px-3 py-2">
-                  <Link href={`/events/${block.event.slug}`} className="font-medium hover:underline">
+              <tr
+                key={block.result_set.id}
+                className={cn("border-t border-line/70", i % 2 === 1 && "bg-paper/40")}
+              >
+                <td className="px-4 py-3">
+                  <Link
+                    href={`/events/${block.event.slug}`}
+                    className="font-medium text-kerala-dark hover:underline"
+                  >
                     {tName(locale, block.event.programme)}
                   </Link>
-                  <p className="text-xs text-muted">
-                    {block.result_set.published_at
-                      ? formatClock(block.result_set.published_at)
-                      : null}
-                  </p>
+                  {block.result_set.published_at ? (
+                    <p className="text-xs text-muted">
+                      {formatClock(block.result_set.published_at)}
+                    </p>
+                  ) : null}
                 </td>
-                <td className="px-3 py-2">{tName(locale, block.event.category)}</td>
-                <td className="px-3 py-2 tabular">{first.rank}</td>
-                <td className="px-3 py-2">{first.participant_name}</td>
-                <td className="px-3 py-2">
-                  <Link href={`/schools/${first.school.slug}`} className="hover:underline">
+                <td className="px-4 py-3">{tName(locale, block.event.category)}</td>
+                <td className="px-4 py-3 text-center">
+                  <Medal rank={first.rank} className="h-7 w-7 text-xs" />
+                </td>
+                <td className="px-4 py-3">{first.participant_name}</td>
+                <td className="px-4 py-3">
+                  <Link
+                    href={`/schools/${first.school.slug}`}
+                    className="hover:underline"
+                  >
                     {tName(locale, first.school)}
                   </Link>
                 </td>
-                <td className="px-3 py-2 tabular">{first.marks}</td>
-                <td className="px-3 py-2 font-semibold">{first.grade}</td>
+                <td className="px-4 py-3 text-right tabular">{first.marks}</td>
+                <td className="px-4 py-3 text-center font-semibold">{first.grade}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
+
+      {/* Mobile / tablet cards */}
+      <ul className="divide-y divide-line lg:hidden">
+        {results.map((block) => {
+          const first = block.entries[0];
+          if (!first) return null;
+          return (
+            <li key={block.result_set.id} className="p-4">
+              <div className="flex items-start justify-between gap-3">
+                <Link
+                  href={`/events/${block.event.slug}`}
+                  className="font-display font-bold text-kerala-dark hover:underline"
+                >
+                  {tName(locale, block.event.programme)}
+                </Link>
+                <span className="chip shrink-0 py-1 text-xs">
+                  {tName(locale, block.event.category)}
+                </span>
+              </div>
+              <div className="mt-3 flex items-center gap-3">
+                <Medal rank={first.rank} className="h-9 w-9 text-sm" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium">{first.participant_name}</p>
+                  <Link
+                    href={`/schools/${first.school.slug}`}
+                    className="text-sm text-muted hover:underline"
+                  >
+                    {tName(locale, first.school)}
+                  </Link>
+                </div>
+                <div className="text-right text-sm">
+                  <p className="tabular font-semibold">{first.marks}</p>
+                  <p className="text-muted">{first.grade}</p>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

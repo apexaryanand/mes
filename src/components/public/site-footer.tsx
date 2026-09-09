@@ -5,22 +5,80 @@ import { useI18n } from "@/lib/i18n/provider";
 
 export function SiteFooter() {
   const { t } = useI18n();
+
+  const groups: Array<{ title: string; links: Array<[string, string]> }> = [
+    {
+      title: t.results,
+      links: [
+        [t.results, "/results"],
+        [t.schools, "/schools"],
+        [t.programmes, "/programmes"],
+      ],
+    },
+    {
+      title: t.schedule,
+      links: [
+        [t.schedule, "/schedule"],
+        [t.stages, "/stages"],
+        [t.liveUpdates, "/live"],
+      ],
+    },
+    {
+      title: t.news,
+      links: [
+        [t.news, "/news"],
+        [t.photos, "/photos"],
+        [t.videos, "/videos"],
+        [t.interviews, "/interviews"],
+      ],
+    },
+    {
+      title: t.submit,
+      links: [
+        [t.submit, "/submit"],
+        [t.search, "/search"],
+        [t.warRoom, "/war-room/login"],
+      ],
+    },
+  ];
+
   return (
-    <footer className="mt-auto border-t border-line bg-kerala-dark text-paper">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm md:flex-row md:items-end md:justify-between">
+    <footer className="relative mt-auto overflow-hidden text-paper [background:var(--grad-hero)]">
+      <div className="kolam-bg absolute inset-0 opacity-[0.08]" aria-hidden />
+      <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-[1.4fr_repeat(4,1fr)] md:px-6">
         <div>
-          <p className="font-display text-xl text-gold">{t.brand}</p>
-          <p className="mt-1">{t.eventName}</p>
-          <p className="text-paper/80">
+          <p className="font-display text-2xl font-bold text-gold-light">{t.brand}</p>
+          <p className="mt-2 text-sm text-paper/85">{t.eventName}</p>
+          <p className="text-sm text-paper/70">
             {t.hostedAt} · {t.location}
           </p>
-          <p className="mt-3 text-paper/70">{t.littleKites}</p>
+          <p className="mt-4 max-w-xs text-xs leading-relaxed text-paper/60">
+            {t.footerNote}
+          </p>
         </div>
-        <div className="flex flex-wrap gap-x-4 gap-y-2">
-          <Link href="/results">{t.results}</Link>
-          <Link href="/schedule">{t.schedule}</Link>
-          <Link href="/submit">{t.submit}</Link>
-          <Link href="/war-room/login">{t.warRoom}</Link>
+        {groups.map((group) => (
+          <div key={group.title}>
+            <p className="text-xs font-bold uppercase tracking-wider text-gold-light/90">
+              {group.title}
+            </p>
+            <ul className="mt-3 space-y-2 text-sm">
+              {group.links.map(([label, href]) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="text-paper/75 transition-colors hover:text-gold-light"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <div className="relative border-t border-white/10">
+        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-paper/60 md:px-6">
+          {t.littleKites}
         </div>
       </div>
     </footer>

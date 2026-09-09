@@ -1,21 +1,49 @@
 @import "tailwindcss";
 
 :root {
+  /* Core Kerala identity */
   --kerala-green: #0b5d1e;
   --kerala-green-dark: #073d14;
+  --kerala-green-deep: #052a0e;
   --kerala-green-soft: #e7f3ea;
   --gold: #c4a35a;
+  --gold-light: #e2c988;
   --gold-deep: #9a7b32;
+
+  /* Festival accents (used sparingly) */
+  --marigold: #f5a623;
+  --temple-red: #c41e3a;
+  --indigo: #3b3a86;
+
+  /* Neutrals */
   --ink: #1a1a1a;
   --muted: #5c574e;
   --paper: #f7f3ea;
   --paper-white: #fffdf8;
   --line: #e4dcc8;
+
+  /* Status */
   --live: #c41e3a;
   --live-soft: #fde8ec;
   --next: #0b5d1e;
   --delayed: #b45309;
   --completed: #5c574e;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(7, 61, 20, 0.06), 0 1px 3px rgba(7, 61, 20, 0.05);
+  --shadow-md: 0 4px 12px rgba(7, 61, 20, 0.08), 0 2px 4px rgba(7, 61, 20, 0.05);
+  --shadow-lg: 0 18px 40px -12px rgba(7, 61, 20, 0.28), 0 8px 16px -8px rgba(7, 61, 20, 0.14);
+  --shadow-gold: 0 10px 30px -8px rgba(154, 123, 50, 0.35);
+
+  /* Radii */
+  --radius: 14px;
+  --radius-lg: 22px;
+
+  /* Gradients */
+  --grad-hero: radial-gradient(120% 140% at 12% 0%, #0b5d1e 0%, #073d14 45%, #052a0e 100%);
+  --grad-gold: linear-gradient(100deg, #9a7b32 0%, #c4a35a 40%, #e2c988 100%);
+  --grad-warm: linear-gradient(135deg, #c41e3a 0%, #f5a623 100%);
+
   --background: var(--paper);
   --foreground: var(--ink);
 }
@@ -25,9 +53,14 @@
   --color-foreground: var(--foreground);
   --color-kerala: var(--kerala-green);
   --color-kerala-dark: var(--kerala-green-dark);
+  --color-kerala-deep: var(--kerala-green-deep);
   --color-kerala-soft: var(--kerala-green-soft);
   --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
   --color-gold-deep: var(--gold-deep);
+  --color-marigold: var(--marigold);
+  --color-temple-red: var(--temple-red);
+  --color-indigo: var(--indigo);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-paper: var(--paper);
@@ -38,6 +71,10 @@
   --font-sans: var(--font-ui);
   --font-display: var(--font-display);
   --font-ml: var(--font-malayalam);
+  --radius: var(--radius);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
 }
 
 html,
@@ -49,6 +86,8 @@ body {
 body {
   font-family: var(--font-ui), var(--font-malayalam), system-ui, sans-serif;
   min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 html[lang="ml"] body {
@@ -57,16 +96,154 @@ html[lang="ml"] body {
 
 .font-display {
   font-family: var(--font-display), var(--font-malayalam), serif;
+  letter-spacing: -0.01em;
 }
 
 html[lang="ml"] .font-display {
   font-family: var(--font-malayalam), serif;
+  letter-spacing: 0;
 }
 
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
+/* ---- Fluid display scale ---- */
+.text-display-xl {
+  font-size: clamp(2.5rem, 6vw + 1rem, 5.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+.text-display-lg {
+  font-size: clamp(2rem, 4vw + 0.75rem, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+.text-display-md {
+  font-size: clamp(1.5rem, 2vw + 0.6rem, 2.25rem);
+  line-height: 1.1;
+}
+html[lang="ml"] .text-display-xl,
+html[lang="ml"] .text-display-lg {
+  line-height: 1.25;
+}
+
+/* ---- Layout helpers ---- */
+.container-page {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 1.5rem;
+  }
+}
+
+/* ---- Surfaces ---- */
+.card {
+  background: var(--paper-white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.card-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
+}
+.surface-glass {
+  background: color-mix(in srgb, var(--paper-white) 80%, transparent);
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+}
+
+/* ---- Chips ---- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--paper-white);
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: all 0.18s ease;
+  min-height: 2.25rem;
+}
+.chip:hover {
+  border-color: var(--gold);
+  color: var(--ink);
+}
+.chip-active {
+  background: var(--kerala-green-dark);
+  border-color: var(--kerala-green-dark);
+  color: #fff;
+}
+.chip-active:hover {
+  color: #fff;
+}
+
+/* ---- Decorative ---- */
+.gradient-text {
+  background: var(--grad-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+.section-eyebrow::before {
+  content: "";
+  width: 1.5rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--grad-gold);
+}
+
+.kolam-bg {
+  background-image: url("/images/kolam-motif.svg");
+  background-repeat: repeat;
+  background-size: 340px;
+}
+
+/* Fancy underline for nav links */
+.nav-underline {
+  position: relative;
+}
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: var(--grad-gold);
+  transition: transform 0.25s ease;
+}
+.nav-underline:hover::after,
+.nav-underline[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
+/* ---- Live indicators ---- */
 .live-dot {
   width: 0.5rem;
   height: 0.5rem;
@@ -85,5 +262,71 @@ html[lang="ml"] .font-display {
   }
   100% {
     box-shadow: 0 0 0 0 rgba(196, 30, 58, 0);
+  }
+}
+
+/* ---- Ticker marquee ---- */
+.ticker-track {
+  display: inline-flex;
+  gap: 3rem;
+  white-space: nowrap;
+  animation: ticker 32s linear infinite;
+  will-change: transform;
+}
+.ticker-viewport:hover .ticker-track {
+  animation-play-state: paused;
+}
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---- Reveal on scroll ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.reveal.reveal-in {
+  animation: fade-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes fade-rise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ---- Focus & selection ---- */
+:focus-visible {
+  outline: 2px solid var(--gold-deep);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+::selection {
+  background: color-mix(in srgb, var(--gold) 45%, transparent);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
   }
 }
