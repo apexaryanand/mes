@@ -10,7 +10,7 @@ export default async function ProgrammesPage() {
   const [programmes, events] = await Promise.all([getProgrammes(), getScheduledEvents()]);
 
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-5 sm:gap-8">
       <PageHeader eyebrow={t.all} title={t.programmes} />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {programmes.map((p) => {

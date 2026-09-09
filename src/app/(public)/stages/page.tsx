@@ -10,7 +10,7 @@ export default async function StagesPage() {
   const [stages, events] = await Promise.all([getStages(), getScheduledEvents()]);
 
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-5 sm:gap-8">
       <PageHeader eyebrow={t.schedule} title={t.stages} />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {stages.map((s) => {

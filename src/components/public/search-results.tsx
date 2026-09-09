@@ -17,7 +17,7 @@ export function SearchResults({
 
   return (
     <div className="grid gap-4">
-      <form className="surface-glass sticky top-[68px] z-10 -mx-4 border-y border-line px-4 py-3 md:mx-0 md:rounded-full md:border">
+      <form className="surface-glass sticky top-[52px] z-10 -mx-3 border-y border-line px-3 py-2 sm:-mx-4 sm:px-4 sm:py-3 md:mx-0 md:rounded-full md:border">
         <div className="relative">
           <svg
             className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"

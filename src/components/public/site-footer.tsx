@@ -45,7 +45,7 @@ export function SiteFooter() {
   return (
     <footer className="relative mt-auto overflow-hidden text-paper [background:var(--grad-hero)]">
       <div className="kolam-bg absolute inset-0 opacity-[0.08]" aria-hidden />
-      <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-[1.4fr_repeat(4,1fr)] md:px-6">
+      <div className="relative mx-auto grid max-w-6xl gap-8 px-3 py-8 sm:gap-10 sm:px-4 sm:py-12 md:grid-cols-[1.4fr_repeat(4,1fr)] md:px-6">
         <div>
           <p className="font-display text-2xl font-bold text-gold-light">{t.brand}</p>
           <p className="mt-2 text-sm text-paper/85">{t.eventName}</p>
@@ -77,7 +77,7 @@ export function SiteFooter() {
         ))}
       </div>
       <div className="relative border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-paper/60 md:px-6">
+        <div className="mx-auto max-w-6xl px-3 py-3 text-xs text-paper/60 sm:px-4 sm:py-4 md:px-6">
           {t.littleKites}
         </div>
       </div>

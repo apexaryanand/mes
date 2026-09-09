@@ -25,14 +25,16 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "card relative overflow-hidden p-4 pl-5 text-ink",
-        "before:absolute before:left-0 before:top-0 before:h-full before:w-1.5",
+        "card relative overflow-hidden p-3 pl-4 text-ink sm:p-4 sm:pl-5",
+        "before:absolute before:left-0 before:top-0 before:h-full before:w-1",
         accents[accent],
         className,
       )}
     >
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted">{label}</p>
-      <p className="font-display mt-1 text-3xl font-bold tabular leading-none text-kerala-dark md:text-4xl">
+      <p className="line-clamp-2 text-[10px] font-semibold uppercase leading-tight tracking-wide text-muted sm:text-xs sm:tracking-wider">
+        {label}
+      </p>
+      <p className="font-display mt-0.5 text-2xl font-bold tabular leading-none text-kerala-dark sm:mt-1 sm:text-3xl md:text-4xl">
         {value}
       </p>
       {hint ? <p className="mt-1.5 text-xs text-muted">{hint}</p> : null}

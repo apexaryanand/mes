@@ -26,7 +26,7 @@ export default async function SchoolPage({
   );
 
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-5 sm:gap-8">
       <nav className="flex items-center gap-1.5 text-sm text-muted">
         <Link href="/schools" className="hover:text-kerala-dark">
           {t.schools}

@@ -23,12 +23,12 @@ export function HappeningNow({ events }: { events: ScheduledEventView[] }) {
 
   if (!cards.length) {
     return (
-      <div className="card p-8 text-center text-muted">{t.noItems}</div>
+      <div className="card p-6 text-center text-sm text-muted sm:p-8">{t.noItems}</div>
     );
   }
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
       {cards.map((event) => {
         const status = event.status === "upcoming" ? "next" : event.status;
         const label =
@@ -48,22 +48,22 @@ export function HappeningNow({ events }: { events: ScheduledEventView[] }) {
             key={event.id}
             href={`/events/${event.slug}`}
             className={cn(
-              "card card-hover relative overflow-hidden p-5 pl-6",
-              "before:absolute before:left-0 before:top-0 before:h-full before:w-1.5",
+              "card card-hover relative overflow-hidden p-3 pl-4 sm:p-5 sm:pl-6",
+              "before:absolute before:left-0 before:top-0 before:h-full before:w-1 sm:before:w-1.5",
               accentByStatus[status] ?? "before:bg-kerala",
             )}
           >
             <div className="flex items-start justify-between gap-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted sm:text-xs sm:tracking-wider">
                 {tName(locale, event.stage)}
               </p>
               <StatusBadge status={status} label={label} />
             </div>
-            <h3 className="font-display mt-3 text-xl font-bold leading-snug">
+            <h3 className="font-display mt-2 text-base font-bold leading-snug sm:mt-3 sm:text-xl">
               {tName(locale, event.programme)}
             </h3>
-            <p className="mt-1 text-sm text-muted">{tName(locale, event.category)}</p>
-            <p className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-kerala-dark">
+            <p className="mt-0.5 text-xs text-muted sm:mt-1 sm:text-sm">{tName(locale, event.category)}</p>
+            <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-kerala-dark sm:mt-4 sm:text-sm">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 7v5l3 2" />

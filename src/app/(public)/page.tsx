@@ -68,21 +68,21 @@ export default async function HomePage() {
   const tickerItems = updates.slice(0, 8).map((u) => u.body);
 
   return (
-    <div className="grid gap-8 md:gap-10">
+    <div className="grid gap-5 sm:gap-8 md:gap-10">
       {/* Compact hero + inline stats (above the fold) */}
       <section
-        className="hero-on-dark relative -mt-6 mx-[calc(50%-50vw)] w-screen overflow-hidden text-white [background:var(--grad-hero)]"
+        className="hero-on-dark relative -mt-3 mx-[calc(50%-50vw)] w-screen overflow-hidden text-white sm:-mt-6 [background:var(--grad-hero)]"
       >
         <div className="kolam-bg absolute inset-0 opacity-[0.12]" aria-hidden />
         <div
           className="absolute -right-24 -top-24 h-72 w-72 rounded-full opacity-25 blur-3xl [background:var(--grad-gold)]"
           aria-hidden
         />
-        <div className="relative mx-auto w-full max-w-6xl px-4 py-5 md:px-6 md:py-7">
-          <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="relative mx-auto w-full max-w-6xl px-3 py-4 sm:px-4 sm:py-5 md:px-6 md:py-7">
+          <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4">
             <div className="min-w-0 max-w-2xl">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="section-eyebrow hero-accent before:[background:var(--grad-gold)]">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="section-eyebrow hero-accent before:[background:var(--grad-gold)] max-sm:text-[0.65rem]">
                   {t.official}
                 </span>
                 <StatusBadge
@@ -91,10 +91,10 @@ export default async function HomePage() {
                   dark
                 />
               </div>
-              <h1 className="font-display text-display-hero-compact mt-2 font-black text-white">
+              <h1 className="font-display text-display-hero-compact mt-1.5 font-black text-white sm:mt-2">
                 {locale === "ml" ? settings.name_ml : settings.name_en}
               </h1>
-              <p className="mt-1.5 flex flex-wrap items-center gap-x-2 text-sm hero-muted">
+              <p className="mt-1 flex flex-wrap items-center gap-x-1.5 text-xs hero-muted sm:mt-1.5 sm:gap-x-2 sm:text-sm">
                 <span className="font-semibold hero-accent">
                   {locale === "ml" ? settings.venue_ml : settings.venue_en}
                 </span>
@@ -119,17 +119,31 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="mt-3 grid grid-cols-2 gap-1.5 sm:mt-4 sm:grid-cols-4 sm:gap-2">
             <StatCard label={t.schoolsCompeting} value={schools.length} accent="green" className="border-white/25 bg-white shadow-md" />
             <StatCard label={t.eventsToday} value={todayEvents.length} accent="gold" className="border-white/25 bg-white shadow-md" />
             <StatCard label={t.resultsPublished} value={results.length} accent="indigo" className="border-white/25 bg-white shadow-md" />
             <StatCard label={t.liveNow} value={liveCount} accent="red" className="border-white/25 bg-white shadow-md" />
           </div>
+
+          <div className="mt-3 flex gap-2 sm:hidden">
+            <ButtonLink href="/results" variant="gold" size="sm" className="flex-1 justify-center">
+              {t.exploreResults}
+            </ButtonLink>
+            <ButtonLink
+              href="/schedule"
+              variant="outline"
+              size="sm"
+              className="flex-1 justify-center border-white/40 bg-white/10 text-white hover:border-[#fde68a] hover:text-[#fde68a]"
+            >
+              {t.viewSchedule}
+            </ButtonLink>
+          </div>
         </div>
 
         {tickerItems.length ? (
-          <div className="ticker-viewport relative border-t border-white/20 bg-black/25 py-2">
-            <div className="ticker-track px-4 text-sm hero-muted">
+          <div className="ticker-viewport relative hidden border-t border-white/20 bg-black/25 py-2 sm:block">
+            <div className="ticker-track px-3 text-sm hero-muted sm:px-4">
               {[...tickerItems, ...tickerItems].map((item, i) => (
                 <span key={i} className="inline-flex items-center gap-3">
                   <span className="live-dot shrink-0" />
@@ -171,7 +185,7 @@ export default async function HomePage() {
         <LeadingSchools standings={standings} />
       </Reveal>
 
-      <section className="grid gap-10 lg:grid-cols-2">
+      <section className="grid gap-5 sm:gap-10 lg:grid-cols-2">
         <Reveal>
           <SectionHeader
             eyebrow={t.reporter}
@@ -188,7 +202,7 @@ export default async function HomePage() {
             linkHref="/photos"
             linkLabel={t.viewAll}
           />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {media.slice(0, 4).map((item) => (
               <Link
                 key={item.id}
@@ -221,19 +235,19 @@ export default async function HomePage() {
         </Reveal>
       </section>
 
-      <Reveal as="section">
+      <Reveal as="section" className="hidden sm:block">
         <SectionHeader eyebrow={t.exploreMore} title={t.quickNav} />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
           {nav.map(([label, href]) => (
             <Link
               key={href}
               href={href}
-              className="card card-hover group flex min-h-24 flex-col items-start justify-between gap-3 p-4"
+              className="card card-hover group flex min-h-20 flex-col items-start justify-between gap-2 p-3 sm:min-h-24 sm:gap-3 sm:p-4"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-kerala-soft text-kerala-dark transition-colors group-hover:bg-kerala-dark group-hover:text-white">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-kerala-soft text-kerala-dark transition-colors group-hover:bg-kerala-dark group-hover:text-white sm:h-10 sm:w-10 sm:rounded-xl">
                 <svg
-                  width="20"
-                  height="20"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"

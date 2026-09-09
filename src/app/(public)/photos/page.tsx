@@ -9,7 +9,7 @@ export default async function PhotosPage() {
   const t = getDictionary(locale);
   const photos = await getMedia("photo");
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-5 sm:gap-8">
       <PageHeader eyebrow={t.latestMedia} title={t.photos}>
         <ButtonLink href="/submit" variant="outline" size="sm">
           {t.submit}

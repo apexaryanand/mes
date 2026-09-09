@@ -43,7 +43,7 @@ export default async function EventPage({
   const relatedInterviews = interviews.filter((i) => i.scheduled_event_id === event.id);
 
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-5 sm:gap-8">
       <nav className="flex items-center gap-1.5 text-sm text-muted">
         <Link href="/results" className="hover:text-kerala-dark">
           {t.results}

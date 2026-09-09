@@ -9,7 +9,7 @@ export default async function VideosPage() {
   const t = getDictionary(locale);
   const videos = await getMedia("video");
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-5 sm:gap-8">
       <PageHeader eyebrow={t.latestMedia} title={t.videos}>
         <ButtonLink href="/submit" variant="outline" size="sm">
           {t.submit}

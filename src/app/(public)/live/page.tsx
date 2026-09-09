@@ -9,7 +9,7 @@ export default async function LivePage() {
   const t = getDictionary(locale);
   const updates = await getLiveUpdates();
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-5 sm:gap-8">
       <PageHeader
         eyebrow={t.reporter}
         title={t.liveUpdates}

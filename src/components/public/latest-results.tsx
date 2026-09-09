@@ -13,10 +13,10 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
   const { locale, t } = useI18n();
 
   if (!results.length)
-    return <div className="card p-8 text-center text-muted">{t.noResults}</div>;
+    return <div className="card p-6 text-center text-sm text-muted sm:p-8">{t.noResults}</div>;
 
   return (
-    <div className="card overflow-hidden">
+    <div className="card mobile-bleed overflow-hidden max-sm:rounded-none max-sm:border-x-0">
       {/* Desktop table */}
       <table className="hidden w-full text-left text-sm md:table">
         <thead className="bg-kerala-soft text-kerala-dark">
@@ -103,20 +103,20 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
             pageUrl: absoluteUrl(`/events/${block.event.slug}`),
           });
           return (
-            <li key={block.result_set.id} className="p-4">
-              <div className="flex items-start justify-between gap-3">
+            <li key={block.result_set.id} className="p-3 sm:p-4">
+              <div className="flex items-start justify-between gap-2 sm:gap-3">
                 <Link
                   href={`/events/${block.event.slug}`}
-                  className="font-display font-bold text-kerala-dark hover:underline"
+                  className="font-display text-sm font-bold text-kerala-dark hover:underline sm:text-base"
                 >
                   {tName(locale, block.event.programme)}
                 </Link>
-                <span className="chip shrink-0 py-1 text-xs">
+                <span className="chip shrink-0 px-2 py-0.5 text-[10px] sm:text-xs">
                   {tName(locale, block.event.category)}
                 </span>
               </div>
-              <div className="mt-3 flex items-center gap-3">
-                <Medal rank={first.rank} className="h-9 w-9 text-sm" />
+              <div className="mt-2 flex items-center gap-2.5 sm:mt-3 sm:gap-3">
+                <Medal rank={first.rank} className="h-8 w-8 text-xs sm:h-9 sm:w-9 sm:text-sm" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{first.participant_name}</p>
                   <Link
@@ -131,8 +131,8 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                   <p className="text-muted">{first.grade}</p>
                 </div>
               </div>
-              <div className="mt-3">
-                <WhatsAppShareButton text={shareText} />
+              <div className="mt-2 sm:mt-3">
+                <WhatsAppShareButton text={shareText} compact />
               </div>
             </li>
           );

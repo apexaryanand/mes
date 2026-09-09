@@ -12,7 +12,7 @@ export default async function SchoolsPage() {
   const [schools, standings] = await Promise.all([getSchools(), getStandings()]);
 
   return (
-    <div className="grid gap-10">
+    <div className="grid gap-5 sm:gap-10">
       <PageHeader eyebrow={t.points} title={t.schools} />
       <section>
         <SectionHeader eyebrow={t.overallRank} title={t.leadingSchools} />

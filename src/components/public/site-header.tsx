@@ -47,16 +47,16 @@ export function SiteHeader() {
 
   return (
     <header className="surface-glass sticky top-0 z-40 border-b border-line">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
-        <Link href="/" className="group flex min-w-0 flex-1 items-center gap-2.5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-[var(--shadow-gold)] [background:var(--grad-hero)]">
-            <span className="font-display text-lg font-black text-gold-light">ക</span>
+      <div className="mx-auto flex max-w-6xl items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3">
+        <Link href="/" className="group flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white shadow-[var(--shadow-gold)] [background:var(--grad-hero)] sm:h-9 sm:w-9 sm:rounded-xl">
+            <span className="font-display text-base font-black text-gold-light sm:text-lg">ക</span>
           </span>
           <span className="min-w-0">
-            <span className="font-display block truncate text-lg font-bold leading-tight text-kerala-dark">
+            <span className="font-display block truncate text-base font-bold leading-tight text-kerala-dark sm:text-lg">
               {t.brand}
             </span>
-            <span className="block truncate text-xs text-muted">{t.hostedAt}</span>
+            <span className="hidden truncate text-xs text-muted sm:block">{t.hostedAt}</span>
           </span>
         </Link>
 
@@ -91,7 +91,7 @@ export function SiteHeader() {
 
         <button
           type="button"
-          className="flex min-h-10 min-w-10 items-center justify-center rounded-full border border-line text-kerala-dark md:hidden"
+          className="flex min-h-9 min-w-9 items-center justify-center rounded-full border border-line text-kerala-dark md:hidden"
           aria-label="Menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}

@@ -60,7 +60,7 @@ export default async function ResultsPage({
   return (
     <div className="grid gap-8">
       <PageHeader eyebrow={t.official} title={t.results} />
-      <form className="card grid gap-4 p-5 md:grid-cols-3">
+      <form className="card grid gap-3 p-3 sm:gap-4 sm:p-5 md:grid-cols-3">
         <FilterSelect
           name="school"
           label={t.school}
@@ -112,7 +112,7 @@ export default async function ResultsPage({
         </button>
       </form>
 
-      <div className="grid gap-10">
+      <div className="grid gap-5 sm:gap-10">
         {filtered.length === 0 ? (
           <div className="card p-10 text-center text-muted">{t.noResults}</div>
         ) : null}

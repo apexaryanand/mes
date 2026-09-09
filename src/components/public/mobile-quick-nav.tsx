@@ -18,42 +18,46 @@ export function MobileQuickNav() {
 
   return (
     <nav
-      className="surface-glass sticky top-[68px] z-20 -mx-4 border-b border-line px-2 py-2 md:hidden"
+      className="surface-glass sticky top-[52px] z-20 border-b border-line md:hidden"
       aria-label={t.quickNav}
     >
-      <ul className="flex gap-1 overflow-x-auto">
-        {LINKS.map((link) => {
-          const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
-          return (
-            <li key={link.href} className="shrink-0">
-              <Link
-                href={link.href}
-                className={cn(
-                  "flex min-h-11 min-w-[4.5rem] flex-col items-center justify-center gap-0.5 rounded-xl px-2 text-[10px] font-bold uppercase tracking-wide transition-colors",
-                  active
-                    ? "bg-kerala-dark text-white shadow-sm"
-                    : "text-muted hover:bg-kerala-soft hover:text-kerala-dark",
-                )}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
+      <div className="mx-auto max-w-6xl px-3 py-1.5">
+        <ul className="flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {LINKS.map((link) => {
+            const active =
+              pathname === link.href || pathname.startsWith(`${link.href}/`);
+            return (
+              <li key={link.href} className="shrink-0">
+                <Link
+                  href={link.href}
+                  className={cn(
+                    "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+                    active
+                      ? "bg-kerala-dark text-white shadow-sm"
+                      : "bg-paper text-muted hover:bg-kerala-soft hover:text-kerala-dark",
+                  )}
                 >
-                  <path d={link.icon} />
-                </svg>
-                {t[link.key as keyof typeof t] as string}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                    className="shrink-0"
+                  >
+                    <path d={link.icon} />
+                  </svg>
+                  {t[link.key as keyof typeof t] as string}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </nav>
   );
 }

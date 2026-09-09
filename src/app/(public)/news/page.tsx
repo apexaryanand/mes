@@ -12,7 +12,7 @@ export default async function NewsPage() {
   const [lead, ...rest] = articles;
 
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-5 sm:gap-8">
       <PageHeader eyebrow={t.official} title={t.news} />
       {!articles.length ? (
         <div className="card p-10 text-center text-muted">{t.noItems}</div>

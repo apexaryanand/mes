@@ -30,7 +30,7 @@ export default async function SchedulePage({
   return (
     <div className="grid gap-8">
       <PageHeader eyebrow={t.stages} title={t.schedule} />
-      <div className="surface-glass sticky top-[68px] z-10 -mx-4 flex flex-wrap gap-2 rounded-none border-y border-line px-4 py-3 md:mx-0 md:rounded-full md:border md:px-4">
+      <div className="surface-glass sticky top-[52px] z-10 -mx-3 flex flex-wrap gap-1.5 rounded-none border-y border-line px-3 py-2 sm:-mx-4 sm:gap-2 sm:px-4 sm:py-3 md:mx-0 md:rounded-full md:border">
         {[1, 2, 3].map((d) => (
           <Link
             key={d}

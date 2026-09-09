@@ -70,9 +70,9 @@ export function ResultTable({
       {/* Mobile cards */}
       <ul className="divide-y divide-line md:hidden">
         {entries.map((row) => (
-          <li key={row.id} className="p-4">
-            <div className="flex items-center gap-3">
-              <Medal rank={row.rank} className="h-9 w-9 text-sm" />
+          <li key={row.id} className="p-3 sm:p-4">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <Medal rank={row.rank} className="h-8 w-8 text-xs sm:h-9 sm:w-9 sm:text-sm" />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{row.participant_name ?? "—"}</p>
                 <Link

@@ -9,7 +9,7 @@ export default async function InterviewsPage() {
   const t = getDictionary(locale);
   const interviews = await getInterviews();
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-5 sm:gap-8">
       <PageHeader eyebrow={t.official} title={t.interviews} />
       {!interviews.length ? (
         <div className="card p-10 text-center text-muted">{t.noItems}</div>
