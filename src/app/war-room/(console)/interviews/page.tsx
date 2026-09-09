@@ -1,7 +1,8 @@
 import { saveInterview } from "@/domains/admin/actions";
-import * as demo from "@/lib/data/demo";
+import { getAllInterviewsAdmin } from "@/lib/data/admin-queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
+import { getProgrammes, getSchools } from "@/lib/data/queries";
 import { revalidatePath } from "next/cache";
 
 async function createInterview(formData: FormData) {
@@ -21,6 +22,11 @@ async function createInterview(formData: FormData) {
 export default async function InterviewsAdminPage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
+  const [schools, programmes, interviews] = await Promise.all([
+    getSchools(),
+    getProgrammes(),
+    getAllInterviewsAdmin(),
+  ]);
 
   const field =
     "min-h-11 rounded-xl border border-line bg-paper-white px-3 text-sm focus:border-gold";
@@ -30,15 +36,15 @@ export default async function InterviewsAdminPage() {
         <p className="section-eyebrow">{t.create}</p>
         <input name="winner_name" placeholder="Winner name" required className={field} />
         <div className="grid gap-3 sm:grid-cols-2">
-          <select name="school_id" className={field}>
-            {demo.schools.map((s) => (
+          <select name="school_id" required className={field}>
+            {schools.map((s) => (
               <option key={s.id} value={s.id}>
                 {tName(locale, s)}
               </option>
             ))}
           </select>
-          <select name="programme_id" className={field}>
-            {demo.programmes.map((p) => (
+          <select name="programme_id" required className={field}>
+            {programmes.map((p) => (
               <option key={p.id} value={p.id}>
                 {tName(locale, p)}
               </option>
@@ -54,7 +60,7 @@ export default async function InterviewsAdminPage() {
         </button>
       </form>
       <ul className="grid h-fit gap-2">
-        {demo.interviews.map((i) => (
+        {interviews.map((i) => (
           <li key={i.id} className="card flex items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-kerala-soft text-kerala-dark">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

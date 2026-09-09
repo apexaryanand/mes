@@ -5,11 +5,10 @@ import {
   transitionResultForm,
 } from "@/domains/admin/actions";
 import { can, getSessionProfile } from "@/lib/auth";
-import * as demo from "@/lib/data/demo";
-import { hydrateEntries } from "@/lib/data/queries";
+import { getResultEntries, getResultSetById } from "@/lib/data/admin-queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
-import { getScheduledEvents } from "@/lib/data/queries";
+import { getParticipants, getScheduledEvents, getSchools } from "@/lib/data/queries";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
 import { suggestGrade } from "@/domains/results/scoring";
@@ -25,15 +24,20 @@ export default async function ResultEditorPage({
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
   const profile = await getSessionProfile();
-  const set = demo.resultSets.find((s) => s.id === id);
+  const set = await getResultSetById(id);
   if (!set) notFound();
-  const events = await getScheduledEvents();
+  const [events, schools, participants] = await Promise.all([
+    getScheduledEvents(),
+    getSchools(),
+    getParticipants(),
+  ]);
   const event = events.find((e) => e.id === set.scheduled_event_id);
   if (!event) notFound();
-  const entries = hydrateEntries(set.id);
+  const entries = await getResultEntries(set.id);
   const locked = set.status === "published";
   const operator = can(profile?.role, ["results_operator"]);
   const verifier = can(profile?.role, ["results_verifier"]);
+  const defaultSchoolId = schools[0]?.id ?? "";
 
   const steps: Array<{ key: string; label: string }> = [
     { key: "draft", label: t.draft },
@@ -45,6 +49,23 @@ export default async function ResultEditorPage({
   const activeStep = steps.findIndex((s) => s.key === normalized);
   const inputCls =
     "rounded-lg border border-line bg-paper-white px-2.5 py-1.5 text-sm focus:border-gold disabled:bg-paper disabled:text-muted";
+
+  const rows = entries.length
+    ? entries
+    : [
+        {
+          id: "",
+          school_id: defaultSchoolId,
+          participant_id: null,
+          participant_name: "",
+          marks: null,
+          grade: null,
+          rank: 1,
+          points: 0,
+          result_set_id: set.id,
+          school: schools[0],
+        },
+      ];
 
   return (
     <div className="grid gap-3 sm:gap-5">
@@ -59,7 +80,6 @@ export default async function ResultEditorPage({
           <StatusBadge status={set.status} label={statusLabel(locale, set.status)} />
         </div>
 
-        {/* State stepper */}
         <ol className="mt-4 flex items-center gap-0.5 sm:mt-5 sm:gap-1">
           {steps.map((step, i) => {
             const done = activeStep >= 0 && i <= activeStep;
@@ -100,12 +120,13 @@ export default async function ResultEditorPage({
 
       <form action={saveResultDraftForm} className="card mobile-bleed p-3 max-sm:rounded-none max-sm:border-x-0 sm:p-4">
         <input type="hidden" name="resultSetId" value={set.id} />
-        <input type="hidden" name="count" value={Math.max(entries.length, 1)} />
+        <input type="hidden" name="count" value={Math.max(rows.length, 1)} />
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-sm">
+          <table className="w-full min-w-[860px] text-sm">
             <thead className="bg-paper">
               <tr className="text-left">
                 <th className="rounded-l-lg px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.rank}</th>
+                <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">Registered</th>
                 <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.participant}</th>
                 <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.school}</th>
                 <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.marks}</th>
@@ -113,18 +134,35 @@ export default async function ResultEditorPage({
               </tr>
             </thead>
             <tbody>
-              {(entries.length ? entries : [{ id: "", school_id: demo.schools[0].id, participant_name: "", marks: null, grade: null, rank: 1, points: 0, result_set_id: set.id, school: demo.schools[0] }]).map((row, i) => (
+              {rows.map((row, i) => (
                 <tr key={row.id || i} className="border-t border-line">
                   <td className="px-3 py-2">
                     <input type="hidden" name={`id_${i}`} defaultValue={row.id} />
                     <input name={`rank_${i}`} defaultValue={row.rank ?? i + 1} disabled={locked} className={cn(inputCls, "w-16")} />
                   </td>
                   <td className="px-3 py-2">
+                    <select
+                      name={`participant_${i}`}
+                      defaultValue={row.participant_id ?? ""}
+                      disabled={locked}
+                      className={cn(inputCls, "min-w-36")}
+                    >
+                      <option value="">Manual entry</option>
+                      {participants
+                        .filter((p) => p.school_id === row.school_id || !row.school_id)
+                        .map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.full_name}
+                          </option>
+                        ))}
+                    </select>
+                  </td>
+                  <td className="px-3 py-2">
                     <input name={`name_${i}`} defaultValue={row.participant_name ?? ""} disabled={locked} className={cn(inputCls, "min-w-40 w-full")} />
                   </td>
                   <td className="px-3 py-2">
                     <select name={`school_${i}`} defaultValue={row.school_id} disabled={locked} className={inputCls}>
-                      {demo.schools.map((s) => (
+                      {schools.map((s) => (
                         <option key={s.id} value={s.id}>
                           {tName(locale, s)}
                         </option>
@@ -155,7 +193,7 @@ export default async function ResultEditorPage({
       </form>
 
       <div className="flex flex-wrap gap-2">
-        {operator && set.status === "draft" ? (
+        {operator && (set.status === "draft" || set.status === "correction_draft") ? (
           <form action={transitionResultForm}>
             <input type="hidden" name="id" value={set.id} />
             <input type="hidden" name="next" value="entered" />
@@ -188,13 +226,6 @@ export default async function ResultEditorPage({
               label={t.startCorrection}
               message={t.confirmDestructive}
             />
-          </form>
-        ) : null}
-        {operator && set.status === "correction_draft" ? (
-          <form action={transitionResultForm}>
-            <input type="hidden" name="id" value={set.id} />
-            <input type="hidden" name="next" value="entered" />
-            <button className="min-h-11 rounded-full bg-amber-600 px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90">{t.submitForVerification}</button>
           </form>
         ) : null}
       </div>

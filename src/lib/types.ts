@@ -73,6 +73,17 @@ export type School = {
   short_name: string | null;
 };
 
+export type Participant = {
+  id: string;
+  school_id: string;
+  full_name: string;
+  full_name_ml: string | null;
+  class_name: string | null;
+  chest_number: string | null;
+  created_at: string;
+  school?: School;
+};
+
 export type Category = {
   id: string;
   code: string;
@@ -144,6 +155,7 @@ export type ResultEntry = {
   id: string;
   result_set_id: string;
   school_id: string;
+  participant_id: string | null;
   participant_name: string | null;
   marks: number | null;
   grade: GradeCode | null;

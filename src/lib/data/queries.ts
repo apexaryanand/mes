@@ -1,74 +1,52 @@
-import * as demo from "@/lib/data/demo";
 import { createServerSupabase } from "@/lib/supabase/server";
 import type {
   Article,
+  EventSettings,
   InterviewView,
   LiveUpdateView,
   MediaItemView,
+  Participant,
   PublishedResultView,
-  ResultEntryView,
   ScheduledEventView,
   SchoolStanding,
   SearchHit,
 } from "@/lib/types";
+import { DEFAULT_SCORING_RULES } from "@/lib/types";
 import { isSupabaseConfigured } from "@/lib/utils";
 
-function hydrateEvent(event: (typeof demo.scheduledEvents)[number]): ScheduledEventView {
-  const programme = demo.programmes.find((p) => p.id === event.programme_id)!;
-  const category = demo.categories.find((c) => c.id === event.category_id)!;
-  const stage = demo.stages.find((s) => s.id === event.stage_id)!;
-  return { ...event, programme, category, stage };
-}
-
-function publishedSets() {
-  return demo.resultSets.filter((s) => s.status === "published");
-}
-
-export function hydrateEntries(setId: string): ResultEntryView[] {
-  return demo.resultEntries
-    .filter((e) => e.result_set_id === setId)
-    .map((e) => ({
-      ...e,
-      school: demo.schools.find((s) => s.id === e.school_id)!,
-    }))
-    .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
-}
-
-export function hydratePublishedResults(): PublishedResultView[] {
-  return publishedSets()
-    .map((set) => {
-      const event = demo.scheduledEvents.find((e) => e.id === set.scheduled_event_id)!;
-      return {
-        event: hydrateEvent(event),
-        result_set: set,
-        entries: hydrateEntries(set.id),
-      };
-    })
-    .sort((a, b) =>
-      (b.result_set.published_at ?? "").localeCompare(a.result_set.published_at ?? ""),
-    );
-}
+export const EMPTY_SETTINGS: EventSettings = {
+  id: "00000000-0000-0000-0000-000000000000",
+  slug: "kalolsavam",
+  name_en: "Kalolsavam",
+  name_ml: "കലോത്സവം",
+  venue_en: "",
+  venue_ml: "",
+  location_en: "",
+  location_ml: "",
+  start_date: new Date().toISOString().slice(0, 10),
+  end_date: new Date().toISOString().slice(0, 10),
+  current_day: 1,
+  live_status: "upcoming",
+  scoring_rules: DEFAULT_SCORING_RULES,
+};
 
 export async function remoteClient() {
-  return isSupabaseConfigured() ? await createServerSupabase() : null;
+  if (!isSupabaseConfigured()) return null;
+  return await createServerSupabase();
 }
 
-export async function getSettings() {
+export async function getSettings(): Promise<EventSettings> {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb.from("event_settings").select("*").limit(1).maybeSingle();
-    if (data) return data as typeof demo.settings;
-  }
-  return demo.settings;
+  if (!sb) return EMPTY_SETTINGS;
+  const { data } = await sb.from("event_settings").select("*").limit(1).maybeSingle();
+  return (data as EventSettings | null) ?? EMPTY_SETTINGS;
 }
 
 export async function getSchools() {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb.from("schools").select("*").order("name_en");
-    if (data?.length) return data as typeof demo.schools;
-  }
-  return demo.schools;
+  if (!sb) return [];
+  const { data } = await sb.from("schools").select("*").order("name_en");
+  return data ?? [];
 }
 
 export async function getSchoolBySlug(slug: string) {
@@ -78,20 +56,16 @@ export async function getSchoolBySlug(slug: string) {
 
 export async function getCategories() {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb.from("categories").select("*").order("sort_order");
-    if (data?.length) return data as typeof demo.categories;
-  }
-  return demo.categories;
+  if (!sb) return [];
+  const { data } = await sb.from("categories").select("*").order("sort_order");
+  return data ?? [];
 }
 
 export async function getProgrammes() {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb.from("programmes").select("*").order("name_en");
-    if (data?.length) return data as typeof demo.programmes;
-  }
-  return demo.programmes;
+  if (!sb) return [];
+  const { data } = await sb.from("programmes").select("*").order("name_en");
+  return data ?? [];
 }
 
 export async function getProgrammeBySlug(slug: string) {
@@ -101,11 +75,9 @@ export async function getProgrammeBySlug(slug: string) {
 
 export async function getStages() {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb.from("stages").select("*").order("sort_order");
-    if (data?.length) return data as typeof demo.stages;
-  }
-  return demo.stages;
+  if (!sb) return [];
+  const { data } = await sb.from("stages").select("*").order("sort_order");
+  return data ?? [];
 }
 
 export async function getStageBySlug(slug: string) {
@@ -113,19 +85,25 @@ export async function getStageBySlug(slug: string) {
   return stages.find((s) => s.slug === slug) ?? null;
 }
 
+export async function getParticipants(): Promise<Participant[]> {
+  const sb = await remoteClient();
+  if (!sb) return [];
+  const { data } = await sb
+    .from("participants")
+    .select("*, school:schools(*)")
+    .order("full_name");
+  return (data ?? []) as Participant[];
+}
+
 export async function getScheduledEvents(): Promise<ScheduledEventView[]> {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb
-      .from("scheduled_events")
-      .select("*, programme:programmes(*), category:categories(*), stage:stages(*)")
-      .order("day_number")
-      .order("start_time");
-    if (data?.length) return data as ScheduledEventView[];
-  }
-  return demo.scheduledEvents
-    .map(hydrateEvent)
-    .sort((a, b) => a.day_number - b.day_number || a.start_time.localeCompare(b.start_time));
+  if (!sb) return [];
+  const { data } = await sb
+    .from("scheduled_events")
+    .select("*, programme:programmes(*), category:categories(*), stage:stages(*)")
+    .order("day_number")
+    .order("start_time");
+  return (data ?? []) as ScheduledEventView[];
 }
 
 export async function getEventBySlug(slug: string) {
@@ -135,45 +113,39 @@ export async function getEventBySlug(slug: string) {
 
 export async function getStandings(): Promise<SchoolStanding[]> {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb
-      .from("school_standings")
-      .select("*, school:schools(*)")
-      .order("overall_rank", { nullsFirst: false });
-    if (data?.length) {
-      return (data as SchoolStanding[]).sort(
-        (a, b) => (a.overall_rank ?? 999) - (b.overall_rank ?? 999),
-      );
-    }
-  }
-  return demo.schoolStandings;
+  if (!sb) return [];
+  const { data } = await sb
+    .from("school_standings")
+    .select("*, school:schools(*)")
+    .order("overall_rank", { nullsFirst: false });
+  return ((data ?? []) as SchoolStanding[]).sort(
+    (a, b) => (a.overall_rank ?? 999) - (b.overall_rank ?? 999),
+  );
 }
 
 export async function getPublishedResults(): Promise<PublishedResultView[]> {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb
-      .from("result_sets")
-      .select(
-        "*, scheduled_event:scheduled_events(*, programme:programmes(*), category:categories(*), stage:stages(*)), result_entries(*, school:schools(*))",
-      )
-      .eq("status", "published")
-      .order("published_at", { ascending: false });
-    if (data?.length) {
-      return data.map((row) => {
-        const r = row as {
-          scheduled_event: ScheduledEventView;
-          result_entries: ResultEntryView[];
-        } & PublishedResultView["result_set"];
-        return {
-          event: r.scheduled_event,
-          result_set: r,
-          entries: [...r.result_entries].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99)),
-        };
-      });
-    }
-  }
-  return hydratePublishedResults();
+  if (!sb) return [];
+  const { data } = await sb
+    .from("result_sets")
+    .select(
+      "*, scheduled_event:scheduled_events(*, programme:programmes(*), category:categories(*), stage:stages(*)), result_entries(*, school:schools(*))",
+    )
+    .eq("status", "published")
+    .is("deleted_at", null)
+    .order("published_at", { ascending: false });
+  if (!data?.length) return [];
+  return data.map((row) => {
+    const r = row as {
+      scheduled_event: ScheduledEventView;
+      result_entries: PublishedResultView["entries"];
+    } & PublishedResultView["result_set"];
+    return {
+      event: r.scheduled_event,
+      result_set: r,
+      entries: [...r.result_entries].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99)),
+    };
+  });
 }
 
 export async function getResultForEvent(eventId: string) {
@@ -183,107 +155,78 @@ export async function getResultForEvent(eventId: string) {
 
 export async function getLiveUpdates(): Promise<LiveUpdateView[]> {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb
-      .from("live_updates")
-      .select("*, stage:stages(*)")
-      .eq("is_removed", false)
-      .order("created_at", { ascending: false });
-    if (data) {
-      const events = await getScheduledEvents();
-      return data.map((row) => {
-        const r = row as LiveUpdateView;
-        return {
-          ...r,
-          event: events.find((e) => e.id === r.scheduled_event_id) ?? null,
-        };
-      });
-    }
-  }
-  const events = demo.scheduledEvents.map(hydrateEvent);
-  return [...demo.liveUpdates]
-    .filter((u) => !u.is_removed)
-    .sort((a, b) => b.created_at.localeCompare(a.created_at))
-    .map((u) => ({
-      ...u,
-      stage: demo.stages.find((s) => s.id === u.stage_id) ?? null,
-      event: events.find((e) => e.id === u.scheduled_event_id) ?? null,
-    }));
+  if (!sb) return [];
+  const { data } = await sb
+    .from("live_updates")
+    .select("*, stage:stages(*)")
+    .eq("is_removed", false)
+    .order("created_at", { ascending: false });
+  if (!data) return [];
+  const events = await getScheduledEvents();
+  return data.map((row) => {
+    const r = row as LiveUpdateView;
+    return {
+      ...r,
+      event: events.find((e) => e.id === r.scheduled_event_id) ?? null,
+    };
+  });
 }
 
 export async function getArticles(): Promise<Article[]> {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb
-      .from("articles")
-      .select("*")
-      .eq("is_published", true)
-      .order("published_at", { ascending: false });
-    if (data?.length) return data as Article[];
-  }
-  return demo.articles.filter((a) => a.is_published);
+  if (!sb) return [];
+  const { data } = await sb
+    .from("articles")
+    .select("*")
+    .eq("is_published", true)
+    .order("published_at", { ascending: false });
+  return (data ?? []) as Article[];
 }
 
 export async function getArticleBySlug(slug: string) {
-  const articles = await getArticles();
-  return articles.find((a) => a.slug === slug) ?? null;
+  const sb = await remoteClient();
+  if (!sb) return null;
+  const { data } = await sb.from("articles").select("*").eq("slug", slug).maybeSingle();
+  return (data as Article | null) ?? null;
 }
 
 export async function getInterviews(): Promise<InterviewView[]> {
   const sb = await remoteClient();
-  if (sb) {
-    const { data } = await sb
-      .from("interviews")
-      .select("*, school:schools(*), programme:programmes(*)")
-      .eq("is_published", true)
-      .order("published_at", { ascending: false });
-    if (data?.length) {
-      const events = await getScheduledEvents();
-      return data.map((row) => {
-        const r = row as InterviewView;
-        return { ...r, event: events.find((e) => e.id === r.scheduled_event_id) ?? null };
-      });
-    }
-  }
-  const events = demo.scheduledEvents.map(hydrateEvent);
-  return demo.interviews
-    .filter((i) => i.is_published)
-    .map((i) => ({
-      ...i,
-      school: demo.schools.find((s) => s.id === i.school_id)!,
-      programme: demo.programmes.find((p) => p.id === i.programme_id)!,
-      event: events.find((e) => e.id === i.scheduled_event_id) ?? null,
-    }));
+  if (!sb) return [];
+  const { data } = await sb
+    .from("interviews")
+    .select("*, school:schools(*), programme:programmes(*)")
+    .eq("is_published", true)
+    .order("published_at", { ascending: false });
+  if (!data?.length) return [];
+  const events = await getScheduledEvents();
+  return data.map((row) => {
+    const r = row as InterviewView;
+    return { ...r, event: events.find((e) => e.id === r.scheduled_event_id) ?? null };
+  });
 }
 
 export async function getMedia(kind?: "photo" | "video"): Promise<MediaItemView[]> {
   const sb = await remoteClient();
-  if (sb) {
-    let q = sb.from("media").select("*").eq("status", "approved").order("published_at", { ascending: false });
-    if (kind) q = q.eq("kind", kind);
-    const { data } = await q;
-    if (data?.length) {
-      const events = await getScheduledEvents();
-      const schools = await getSchools();
-      return data.map((row) => {
-        const r = row as MediaItemView;
-        return {
-          ...r,
-          event: events.find((e) => e.id === r.scheduled_event_id) ?? null,
-          school: schools.find((s) => s.id === r.school_id) ?? null,
-        };
-      });
-    }
-  }
-  const events = demo.scheduledEvents.map(hydrateEvent);
-  return demo.mediaItems
-    .filter((m) => m.status === "approved" && (!kind || m.kind === kind))
-    .sort((a, b) => (b.published_at ?? "").localeCompare(a.published_at ?? ""))
-    .map((m) => ({
-      ...m,
-      event: events.find((e) => e.id === m.scheduled_event_id) ?? null,
-      school: demo.schools.find((s) => s.id === m.school_id) ?? null,
-    }));
+  if (!sb) return [];
+  let q = sb
+    .from("media")
+    .select("*")
+    .eq("status", "approved")
+    .order("published_at", { ascending: false });
+  if (kind) q = q.eq("kind", kind);
+  const { data } = await q;
+  if (!data?.length) return [];
+  const events = await getScheduledEvents();
+  const schools = await getSchools();
+  return data.map((row) => {
+    const r = row as MediaItemView;
+    return {
+      ...r,
+      event: events.find((e) => e.id === r.scheduled_event_id) ?? null,
+      school: schools.find((s) => s.id === r.school_id) ?? null,
+    };
+  });
 }
 
 export async function searchPublic(query: string): Promise<SearchHit[]> {
@@ -299,7 +242,7 @@ export async function searchPublic(query: string): Promise<SearchHit[]> {
   ]);
 
   for (const s of schoolList) {
-    if (`${s.name_en} ${s.name_ml} ${s.code}`.toLowerCase().includes(q)) {
+    if (`${s.name_en} ${s.name_ml} ${s.code ?? ""}`.toLowerCase().includes(q)) {
       hits.push({
         type: "school",
         id: s.id,
@@ -364,5 +307,3 @@ export async function searchPublic(query: string): Promise<SearchHit[]> {
   }
   return hits.slice(0, 30);
 }
-
-export { demo };

@@ -2,8 +2,12 @@ import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StatCard } from "@/components/ui/stat-card";
 import { getSessionProfile } from "@/lib/auth";
-import * as demo from "@/lib/data/demo";
-import { hydratePublishedResults } from "@/lib/data/queries";
+import {
+  getAllLiveUpdatesAdmin,
+  getAllMediaAdmin,
+  getAllResultSets,
+  getRecentPublished,
+} from "@/lib/data/admin-queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getLiveUpdates, getScheduledEvents } from "@/lib/data/queries";
@@ -16,15 +20,17 @@ export default async function WarRoomDashboard() {
   const events = await getScheduledEvents();
   const live = events.filter((e) => e.status === "live");
   const completed = events.filter((e) => e.status === "completed");
+  const resultSets = await getAllResultSets();
   const awaitingEntry = events.filter(
     (e) =>
       e.status === "completed" &&
-      !demo.resultSets.some((s) => s.scheduled_event_id === e.id && s.status !== "archived"),
+      !resultSets.some((s) => s.scheduled_event_id === e.id && s.status !== "archived"),
   );
-  const awaitingVerification = demo.resultSets.filter((s) => s.status === "entered");
-  const published = hydratePublishedResults().slice(0, 6);
-  const pendingMedia = demo.mediaItems.filter((m) => m.status === "pending");
+  const awaitingVerification = resultSets.filter((s) => s.status === "entered");
+  const pendingMedia = (await getAllMediaAdmin()).filter((m) => m.status === "pending");
+  const published = await getRecentPublished(6);
   const updates = await getLiveUpdates();
+  const allUpdates = await getAllLiveUpdatesAdmin();
 
   return (
     <div className="grid gap-4 sm:gap-6">
@@ -106,7 +112,16 @@ export default async function WarRoomDashboard() {
         </Panel>
 
         <Panel title={t.recentReports} accent="indigo">
-          {updates.length ? (
+          {allUpdates.length ? (
+            <ul className="divide-y divide-line">
+              {allUpdates.slice(0, 5).map((u) => (
+                <li key={u.id} className="px-3 py-2.5 text-sm sm:px-4 sm:py-3">
+                  <span className="font-medium text-kerala-dark">{u.reporter_name}: </span>
+                  <span className="text-muted">{u.body.slice(0, 120)}</span>
+                </li>
+              ))}
+            </ul>
+          ) : updates.length ? (
             <ul className="divide-y divide-line">
               {updates.slice(0, 5).map((u) => (
                 <li key={u.id} className="px-3 py-2.5 text-sm sm:px-4 sm:py-3">

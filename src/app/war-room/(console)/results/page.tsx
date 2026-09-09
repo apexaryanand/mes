@@ -2,7 +2,7 @@ import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TableCard, Th } from "@/components/war-room/primitives";
 import { createDraftForEventForm } from "@/domains/admin/actions";
-import * as demo from "@/lib/data/demo";
+import { getAllResultSets } from "@/lib/data/admin-queries";
 import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getScheduledEvents } from "@/lib/data/queries";
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 export default async function ResultsIndexPage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
-  const events = await getScheduledEvents();
+  const [events, resultSets] = await Promise.all([getScheduledEvents(), getAllResultSets()]);
 
   return (
     <div className="grid gap-4">
@@ -28,7 +28,7 @@ export default async function ResultsIndexPage() {
           </thead>
           <tbody>
             {events.map((event, i) => {
-              const set = demo.resultSets.find(
+              const set = resultSets.find(
                 (s) => s.scheduled_event_id === event.id && s.status !== "archived",
               );
               return (
@@ -36,7 +36,7 @@ export default async function ResultsIndexPage() {
                   key={event.id}
                   className={cn("border-t border-line", i % 2 === 1 && "bg-paper/40")}
                 >
-                  <td className="px-3 py-2 sm:px-4 sm:py-3 font-medium">{tName(locale, event.programme)}</td>
+                  <td className="px-3 py-2 font-medium sm:px-4 sm:py-3">{tName(locale, event.programme)}</td>
                   <td className="px-3 py-2 sm:px-4 sm:py-3">{tName(locale, event.category)}</td>
                   <td className="px-3 py-2 sm:px-4 sm:py-3">{tName(locale, event.stage)}</td>
                   <td className="px-3 py-2 sm:px-4 sm:py-3">
@@ -45,7 +45,7 @@ export default async function ResultsIndexPage() {
                       label={set ? statusLabel(locale, set.status) : "—"}
                     />
                   </td>
-                  <td className="px-3 py-2 sm:px-4 sm:py-3 text-right">
+                  <td className="px-3 py-2 text-right sm:px-4 sm:py-3">
                     {set ? (
                       <Link
                         href={`/war-room/results/${set.id}`}

@@ -22,7 +22,7 @@ export async function submitPublicMedia(
 
   const supabase = await createServerSupabase();
   if (!supabase) {
-    return { ok: true, message: t.submissionReceived };
+    return { ok: false, message: "Uploads are unavailable right now. Please try again later." };
   }
 
   const kind = file.type.startsWith("video") ? "video" : "photo";

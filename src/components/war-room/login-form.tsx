@@ -4,8 +4,6 @@ import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import { loginAction } from "@/domains/admin/actions";
 import { useI18n } from "@/lib/i18n/provider";
-import { demoUsers } from "@/lib/data/demo";
-import { isSupabaseConfigured } from "@/lib/utils";
 
 export function LoginForm() {
   const { t } = useI18n();
@@ -21,7 +19,7 @@ export function LoginForm() {
           name="email"
           type="email"
           required
-          defaultValue={isSupabaseConfigured() ? "" : "admin@kalolsavam.local"}
+          autoComplete="email"
           className="min-h-11 rounded-xl border border-line bg-paper-white px-3 font-normal focus:border-gold"
         />
       </label>
@@ -31,7 +29,7 @@ export function LoginForm() {
           name="password"
           type="password"
           required
-          defaultValue={isSupabaseConfigured() ? "" : "demo-admin"}
+          autoComplete="current-password"
           className="min-h-11 rounded-xl border border-line bg-paper-white px-3 font-normal focus:border-gold"
         />
       </label>
@@ -46,21 +44,9 @@ export function LoginForm() {
           {state.error}
         </p>
       ) : null}
-      {!isSupabaseConfigured() ? (
-        <div className="mt-2 rounded-xl border border-line bg-paper/60 p-4 text-xs text-muted">
-          <p className="font-semibold text-ink">Demo accounts</p>
-          <ul className="mt-1.5 grid gap-1">
-            {demoUsers.map((u) => (
-              <li key={u.email} className="flex items-center justify-between gap-2">
-                <span className="tabular">
-                  {u.email} / {u.password}
-                </span>
-                <span className="chip py-0.5 text-[10px]">{u.role}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+      <p className="text-xs text-muted">
+        Staff accounts are managed in Supabase Auth. Ask your super admin if you need access.
+      </p>
     </form>
   );
 }

@@ -1,4 +1,3 @@
-import { DemoBanner } from "@/components/public/demo-banner";
 import { MobileQuickNav } from "@/components/public/mobile-quick-nav";
 import { RealtimeRefresh } from "@/components/public/realtime-refresh";
 import { SiteFooter } from "@/components/public/site-footer";
@@ -11,7 +10,6 @@ export default function PublicLayout({
 }) {
   return (
     <>
-      <DemoBanner />
       <SiteHeader />
       <MobileQuickNav />
       <RealtimeRefresh />

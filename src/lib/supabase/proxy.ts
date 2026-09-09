@@ -15,9 +15,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
           );
@@ -36,8 +34,6 @@ export async function updateSession(request: NextRequest) {
   const isReporter = path.startsWith("/reporter");
 
   if ((isProtected || isReporter) && !user) {
-    const demoRole = request.cookies.get("kalolsavam_demo_role")?.value;
-    if (demoRole) return response;
     const url = request.nextUrl.clone();
     url.pathname = "/war-room/login";
     url.searchParams.set("next", path);

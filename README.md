@@ -14,42 +14,45 @@ Two products in one Next.js app:
 - Supabase (Postgres, Auth, Storage, Realtime)
 - Malayalam / English UI dictionaries in `src/lib/i18n/dictionaries.ts`
 
-The app runs in **demo mode** when Supabase env vars are missing. Rankings are still computed from published results (`src/domains/results/scoring.ts`), never hardcoded.
+**Supabase is required.** Without env vars the public site shows empty states and War Room writes are disabled.
 
-## Local development (demo data, no backend)
+## Environment variables
+
+Copy `.env.example` to `.env.local` and fill in values from your Supabase project dashboard (Settings → API):
+
+| Variable | Where |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `anon` / publishable key |
+| `SUPABASE_SERVICE_ROLE_KEY` | `service_role` key (server only — never expose to the browser) |
+| `NEXT_PUBLIC_SITE_URL` | Production URL for share links |
+
+On Vercel, add the same variables to the project environment settings.
+
+## Local development
 
 ```bash
 npm install
-npm run dev
-```
-
-Open http://localhost:3000
-
-War Room demo login (also listed on `/war-room/login`):
-
-| Email | Password | Role |
-| --- | --- | --- |
-| admin@kalolsavam.local | demo-admin | super_admin |
-| operator@kalolsavam.local | demo-operator | results_operator |
-| verifier@kalolsavam.local | demo-verifier | results_verifier |
-| reporter@kalolsavam.local | demo-reporter | reporter |
-| media@kalolsavam.local | demo-media | media_moderator |
-| editor@kalolsavam.local | demo-editor | editor |
-| photo@kalolsavam.local | demo-photo | photographer |
-
-## Local Supabase
-
-```bash
 cp .env.example .env.local
-npx supabase start
-# copy API URL + anon key + service role into .env.local
-npx supabase db reset   # applies supabase/migrations + supabase/seed.sql
+# fill in Supabase keys
 npm run dev
 ```
 
-Create War Room users in the Supabase Auth dashboard (or SQL). Roles live on `public.profiles` and are mirrored to `auth.users.raw_app_meta_data.role` (never `user_metadata`).
+### Database setup
 
-Hosted project: set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and server-only `SUPABASE_SERVICE_ROLE_KEY`. Run the migration in the SQL editor or `supabase db push`.
+Migrations live in `supabase/migrations/`. Apply them to your hosted project via the Supabase SQL editor, `supabase db push`, or the Supabase MCP.
+
+`supabase/seed.sql` is optional local fixture data only — production data is entered through War Room:
+
+1. **Settings** — festival name, dates, live status
+2. **Schools** — form or CSV (`code,name_en,name_ml,short_name`)
+3. **Categories** → **Programmes** → **Stages** → **Schedule**
+4. **Participants** — form or CSV (`school_code,full_name,full_name_ml,class_name,chest_number`)
+5. **Results** — enter → verify → publish
+
+### War Room users
+
+Create staff in Supabase Auth. Profiles are auto-created via `handle_new_user`. Assign roles on the War Room **Users** page (super_admin) or set `raw_app_meta_data.role` before first login.
 
 ## Scoring
 

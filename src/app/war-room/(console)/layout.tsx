@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { WarRoomShell } from "@/components/war-room/nav";
 import { getSessionProfile } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export default async function WarRoomConsoleLayout({
   children,
 }: {

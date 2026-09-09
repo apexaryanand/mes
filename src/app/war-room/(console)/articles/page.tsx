@@ -1,6 +1,6 @@
 import { saveArticle } from "@/domains/admin/actions";
 import { StatusBadge } from "@/components/ui/status-badge";
-import * as demo from "@/lib/data/demo";
+import { getAllArticlesAdmin } from "@/lib/data/admin-queries";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { slugify } from "@/lib/utils";
@@ -26,6 +26,7 @@ export default async function ArticlesAdminPage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
 
+  const articles = await getAllArticlesAdmin();
   const field =
     "min-h-11 rounded-xl border border-line bg-paper-white px-3 text-sm focus:border-gold";
   return (
@@ -50,7 +51,7 @@ export default async function ArticlesAdminPage() {
         </button>
       </form>
       <ul className="grid h-fit gap-2">
-        {demo.articles.map((a) => (
+        {articles.map((a) => (
           <li key={a.id} className="card flex items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
             <p className="min-w-0 truncate font-medium">
               {locale === "ml" ? a.title_ml : a.title_en}

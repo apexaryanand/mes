@@ -30,7 +30,9 @@ const GROUPS: NavGroup[] = [
       { href: "/war-room/results", key: "resultManagement", roles: ["super_admin", "results_operator", "results_verifier"], icon: "M9 11l3 3 8-8M4 6h16M4 12h6M4 18h10" },
       { href: "/war-room/schedule", key: "scheduleManagement", roles: ["super_admin", "results_operator", "results_verifier"], icon: "M4 5h16v15H4zM4 9h16M8 3v4M16 3v4" },
       { href: "/war-room/schools", key: "schools", roles: ["super_admin", "results_operator"], icon: "M4 20V9l8-5 8 5v11M9 20v-6h6v6" },
+      { href: "/war-room/participants", key: "participant", roles: ["super_admin", "results_operator"], icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" },
       { href: "/war-room/programmes", key: "programmes", roles: ["super_admin", "results_operator"], icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
+      { href: "/war-room/categories", key: "category", roles: ["super_admin"], icon: "M4 6h16M4 12h10M4 18h6" },
       { href: "/war-room/stages", key: "stages", roles: ["super_admin"], icon: "M3 7h18l-2 5H5zM5 12v7M19 12v7" },
     ],
   },
@@ -47,6 +49,7 @@ const GROUPS: NavGroup[] = [
   {
     titleKey: "sectionAdmin",
     items: [
+      { href: "/war-room/settings", key: "settings", roles: ["super_admin"], icon: "M12 8v4m0 4h.01M4.93 4.93l14.14 14.14M12 3a9 9 0 109 9" },
       { href: "/war-room/users", key: "userManagement", roles: ["super_admin"], icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21v-2a5 5 0 015-5h4a5 5 0 015 5v2" },
       { href: "/war-room/audit", key: "auditLogs", roles: ["super_admin", "results_verifier"], icon: "M9 5h6M9 5a2 2 0 012-2h2a2 2 0 012 2M5 5h14v16H5zM9 12l2 2 4-4" },
     ],

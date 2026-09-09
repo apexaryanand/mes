@@ -105,8 +105,6 @@ export const dictionaries = {
     addRow: "വരി ചേർക്കുക",
     confirmPublish: "പ്രസിദ്ധീകരിക്കുമോ? ഇത് പൊതു സൈറ്റിലും റാങ്കിങ്ങിലും ഉടനെ പ്രതിഫലിക്കും.",
     confirmDestructive: "ഇത് പഴയപടിയാക്കാൻ കഴിഞ്ഞേക്കില്ല. തുടരണോ?",
-    demoBanner:
-      "ഡെമോ മോഡ്: സുപ്പാബേസ് കണക്റ്റ് ചെയ്തിട്ടില്ല. വായന ഡെമോ ഡാറ്റയിൽ നിന്നാണ്.",
     official: "ഔദ്യോഗിക ലൈവ് പ്ലാറ്റ്‌ഫോം",
     littleKites: "Little KITES · MES HSS ഇരിമ്പിളിയം",
     footerNote: "വിദ്യാർത്ഥികൾ നടത്തുന്ന വാർ റൂം · ജെആർസി / സ്കൗട്ട് റിപ്പോർട്ടിംഗ്",
@@ -268,8 +266,6 @@ export const dictionaries = {
     confirmPublish:
       "Publish this result? The public site and school rankings will update immediately.",
     confirmDestructive: "This cannot be easily undone. Continue?",
-    demoBanner:
-      "Demo mode: Supabase is not connected. You are viewing fixture data.",
     official: "Official live platform",
     littleKites: "Little KITES · MES HSS Irimbiliyam",
     footerNote: "Student-operated War Room · JRC / Scout reporting",
