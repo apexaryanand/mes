@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#0B5D1E"/>
+  <rect x="40" y="40" width="1120" height="720" fill="#F7F3EA"/>
+  <rect x="80" y="80" width="1040" height="420" fill="#C4A35A"/>
+  <text x="600" y="300" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#073D14">Oppana Hall · Day 2</text>
+  <text x="600" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#1A1A1A">MES HSS Irimbiliyam</text>
+  <text x="600" y="620" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#5C574E">Kalolsavam Live photo desk</text>
+</svg>

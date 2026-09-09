@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#073D14"/>
+  <polygon points="480,250 780,400 480,550" fill="#F7F3EA"/>
+  <text x="600" y="700" text-anchor="middle" font-family="Georgia, serif" font-size="24" fill="#E4D4A8">Main stage · video still</text>
+</svg>

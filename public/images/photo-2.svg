@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#1A1A1A"/>
+  <rect x="60" y="60" width="1080" height="680" fill="#F7F3EA"/>
+  <circle cx="600" cy="340" r="140" fill="#0B5D1E"/>
+  <text x="600" y="350" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#F7F3EA">*&M/MJ2M2}</text>
+  <text x="600" y="580" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#073D14">Literary Hall</text>
+</svg>
