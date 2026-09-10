@@ -415,6 +415,56 @@ html[lang="ml"] .text-display-lg {
   to { transform: rotate(360deg); }
 }
 
+/* The festival should feel like a painted poster, not a corporate dashboard. */
+.text-festival-yellow { color: #ffd23f; }
+.festival-hero {
+  background: #e83f2f;
+  isolation: isolate;
+  border-bottom: 8px solid #14213d;
+}
+.festival-hero::before {
+  height: 100%;
+  inset: 0;
+  opacity: .18;
+  background-image: radial-gradient(#ffd23f 1px, transparent 1px), radial-gradient(#14213d 1px, transparent 1px);
+  background-size: 18px 18px, 31px 31px;
+  background-position: 0 0, 8px 12px;
+  pointer-events: none;
+}
+.festival-hero::after { display: none; }
+.festival-streamer {
+  display: flex; gap: 2rem; overflow: hidden; white-space: nowrap;
+  background: #14213d; color: #ffd23f; padding: .55rem 0; font-size: .7rem; font-weight: 900; letter-spacing: .2em; text-transform: uppercase;
+  transform: rotate(-1.5deg) scale(1.04); box-shadow: 0 5px 0 #ffd23f;
+}
+.festival-streamer span { animation: ticker 22s linear infinite; }
+.festival-kicker { border: 2px solid #ffd23f; background: #14213d; color: #ffd23f; box-shadow: 4px 4px 0 #ffd23f; }
+.festival-wordmark { color: #fff; text-shadow: 7px 7px 0 #14213d, 14px 14px 0 #ffd23f; }
+.festival-script { color: #14213d; transform: rotate(-2deg); }
+.festival-poster { display: grid; gap: 1rem; border: 4px solid #14213d; background: #ffd23f; color: #14213d; padding: 1.4rem; transform: rotate(4deg); box-shadow: 10px 10px 0 #14213d; }
+.festival-poster strong { font-family: var(--font-display), sans-serif; font-size: 3.8rem; line-height: .8; letter-spacing: -.08em; }
+.festival-poster em { color: #e83f2f; font-style: normal; }
+.festival-poster-top, .festival-poster-bottom { font-size: .65rem; font-weight: 900; letter-spacing: .16em; }
+.festival-poster-bottom { border-top: 2px solid #14213d; padding-top: .7rem; }
+.festival-confetti { position: absolute; z-index: -1; color: #ffd23f; font-size: 5rem; font-weight: 900; }
+.festival-confetti-one { right: 8%; top: 28%; transform: rotate(18deg); }
+.festival-confetti-two { left: 4%; bottom: 18%; color: #14213d; transform: rotate(-14deg); }
+.festival-stat { border: 3px solid #14213d; border-top-width: 8px; border-radius: 0; box-shadow: 4px 4px 0 #14213d; }
+.festival-stat:nth-child(1) { border-top-color: #19a974; }
+.festival-stat:nth-child(2) { border-top-color: #ffd23f; }
+.festival-stat:nth-child(3) { border-top-color: #6c4ab6; }
+.festival-stat:nth-child(4) { border-top-color: #e83f2f; }
+@media (prefers-reduced-motion: no-preference) { .festival-confetti-one { animation: festival-bob 3s ease-in-out infinite; } }
+@keyframes festival-bob { 50% { transform: translateY(-12px) rotate(25deg); } }
+
+
+/* Festival content surfaces keep the energy after the hero. */
+main > div > section:not(.festival-hero) .section-eyebrow { color: #e83f2f; }
+main > div > section:not(.festival-hero) .section-eyebrow::before { background: #e83f2f; width: 2.5rem; }
+main > div > section:not(.festival-hero) .card { border: 3px solid #14213d; box-shadow: 5px 5px 0 #14213d; border-radius: 0; }
+main > div > section:not(.festival-hero) .card-hover:hover { border-color: #e83f2f; box-shadow: 8px 8px 0 #e83f2f; transform: translate(-2px, -2px); }
+main > div > section:not(.festival-hero) h2 { font-family: var(--font-display), sans-serif; font-weight: 900; letter-spacing: -.04em; }
+main > div > section:not(.festival-hero) .chip-active { background: #e83f2f; border-color: #14213d; }
 
 /* ---- Reveal on scroll ---- */
 .reveal {

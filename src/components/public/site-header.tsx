@@ -46,10 +46,10 @@ export function SiteHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b-4 border-ink bg-paper/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3">
         <Link href="/" className="group flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white shadow-[var(--shadow-festival)] bg-kerala-dark sm:h-9 sm:w-9 sm:rounded-xl">
+          <span className="flex h-9 w-9 shrink-0 -rotate-3 items-center justify-center border-2 border-ink bg-festival-yellow text-ink shadow-[3px_3px_0_var(--ink)] sm:h-10 sm:w-10">
             <span className="font-display text-[10px] font-black tracking-tight text-white sm:text-xs">M</span>
           </span>
           <span className="min-w-0">
