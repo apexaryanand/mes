@@ -14,12 +14,19 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("festival-page-header flex flex-wrap items-end justify-between gap-4", className)}>
-      <div className="min-w-0">
+    <div
+      className={cn(
+        "festival-page-header flex flex-wrap items-end justify-between gap-x-4 gap-y-3",
+        className,
+      )}
+    >
+      <div className="min-w-0 flex-1">
         {eyebrow ? <span className="section-eyebrow">{eyebrow}</span> : null}
-        <h1 className="font-display mt-1 text-xl font-bold sm:mt-1.5 sm:text-display-md">{title}</h1>
+        <h1 className="font-display mt-1 text-2xl font-black sm:mt-1.5 sm:text-display-md">
+          {title}
+        </h1>
         {description ? (
-          <p className="mt-1 max-w-2xl text-sm text-muted sm:mt-1.5 sm:text-base">{description}</p>
+          <p className="mt-2 max-w-2xl text-sm text-muted sm:text-base">{description}</p>
         ) : null}
       </div>
       {children ? <div className="shrink-0">{children}</div> : null}

@@ -43,21 +43,27 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer className="relative mt-auto overflow-hidden bg-kerala-deep text-paper">
-      <div className="relative mx-auto grid max-w-6xl gap-8 px-3 py-10 sm:gap-10 sm:px-4 sm:py-14 md:grid-cols-[1.4fr_repeat(4,1fr)] md:px-6">
-        <div>
-          <p className="font-display text-2xl font-bold text-gold-light">{t.brand}</p>
-          <p className="mt-2 text-sm text-paper/85">{t.eventName}</p>
+    <footer className="relative mt-auto bg-fest-ink text-paper">
+      <div className="rule-festival" aria-hidden />
+
+      <div className="mx-auto grid max-w-6xl gap-8 px-3 py-10 sm:grid-cols-2 sm:px-4 sm:py-12 md:grid-cols-[1.5fr_1fr_1fr] md:px-6 lg:grid-cols-[1.6fr_repeat(4,1fr)]">
+        <div className="sm:col-span-2 md:col-span-1">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-10 w-10 shrink-0 -rotate-3 items-center justify-center border-2 border-fest-yellow bg-fest-yellow">
+              <span className="font-display text-sm font-black text-fest-ink">M</span>
+            </span>
+            <p className="font-display text-2xl font-black text-fest-yellow">{t.brand}</p>
+          </div>
+          <p className="mt-3 text-sm text-paper/90">{t.eventName}</p>
           <p className="text-sm text-paper/70">
             {t.hostedAt} · {t.location}
           </p>
-          <p className="mt-4 max-w-xs text-xs leading-relaxed text-paper/60">
-            {t.footerNote}
-          </p>
+          <p className="mt-4 max-w-xs text-xs leading-relaxed text-paper/60">{t.footerNote}</p>
         </div>
+
         {groups.map((group) => (
           <div key={group.title}>
-            <p className="text-xs font-bold uppercase tracking-wider text-gold-light/90">
+            <p className="border-b-2 border-fest-yellow/40 pb-2 text-xs font-black uppercase tracking-wider text-fest-yellow">
               {group.title}
             </p>
             <ul className="mt-3 space-y-2 text-sm">
@@ -65,7 +71,7 @@ export function SiteFooter() {
                 <li key={href}>
                   <Link
                     href={href}
-                    className="text-paper/75 transition-colors hover:text-gold-light"
+                    className="inline-block text-paper/75 transition-colors hover:text-fest-yellow"
                   >
                     {label}
                   </Link>
@@ -75,8 +81,9 @@ export function SiteFooter() {
           </div>
         ))}
       </div>
-      <div className="relative border-t border-white/10">
-        <div className="mx-auto max-w-6xl px-3 py-3 text-xs text-paper/60 sm:px-4 sm:py-4 md:px-6">
+
+      <div className="border-t-2 border-white/15">
+        <div className="mx-auto max-w-6xl px-3 py-4 text-xs text-paper/60 sm:px-4 md:px-6">
           {t.littleKites}
         </div>
       </div>

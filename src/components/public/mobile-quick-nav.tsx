@@ -18,23 +18,23 @@ export function MobileQuickNav() {
 
   return (
     <nav
-      className="surface-glass sticky top-[52px] z-20 border-b border-line md:hidden"
+      className="surface-glass sticky top-[var(--header-h)] z-30 border-b-2 border-fest-ink md:hidden"
       aria-label={t.quickNav}
     >
       <div className="mx-auto max-w-6xl px-3 py-1.5">
         <ul className="flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {LINKS.map((link) => {
-            const active =
-              pathname === link.href || pathname.startsWith(`${link.href}/`);
+            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
             return (
               <li key={link.href} className="shrink-0">
                 <Link
                   href={link.href}
+                  aria-current={active ? "page" : undefined}
                   className={cn(
-                    "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+                    "inline-flex min-h-9 items-center gap-1.5 border-2 border-fest-ink px-3 py-1.5 text-xs font-black transition-colors",
                     active
-                      ? "bg-kerala-dark text-white shadow-sm"
-                      : "bg-paper text-muted hover:bg-kerala-soft hover:text-kerala-dark",
+                      ? "bg-fest-red text-white shadow-[var(--shadow-hard-xs)]"
+                      : "bg-paper-white text-fest-ink hover:bg-fest-yellow-soft",
                   )}
                 >
                   <svg
@@ -43,7 +43,7 @@ export function MobileQuickNav() {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2"
+                    strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     aria-hidden

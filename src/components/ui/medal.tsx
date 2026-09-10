@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
 
 const podium: Record<number, string> = {
-  1: "[background:var(--grad-gold)] text-white shadow-[var(--shadow-gold)]",
-  2: "bg-gradient-to-br from-zinc-300 to-zinc-400 text-white",
-  3: "bg-gradient-to-br from-amber-600 to-amber-800 text-white",
+  1: "bg-fest-yellow text-fest-ink",
+  2: "bg-[#d6d3cd] text-fest-ink",
+  3: "bg-[#d9915b] text-fest-ink",
 };
 
 export function Medal({
@@ -18,8 +18,10 @@ export function Medal({
   return (
     <span
       className={cn(
-        "inline-flex items-center justify-center rounded-full font-display font-bold tabular",
-        isPodium ? podium[value] : "bg-kerala-soft text-kerala-dark",
+        "font-display tabular inline-flex shrink-0 items-center justify-center border-2 border-fest-ink font-black",
+        isPodium
+          ? cn(podium[value], "shadow-[var(--shadow-hard-xs)]")
+          : "bg-paper text-muted",
         className ?? "h-11 w-11 text-lg",
       )}
     >

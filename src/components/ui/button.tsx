@@ -5,19 +5,19 @@ type Variant = "primary" | "gold" | "outline" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "festival-button inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60";
+  "festival-button relative inline-flex items-center justify-center gap-2 text-center font-bold leading-tight " +
+  "focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60";
 
 const variants: Record<Variant, string> = {
-  primary:
-    "bg-kerala-dark text-white shadow-[var(--shadow-md)] hover:bg-kerala-deep hover:shadow-[var(--shadow-lg)]",
-  gold: "text-white shadow-[var(--shadow-gold)] hover:brightness-105 [background:var(--grad-gold)]",
-  outline: "border border-line bg-paper-white text-ink hover:border-gold hover:text-kerala-dark",
-  ghost: "text-muted hover:bg-kerala-soft hover:text-kerala-dark",
-  danger: "bg-live text-white hover:brightness-95",
+  primary: "bg-fest-ink text-fest-yellow hover:bg-fest-ink-soft",
+  gold: "bg-fest-yellow text-fest-ink hover:bg-[color-mix(in_srgb,var(--fest-yellow)_82%,white)]",
+  outline: "bg-paper-white text-fest-ink hover:bg-fest-yellow-soft",
+  ghost: "border-transparent bg-transparent text-fest-ink shadow-none hover:bg-fest-yellow-soft",
+  danger: "bg-fest-red text-white hover:bg-fest-red-deep",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "min-h-9 px-3.5 text-sm",
+  sm: "min-h-9 px-3.5 text-[0.8125rem]",
   md: "min-h-11 px-5 text-sm",
   lg: "min-h-12 px-7 text-base",
 };

@@ -1,13 +1,30 @@
 @import "tailwindcss";
 
+/* =========================================================================
+   MESTA design system
+   A screen-printed festival poster: navy ink, hot red, marigold yellow.
+   Flat colour, hard offset shadows, confident type. No soft gradients.
+   ========================================================================= */
+
 :root {
-  /* MESTA house colors */
+  /* ---- Festival core ---- */
+  --fest-ink: #14213d;
+  --fest-ink-soft: #22304f;
+  --fest-red: #e83f2f;
+  --fest-red-deep: #c22a1c;
+  --fest-yellow: #ffd23f;
+  --fest-yellow-soft: #fff0b8;
+  --fest-green: #19a974;
+  --fest-violet: #6c4ab6;
+  --fest-cyan: #1b9aaa;
+
+  /* ---- House identity ---- */
   --house-blue: #2563eb;
   --house-red: #dc2626;
   --house-yellow: #eab308;
   --house-green: #16a34a;
 
-  /* Core identity (kept for War Room + contrast) */
+  /* ---- Kerala green (War Room + institutional surfaces) ---- */
   --kerala-green: #0b5d1e;
   --kerala-green-dark: #073d14;
   --kerala-green-deep: #052a0e;
@@ -16,43 +33,74 @@
   --gold-light: #e2c988;
   --gold-deep: #9a7b32;
 
-  /* Editorial accents */
+  /* ---- Editorial accents ---- */
   --marigold: #b98b3e;
   --temple-red: #9e3f32;
   --indigo: #365b63;
 
-  /* Neutrals */
-  --ink: #1a1a1a;
-  --muted: #5c574e;
+  /* ---- Neutrals ---- */
+  --ink: #14213d;
+  --muted: #5b6478;
   --paper: #f7f3ea;
   --paper-white: #fffdf8;
   --line: #e4dcc8;
+  --line-strong: var(--fest-ink);
 
-  /* Status */
-  --live: #c41e3a;
-  --live-soft: #fde8ec;
-  --next: #0b5d1e;
+  /* ---- Status ---- */
+  --live: #e83f2f;
+  --live-soft: #ffe6e2;
+  --next: #19a974;
   --delayed: #b45309;
-  --completed: #5c574e;
+  --completed: #5b6478;
 
-  /* Elevation */
-  --shadow-sm: 0 1px 2px rgba(7, 61, 20, 0.06), 0 1px 3px rgba(7, 61, 20, 0.05);
-  --shadow-md: 0 4px 12px rgba(7, 61, 20, 0.08), 0 2px 4px rgba(7, 61, 20, 0.05);
-  --shadow-lg: 0 18px 40px -12px rgba(7, 61, 20, 0.28), 0 8px 16px -8px rgba(7, 61, 20, 0.14);
-  --shadow-gold: 0 10px 30px -8px rgba(154, 123, 50, 0.35);
+  /* ---- Gradients (kept minimal: gold foil + house ribbon) ---- */
+  --grad-gold: linear-gradient(100deg, #9a7b32 0%, #c4a35a 42%, #e2c988 100%);
+  --grad-festival: linear-gradient(
+    100deg,
+    var(--house-blue) 0%,
+    var(--house-red) 33%,
+    var(--house-yellow) 66%,
+    var(--house-green) 100%
+  );
 
-  /* Radii */
-  --radius: 14px;
-  --radius-lg: 22px;
+  /* ---- Elevation: hard poster shadows ---- */
+  --shadow-hard-xs: 2px 2px 0 var(--fest-ink);
+  --shadow-hard-sm: 3px 3px 0 var(--fest-ink);
+  --shadow-hard: 5px 5px 0 var(--fest-ink);
+  --shadow-hard-lg: 8px 8px 0 var(--fest-ink);
+  --shadow-sm: 0 1px 2px rgba(20, 33, 61, 0.08), 0 1px 3px rgba(20, 33, 61, 0.06);
+  --shadow-md: 0 4px 12px rgba(20, 33, 61, 0.1), 0 2px 4px rgba(20, 33, 61, 0.06);
+  --shadow-lg: 0 18px 40px -12px rgba(20, 33, 61, 0.3), 0 8px 16px -8px rgba(20, 33, 61, 0.16);
+  --shadow-gold: 0 10px 30px -8px rgba(154, 123, 50, 0.4);
+  --shadow-festival: 0 16px 36px -12px rgba(20, 33, 61, 0.32);
 
-  /* Electric festival surfaces */
-  --surface-dark: #123d32;
-  --surface-dark-ink: #f7f3ea;
-  --festival-orange: #f97316;
-  --festival-pink: #ec4899;
-  --festival-cyan: #06b6d4;
-  --festival-violet: #7c3aed;
-  --shadow-festival: 0 16px 36px -12px rgba(18, 61, 50, 0.32);
+  /* ---- Geometry ---- */
+  --border-w: 3px;
+  --radius: 0px;
+  --radius-lg: 0px;
+  --radius-btn: 6px;
+  --radius-pill: 999px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --dur-fast: 140ms;
+  --dur: 220ms;
+  --dur-slow: 420ms;
+
+  /* ---- Layout ---- */
+  --header-h: 3.5rem;
+  --quicknav-h: 2.75rem;
+
+  /* ---- Language-safe vertical rhythm ----
+     One rhythm for both scripts. Malayalam needs the taller metrics, so both
+     languages use them: switching language must not resize any container. */
+  --lh-display: 1.16;
+  --lh-heading: 1.28;
+  --lh-body: 1.65;
+  --lh-tight: 1.35;
+  --ls-display: -0.03em;
+  --ls-heading: -0.015em;
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -61,6 +109,23 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-fest-ink: var(--fest-ink);
+  --color-fest-ink-soft: var(--fest-ink-soft);
+  --color-fest-red: var(--fest-red);
+  --color-fest-red-deep: var(--fest-red-deep);
+  --color-fest-yellow: var(--fest-yellow);
+  --color-fest-yellow-soft: var(--fest-yellow-soft);
+  --color-fest-green: var(--fest-green);
+  --color-fest-violet: var(--fest-violet);
+  --color-fest-cyan: var(--fest-cyan);
+  --color-festival-yellow: var(--fest-yellow);
+
+  --color-house-blue: var(--house-blue);
+  --color-house-red: var(--house-red);
+  --color-house-yellow: var(--house-yellow);
+  --color-house-green: var(--house-green);
+
   --color-kerala: var(--kerala-green);
   --color-kerala-dark: var(--kerala-green-dark);
   --color-kerala-deep: var(--kerala-green-deep);
@@ -71,6 +136,7 @@
   --color-marigold: var(--marigold);
   --color-temple-red: var(--temple-red);
   --color-indigo: var(--indigo);
+
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-paper: var(--paper);
@@ -78,14 +144,20 @@
   --color-line: var(--line);
   --color-live: var(--live);
   --color-live-soft: var(--live-soft);
+
   --font-sans: var(--font-ui);
   --font-display: var(--font-display);
   --font-ml: var(--font-malayalam);
+
   --radius: var(--radius);
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
 }
+
+/* =========================================================================
+   Base
+   ========================================================================= */
 
 html,
 body {
@@ -93,69 +165,142 @@ body {
   color: var(--ink);
 }
 
-/* Desktop: match the comfortable density of ~125% browser zoom at 100% scale */
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Desktop reads at the density of ~125% zoom without the user zooming. */
 @media (min-width: 1024px) {
   html {
     font-size: 125%;
   }
-
   :root {
-    --radius: 17.5px;
-    --radius-lg: 27.5px;
+    --header-h: 4rem;
   }
 }
 
 body {
   font-family: var(--font-ui), var(--font-malayalam), system-ui, sans-serif;
   min-height: 100%;
+  line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  -webkit-tap-highlight-color: transparent;
+  overflow-wrap: break-word;
 }
+
+/* Anchored sections clear the sticky header. */
+:target {
+  scroll-margin-top: calc(var(--header-h) + var(--quicknav-h) + 1rem);
+}
+
+/* =========================================================================
+   Typography — language safe
+   -------------------------------------------------------------------------
+   Malayalam (Manjari) ships 400 + 700 only. Asking for 800/900 triggers
+   synthetic bolding: smeared strokes and unpredictable advance widths.
+   We disable synthesis and clamp heavy weights to 700 for Malayalam so the
+   same markup stays legible and the same width in both scripts.
+   ========================================================================= */
 
 html[lang="ml"] body {
   font-family: var(--font-malayalam), var(--font-ui), system-ui, sans-serif;
 }
 
+* {
+  font-synthesis-weight: none;
+  font-synthesis-style: none;
+}
+
 .font-display {
   font-family: var(--font-display), var(--font-malayalam), serif;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ls-heading);
+  line-height: var(--lh-heading);
 }
 
 html[lang="ml"] .font-display {
-  font-family: var(--font-malayalam), serif;
+  font-family: var(--font-malayalam), var(--font-display), serif;
   letter-spacing: 0;
+}
+
+/* Manjari tops out at 700 — never request more, and never ask the browser to fake it. */
+html[lang="ml"] :is(.font-black, .font-extrabold, .font-bold),
+html[lang="ml"] :is(h1, h2, h3, h4, h5, h6),
+html[lang="ml"] strong,
+html[lang="ml"] b {
+  font-weight: 700;
+}
+
+/* Malayalam conjuncts need room; never let them collide vertically. */
+html[lang="ml"] :is(h1, h2, h3, h4, h5, h6, p, li, a, span, button, label) {
+  line-height: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: var(--lh-heading);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 .tabular {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
-/* ---- Fluid display scale ---- */
+/* ---- Fluid display scale (shared rhythm across both scripts) ---- */
 .text-display-xl {
   font-size: clamp(2.5rem, 6vw + 1rem, 5.25rem);
-  line-height: 1.02;
-  letter-spacing: -0.02em;
-}
-.text-display-hero-compact {
-  font-size: clamp(1.65rem, 2.8vw + 0.55rem, 2.65rem);
-  line-height: 1.08;
-  letter-spacing: -0.015em;
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
 }
 .text-display-lg {
   font-size: clamp(2rem, 4vw + 0.75rem, 3.5rem);
-  line-height: 1.05;
-  letter-spacing: -0.015em;
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
 }
 .text-display-md {
   font-size: clamp(1.5rem, 2vw + 0.6rem, 2.25rem);
-  line-height: 1.1;
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
 }
-html[lang="ml"] .text-display-xl,
-html[lang="ml"] .text-display-lg {
-  line-height: 1.25;
+.text-display-hero-compact {
+  font-size: clamp(1.65rem, 2.8vw + 0.55rem, 2.65rem);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
 }
 
-/* ---- Layout helpers ---- */
+/* Malayalam runs wider per glyph: ease the negative tracking so it never overlaps. */
+html[lang="ml"] :is(.text-display-xl, .text-display-lg, .text-display-md, .text-display-hero-compact) {
+  letter-spacing: 0;
+}
+
+/* Reserve line boxes so cards keep their height when the language changes. */
+.lines-1 {
+  min-height: calc(1em * var(--lh-tight));
+}
+.lines-2 {
+  min-height: calc(2em * var(--lh-tight));
+}
+
+/* =========================================================================
+   Layout helpers
+   ========================================================================= */
+
 .container-page {
   width: 100%;
   max-width: 76rem;
@@ -173,7 +318,6 @@ html[lang="ml"] .text-display-lg {
   }
 }
 
-/* Edge-to-edge on narrow screens (offsets main px-3 gutter) */
 @media (max-width: 639px) {
   .mobile-bleed {
     margin-inline: -0.75rem;
@@ -181,91 +325,219 @@ html[lang="ml"] .text-display-lg {
   }
 }
 
-/* ---- Surfaces ---- */
+/* Newsprint dot field: the paper the festival is printed on. */
+.festival-main {
+  background-image: radial-gradient(color-mix(in srgb, var(--fest-ink) 13%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+@media (max-width: 639px) {
+  .festival-main {
+    background-size: 18px 18px;
+  }
+}
+
+/* =========================================================================
+   Surfaces
+   ========================================================================= */
+
 .card {
   background: var(--paper-white);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--fest-ink);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-hard);
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
 }
-.card-hover {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
+
 .card-hover:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-  border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-hard-lg);
+  border-color: var(--fest-red);
 }
-@media (max-width: 767px) {
+.card-hover:active {
+  transform: translate(1px, 1px);
+  box-shadow: var(--shadow-hard-xs);
+}
+
+/* Keyboard users get the same affordance as pointer users. */
+.card-hover:focus-within {
+  border-color: var(--fest-red);
+  box-shadow: var(--shadow-hard-lg);
+}
+
+@media (max-width: 639px) {
   .card {
-    border-radius: 10px;
+    box-shadow: var(--shadow-hard-sm);
+    border-width: 2px;
   }
   .card-hover:hover {
     transform: none;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-hard-sm);
   }
 }
+
+/* Alias retained for existing markup. */
+.festival-card {
+  position: relative;
+}
+.festival-card:nth-child(3n) {
+  box-shadow: 5px 5px 0 var(--fest-red);
+}
+.festival-card:nth-child(4n) {
+  box-shadow: 5px 5px 0 var(--fest-green);
+}
+@media (max-width: 639px) {
+  .festival-card:nth-child(3n) {
+    box-shadow: 3px 3px 0 var(--fest-red);
+  }
+  .festival-card:nth-child(4n) {
+    box-shadow: 3px 3px 0 var(--fest-green);
+  }
+}
+
 .surface-glass {
-  background: color-mix(in srgb, var(--paper-white) 80%, transparent);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter: blur(10px) saturate(1.1);
   -webkit-backdrop-filter: blur(10px) saturate(1.1);
 }
 
-/* ---- Chips ---- */
+/* =========================================================================
+   Buttons
+   ========================================================================= */
+
+.festival-button {
+  border-radius: var(--radius-btn);
+  border: var(--border-w) solid var(--fest-ink);
+  box-shadow: var(--shadow-hard-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.festival-button:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-hard);
+}
+.festival-button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--fest-ink);
+}
+.festival-button:disabled {
+  box-shadow: var(--shadow-hard-xs);
+  transform: none;
+}
+
+/* Malayalam is not an uppercase script — the transform does nothing but it
+   also must not stretch tracking on complex glyph clusters. */
+html[lang="ml"] .festival-button {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* =========================================================================
+   Chips / tabs
+   ========================================================================= */
+
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--fest-ink);
   background: var(--paper-white);
-  padding: 0.375rem 0.75rem;
+  padding: 0.375rem 0.8125rem;
   font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--muted);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--fest-ink);
   white-space: nowrap;
-  transition: all 0.18s ease;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
   min-height: 2.25rem;
 }
 .chip:hover {
-  border-color: var(--gold);
-  color: var(--ink);
+  background: var(--fest-yellow-soft);
+  box-shadow: var(--shadow-hard-xs);
+  transform: translate(-1px, -1px);
 }
-.chip-active {
-  background: var(--kerala-green-dark);
-  border-color: var(--kerala-green-dark);
+.chip:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+}
+.chip-active,
+.chip[aria-selected="true"] {
+  background: var(--fest-red);
+  border-color: var(--fest-ink);
   color: #fff;
+  box-shadow: var(--shadow-hard-xs);
 }
 .chip-active:hover {
+  background: var(--fest-red-deep);
   color: #fff;
 }
 
-/* ---- Decorative ---- */
-.gradient-text {
-  background: var(--gold);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+/* =========================================================================
+   Section furniture
+   ========================================================================= */
+
 .section-eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  line-height: var(--lh-tight);
   text-transform: uppercase;
-  color: var(--gold-deep);
+  color: var(--fest-red);
 }
 .section-eyebrow::before {
   content: "";
-  width: 1.5rem;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--gold);
+  width: 2.5rem;
+  height: 3px;
+  background: var(--fest-red);
+  flex: none;
+}
+html[lang="ml"] .section-eyebrow {
+  text-transform: none;
+  letter-spacing: 0.06em;
 }
 
-/* Fancy underline for nav links */
+.festival-section-header h2,
+.festival-page-header h1 {
+  text-transform: uppercase;
+  font-weight: 900;
+}
+html[lang="ml"] :is(.festival-section-header h2, .festival-page-header h1) {
+  text-transform: none;
+  font-weight: 700;
+}
+
+.festival-page-header {
+  border-bottom: 4px solid var(--fest-ink);
+  padding-bottom: 1rem;
+  position: relative;
+}
+.festival-page-header::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 5rem;
+  height: 4px;
+  background: var(--fest-yellow);
+}
+.festival-section-header .section-eyebrow::before,
+.festival-page-header .section-eyebrow::before {
+  background: var(--fest-green);
+}
+@media (max-width: 639px) {
+  .festival-page-header {
+    padding-bottom: 0.75rem;
+  }
+}
+
+/* Animated underline for nav links. */
 .nav-underline {
   position: relative;
 }
@@ -273,72 +545,394 @@ html[lang="ml"] .text-display-lg {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -2px;
-  height: 2px;
+  bottom: -3px;
+  height: 3px;
   width: 100%;
   transform: scaleX(0);
   transform-origin: left;
-  background: var(--gold);
-  transition: transform 0.25s ease;
+  background: var(--fest-red);
+  transition: transform var(--dur) var(--ease-out);
 }
 .nav-underline:hover::after,
 .nav-underline[data-active="true"]::after {
   transform: scaleX(1);
 }
+.nav-underline[data-active="true"]::after {
+  background: var(--fest-yellow);
+  box-shadow: 0 2px 0 var(--fest-ink);
+}
 
-/* ---- Live indicators ---- */
+/* =========================================================================
+   Status indicators
+   ========================================================================= */
+
+.festival-status {
+  border: 2px solid var(--fest-ink);
+  border-radius: var(--radius-btn);
+  box-shadow: var(--shadow-hard-xs);
+  line-height: var(--lh-tight);
+}
+html[lang="ml"] .festival-status {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
 .live-dot {
   width: 0.5rem;
   height: 0.5rem;
+  flex: none;
   border-radius: 999px;
-  background: #ef4444;
-  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.65);
+  background: var(--fest-red);
+  box-shadow: 0 0 0 0 rgba(232, 63, 47, 0.65);
   animation: livepulse 1.6s ease-out infinite;
 }
 .status-dot-next {
   width: 0.5rem;
   height: 0.5rem;
+  flex: none;
   border-radius: 999px;
-  background: #10b981;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+  background: var(--fest-green);
+  box-shadow: 0 0 0 2px rgba(25, 169, 116, 0.28);
 }
 .status-dot-delayed {
   width: 0.5rem;
   height: 0.5rem;
+  flex: none;
   border-radius: 999px;
-  background: #f59e0b;
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
+  background: var(--delayed);
+  box-shadow: 0 0 0 2px rgba(180, 83, 9, 0.3);
 }
 
-/* WCAG AA-friendly text on dark green hero surfaces */
+@keyframes livepulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(232, 63, 47, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(232, 63, 47, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(232, 63, 47, 0);
+  }
+}
+
+/* =========================================================================
+   Hero
+   ========================================================================= */
+
+.festival-hero {
+  background: var(--fest-red);
+  isolation: isolate;
+  border-bottom: 8px solid var(--fest-ink);
+}
+.festival-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  background-image: radial-gradient(var(--fest-yellow) 1px, transparent 1px),
+    radial-gradient(var(--fest-ink) 1px, transparent 1px);
+  background-size: 18px 18px, 31px 31px;
+  background-position: 0 0, 8px 12px;
+  pointer-events: none;
+}
+
+.festival-streamer {
+  display: flex;
+  gap: 2rem;
+  overflow: hidden;
+  white-space: nowrap;
+  background: var(--fest-ink);
+  color: var(--fest-yellow);
+  padding: 0.55rem 0;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transform: rotate(-1.5deg) scale(1.04);
+  box-shadow: 0 5px 0 var(--fest-yellow);
+}
+.festival-streamer span {
+  animation: ticker 22s linear infinite;
+}
+.festival-streamer:hover span {
+  animation-play-state: paused;
+}
+
+.festival-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px solid var(--fest-yellow);
+  background: var(--fest-ink);
+  color: var(--fest-yellow);
+  box-shadow: 4px 4px 0 var(--fest-yellow);
+  padding: 0.45rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  line-height: var(--lh-tight);
+  text-transform: uppercase;
+}
+.festival-kicker::before {
+  content: "✦";
+  color: var(--fest-red);
+}
+html[lang="ml"] .festival-kicker {
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+.festival-wordmark {
+  color: #fff;
+  text-shadow: 7px 7px 0 var(--fest-ink), 14px 14px 0 var(--fest-yellow);
+}
+@media (max-width: 639px) {
+  .festival-wordmark {
+    text-shadow: 4px 4px 0 var(--fest-ink), 8px 8px 0 var(--fest-yellow);
+  }
+}
+
+.festival-script {
+  color: var(--fest-ink);
+  transform: rotate(-2deg);
+  transform-origin: left center;
+}
+
+.festival-poster {
+  display: grid;
+  gap: 1rem;
+  border: 4px solid var(--fest-ink);
+  background: var(--fest-yellow);
+  color: var(--fest-ink);
+  padding: 1.4rem;
+  transform: rotate(4deg);
+  box-shadow: 10px 10px 0 var(--fest-ink);
+  transition: transform var(--dur-slow) var(--ease-spring);
+}
+.festival-poster:hover {
+  transform: rotate(1deg) scale(1.02);
+}
+.festival-poster strong {
+  font-family: var(--font-display), sans-serif;
+  font-size: 3.8rem;
+  line-height: 0.8;
+  letter-spacing: -0.08em;
+}
+.festival-poster em {
+  color: var(--fest-red);
+  font-style: normal;
+}
+.festival-poster-top,
+.festival-poster-bottom {
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  line-height: var(--lh-tight);
+}
+.festival-poster-bottom {
+  border-top: 2px solid var(--fest-ink);
+  padding-top: 0.7rem;
+}
+
+.festival-confetti {
+  position: absolute;
+  z-index: -1;
+  color: var(--fest-yellow);
+  font-size: 5rem;
+  font-weight: 900;
+  pointer-events: none;
+}
+.festival-confetti-one {
+  right: 8%;
+  top: 28%;
+  transform: rotate(18deg);
+}
+.festival-confetti-two {
+  left: 4%;
+  bottom: 18%;
+  color: var(--fest-ink);
+  transform: rotate(-14deg);
+}
+
+.festival-stat {
+  border: var(--border-w) solid var(--fest-ink);
+  border-top-width: 8px;
+  border-radius: 0;
+  box-shadow: var(--shadow-hard-sm);
+}
+.festival-stat:nth-child(1) {
+  border-top-color: var(--fest-green);
+}
+.festival-stat:nth-child(2) {
+  border-top-color: var(--fest-yellow);
+}
+.festival-stat:nth-child(3) {
+  border-top-color: var(--fest-violet);
+}
+.festival-stat:nth-child(4) {
+  border-top-color: var(--fest-red);
+}
+
+.festival-stat-card {
+  border-radius: 0;
+  border-width: var(--border-w);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+/* Readable text on the red hero and dark surfaces. */
 .hero-on-dark {
-  --hero-subtext: #f0fdf4;
+  --hero-subtext: #fff6e9;
   --hero-muted: rgba(255, 255, 255, 0.92);
-  --hero-accent: #fde68a;
+  --hero-accent: var(--fest-yellow);
 }
 .hero-subtext {
-  color: var(--hero-subtext, #f0fdf4);
+  color: var(--hero-subtext, #fff6e9);
 }
 .hero-muted {
   color: var(--hero-muted, rgba(255, 255, 255, 0.92));
 }
 .hero-accent {
-  color: var(--hero-accent, #fde68a);
+  color: var(--hero-accent, var(--fest-yellow));
 }
 
-@keyframes livepulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.55);
+@media (prefers-reduced-motion: no-preference) {
+  .festival-confetti-one {
+    animation: festival-bob 3s ease-in-out infinite;
   }
-  70% {
-    box-shadow: 0 0 0 8px rgba(196, 30, 58, 0);
+  .festival-confetti-two {
+    animation: festival-bob 3.6s ease-in-out infinite reverse;
   }
+}
+@keyframes festival-bob {
+  50% {
+    transform: translateY(-12px) rotate(25deg);
+  }
+}
+
+/* =========================================================================
+   Tables
+   ========================================================================= */
+
+.festival-table-card {
+  border-radius: 0;
+  box-shadow: var(--shadow-hard);
+}
+.festival-table-card thead {
+  background: var(--fest-ink);
+  color: var(--fest-yellow);
+}
+.festival-table-card thead th {
+  color: var(--fest-yellow);
+}
+.festival-table-card tbody tr {
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+.festival-table-card tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--fest-yellow) 14%, transparent);
+}
+.festival-table-card tbody tr:hover {
+  background: color-mix(in srgb, var(--fest-red) 12%, transparent);
+}
+
+/* =========================================================================
+   Forms
+   ========================================================================= */
+
+.field-input,
+.festival-input {
+  min-height: 2.75rem;
+  width: 100%;
+  border: 2px solid var(--fest-ink);
+  border-radius: var(--radius-btn);
+  background: var(--paper-white);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9375rem;
+  line-height: var(--lh-tight);
+  color: var(--ink);
+  transition: box-shadow var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.field-input::placeholder {
+  color: color-mix(in srgb, var(--muted) 75%, transparent);
+}
+.field-input:hover {
+  border-color: var(--fest-ink-soft);
+}
+.field-input:focus,
+.field-input:focus-visible {
+  outline: none;
+  border-color: var(--fest-red);
+  box-shadow: var(--shadow-hard-xs);
+}
+.field-input:disabled {
+  background: color-mix(in srgb, var(--line) 35%, var(--paper-white));
+  cursor: not-allowed;
+}
+.field-label {
+  display: grid;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  color: var(--fest-ink);
+}
+
+/* =========================================================================
+   Empty + loading states
+   ========================================================================= */
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+}
+.empty-state-mark {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: var(--border-w) solid var(--fest-ink);
+  background: var(--fest-yellow);
+  box-shadow: var(--shadow-hard-sm);
+  color: var(--fest-ink);
+  margin-bottom: 0.25rem;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--fest-ink) 9%, var(--paper-white));
+  border-radius: 3px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--paper-white) 85%, transparent),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+  }
+}
+@keyframes shimmer {
   100% {
-    box-shadow: 0 0 0 0 rgba(196, 30, 58, 0);
+    transform: translateX(100%);
   }
 }
 
-/* ---- Ticker marquee ---- */
+/* =========================================================================
+   Ticker
+   ========================================================================= */
+
 .ticker-track {
   display: inline-flex;
   gap: 3rem;
@@ -358,121 +952,16 @@ html[lang="ml"] .text-display-lg {
   }
 }
 
-.festival-hero {
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--kerala-green-deep) 94%, var(--festival-violet)), var(--kerala-green-deep));
-}
-.festival-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 0.5rem;
-  background: linear-gradient(90deg, var(--festival-orange) 0 20%, var(--festival-pink) 20% 40%, var(--festival-violet) 40% 60%, var(--festival-cyan) 60% 80%, var(--gold) 80%);
-}
-.festival-hero::after {
-  content: "";
-  position: absolute;
-  right: -5rem;
-  top: 3rem;
-  width: 22rem;
-  height: 22rem;
-  border: 1px solid color-mix(in srgb, var(--gold) 42%, transparent);
-  border-radius: 50%;
-  box-shadow: 0 0 0 2rem color-mix(in srgb, var(--festival-pink) 10%, transparent), 0 0 0 5rem color-mix(in srgb, var(--festival-cyan) 8%, transparent);
-  pointer-events: none;
-}
-.festival-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid color-mix(in srgb, var(--gold) 65%, transparent);
-  background: color-mix(in srgb, var(--gold) 14%, transparent);
-  padding: 0.45rem 0.75rem;
-  color: var(--gold-light);
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-.festival-kicker::before {
-  content: "✦";
-  color: var(--festival-orange);
-}
-.festival-wordmark {
-  text-shadow: 0.08em 0.08em 0 var(--festival-pink), 0.15em 0.15em 0 var(--festival-orange);
-}
-.festival-stat {
-  border-top: 3px solid var(--festival-orange);
-}
-.festival-stat:nth-child(2) { border-color: var(--festival-cyan); }
-.festival-stat:nth-child(3) { border-color: var(--festival-pink); }
-.festival-stat:nth-child(4) { border-color: var(--gold); }
+/* =========================================================================
+   Reveal on scroll
+   ========================================================================= */
 
-@media (prefers-reduced-motion: no-preference) {
-  .festival-hero::after { animation: festival-orbit 18s linear infinite; }
-}
-@keyframes festival-orbit {
-  to { transform: rotate(360deg); }
-}
-
-/* The festival should feel like a painted poster, not a corporate dashboard. */
-.text-festival-yellow { color: #ffd23f; }
-.festival-hero {
-  background: #e83f2f;
-  isolation: isolate;
-  border-bottom: 8px solid #14213d;
-}
-.festival-hero::before {
-  height: 100%;
-  inset: 0;
-  opacity: .18;
-  background-image: radial-gradient(#ffd23f 1px, transparent 1px), radial-gradient(#14213d 1px, transparent 1px);
-  background-size: 18px 18px, 31px 31px;
-  background-position: 0 0, 8px 12px;
-  pointer-events: none;
-}
-.festival-hero::after { display: none; }
-.festival-streamer {
-  display: flex; gap: 2rem; overflow: hidden; white-space: nowrap;
-  background: #14213d; color: #ffd23f; padding: .55rem 0; font-size: .7rem; font-weight: 900; letter-spacing: .2em; text-transform: uppercase;
-  transform: rotate(-1.5deg) scale(1.04); box-shadow: 0 5px 0 #ffd23f;
-}
-.festival-streamer span { animation: ticker 22s linear infinite; }
-.festival-kicker { border: 2px solid #ffd23f; background: #14213d; color: #ffd23f; box-shadow: 4px 4px 0 #ffd23f; }
-.festival-wordmark { color: #fff; text-shadow: 7px 7px 0 #14213d, 14px 14px 0 #ffd23f; }
-.festival-script { color: #14213d; transform: rotate(-2deg); }
-.festival-poster { display: grid; gap: 1rem; border: 4px solid #14213d; background: #ffd23f; color: #14213d; padding: 1.4rem; transform: rotate(4deg); box-shadow: 10px 10px 0 #14213d; }
-.festival-poster strong { font-family: var(--font-display), sans-serif; font-size: 3.8rem; line-height: .8; letter-spacing: -.08em; }
-.festival-poster em { color: #e83f2f; font-style: normal; }
-.festival-poster-top, .festival-poster-bottom { font-size: .65rem; font-weight: 900; letter-spacing: .16em; }
-.festival-poster-bottom { border-top: 2px solid #14213d; padding-top: .7rem; }
-.festival-confetti { position: absolute; z-index: -1; color: #ffd23f; font-size: 5rem; font-weight: 900; }
-.festival-confetti-one { right: 8%; top: 28%; transform: rotate(18deg); }
-.festival-confetti-two { left: 4%; bottom: 18%; color: #14213d; transform: rotate(-14deg); }
-.festival-stat { border: 3px solid #14213d; border-top-width: 8px; border-radius: 0; box-shadow: 4px 4px 0 #14213d; }
-.festival-stat:nth-child(1) { border-top-color: #19a974; }
-.festival-stat:nth-child(2) { border-top-color: #ffd23f; }
-.festival-stat:nth-child(3) { border-top-color: #6c4ab6; }
-.festival-stat:nth-child(4) { border-top-color: #e83f2f; }
-@media (prefers-reduced-motion: no-preference) { .festival-confetti-one { animation: festival-bob 3s ease-in-out infinite; } }
-@keyframes festival-bob { 50% { transform: translateY(-12px) rotate(25deg); } }
-
-
-/* Festival content surfaces keep the energy after the hero. */
-main > div > section:not(.festival-hero) .section-eyebrow { color: #e83f2f; }
-main > div > section:not(.festival-hero) .section-eyebrow::before { background: #e83f2f; width: 2.5rem; }
-main > div > section:not(.festival-hero) .card { border: 3px solid #14213d; box-shadow: 5px 5px 0 #14213d; border-radius: 0; }
-main > div > section:not(.festival-hero) .card-hover:hover { border-color: #e83f2f; box-shadow: 8px 8px 0 #e83f2f; transform: translate(-2px, -2px); }
-main > div > section:not(.festival-hero) h2 { font-family: var(--font-display), sans-serif; font-weight: 900; letter-spacing: -.04em; }
-main > div > section:not(.festival-hero) .chip-active { background: #e83f2f; border-color: #14213d; }
-
-/* ---- Reveal on scroll ---- */
 .reveal {
   opacity: 0;
   transform: translateY(18px);
 }
 .reveal.reveal-in {
-  animation: fade-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: fade-rise 0.6s var(--ease-out) forwards;
 }
 @keyframes fade-rise {
   to {
@@ -481,22 +970,45 @@ main > div > section:not(.festival-hero) .chip-active { background: #e83f2f; bor
   }
 }
 
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
+/* =========================================================================
+   Decorative
+   ========================================================================= */
+
+.gradient-text {
+  background: var(--grad-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-festival-yellow {
+  color: var(--fest-yellow);
+}
+.rule-festival {
+  height: 4px;
+  background: var(--grad-festival);
 }
 
-/* ---- Focus & selection ---- */
+/* =========================================================================
+   Focus & selection
+   ========================================================================= */
+
 :focus-visible {
-  outline: 2px solid var(--gold-deep);
+  outline: 3px solid var(--fest-red);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 2px;
+}
+.festival-hero :focus-visible,
+.festival-table-card thead :focus-visible {
+  outline-color: var(--fest-yellow);
 }
 ::selection {
-  background: color-mix(in srgb, var(--gold) 45%, transparent);
-  color: var(--ink);
+  background: var(--fest-yellow);
+  color: var(--fest-ink);
 }
+
+/* =========================================================================
+   Motion preferences
+   ========================================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -510,53 +1022,32 @@ main > div > section:not(.festival-hero) .chip-active { background: #e83f2f; bor
     opacity: 1;
     transform: none;
   }
+  .festival-poster:hover {
+    transform: rotate(4deg);
+  }
 }
 
-/* ---- End-to-end festival system ---- */
-.festival-main {
-  background-image: radial-gradient(color-mix(in srgb, #14213d 14%, transparent) 1px, transparent 1px);
-  background-size: 22px 22px;
-}
-.festival-card {
-  border: 3px solid #14213d;
-  border-radius: 0;
-  box-shadow: 5px 5px 0 #14213d;
-  position: relative;
-}
-.festival-card:nth-child(3n) { box-shadow: 5px 5px 0 #e83f2f; }
-.festival-card:nth-child(4n) { box-shadow: 5px 5px 0 #19a974; }
-.festival-card:hover { border-color: #e83f2f; }
-.festival-page-header {
-  border-bottom: 4px solid #14213d;
-  padding-bottom: 1rem;
-  position: relative;
-}
-.festival-page-header::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 5rem;
-  height: 4px;
-  background: #ffd23f;
-}
-.festival-section-header h2,
-.festival-page-header h1 { text-transform: uppercase; }
-.festival-section-header .section-eyebrow,
-.festival-page-header .section-eyebrow { color: #e83f2f; }
-.festival-section-header .section-eyebrow::before,
-.festival-page-header .section-eyebrow::before { background: #19a974; }
-.festival-stat-card { border-radius: 0; border-width: 3px; box-shadow: 4px 4px 0 #14213d; }
-.festival-status { border: 2px solid #14213d; border-radius: 0.25rem; box-shadow: 2px 2px 0 #ffd23f; }
-.festival-button { border-radius: 0.25rem; border: 3px solid #14213d; box-shadow: 4px 4px 0 #14213d; text-transform: uppercase; letter-spacing: .04em; }
-.festival-button:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 #14213d; }
-.festival-table-card { border-radius: 0; box-shadow: 5px 5px 0 #14213d; }
-.festival-table-card thead { background: #14213d; color: #ffd23f; }
-.festival-table-card tbody tr:nth-child(even) { background: color-mix(in srgb, #ffd23f 14%, transparent); }
-.festival-table-card tbody tr:hover { background: color-mix(in srgb, #e83f2f 12%, transparent); }
+/* =========================================================================
+   Print — result sheets get posted on notice boards
+   ========================================================================= */
 
-@media (max-width: 639px) {
-  .festival-main { background-size: 18px 18px; }
-  .festival-card { box-shadow: 3px 3px 0 #14213d; }
-  .festival-page-header { padding-bottom: .75rem; }
+@media print {
+  .festival-main {
+    background: none;
+  }
+  header,
+  footer,
+  nav,
+  .festival-streamer,
+  .festival-confetti {
+    display: none !important;
+  }
+  .card,
+  .festival-table-card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  body {
+    background: #fff;
+  }
 }
