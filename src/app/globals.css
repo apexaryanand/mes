@@ -902,8 +902,8 @@ html[lang="ml"] .festival-kicker {
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: color-mix(in srgb, var(--fest-ink) 9%, var(--paper-white));
-  border-radius: 3px;
+  background: color-mix(in srgb, var(--fest-ink) 15%, var(--paper-white));
+  border-radius: 2px;
 }
 .skeleton::after {
   content: "";
@@ -913,10 +913,10 @@ html[lang="ml"] .festival-kicker {
   background: linear-gradient(
     90deg,
     transparent,
-    color-mix(in srgb, var(--paper-white) 85%, transparent),
+    color-mix(in srgb, var(--fest-yellow) 55%, transparent),
     transparent
   );
-  animation: shimmer 1.4s infinite;
+  animation: shimmer 1.4s var(--ease-out) infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .skeleton::after {
