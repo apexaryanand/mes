@@ -27,8 +27,8 @@ export default async function VideosPage() {
       ) : null}
       <div className="grid gap-5 md:grid-cols-2">
         {videos.map((item) => (
-          <article key={item.id} className="card overflow-hidden">
-            <div className="overflow-hidden">
+          <article key={item.id} className="card flex flex-col overflow-hidden">
+            <div className="overflow-hidden border-b-[var(--border-w)] border-fest-ink">
               {item.url.includes("youtube") ? (
                 <iframe
                   title={item.title_en}
@@ -46,7 +46,7 @@ export default async function VideosPage() {
                 />
               )}
             </div>
-            <h2 className="font-display p-4 text-xl font-bold">
+            <h2 className="font-display line-clamp-2 p-4 text-xl font-black">
               {locale === "ml" ? item.title_ml : item.title_en}
             </h2>
           </article>

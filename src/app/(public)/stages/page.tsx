@@ -21,14 +21,16 @@ export default async function StagesPage() {
               href={`/stages/${s.slug}`}
               className="card card-hover flex flex-col p-5"
             >
-              <p className="font-display text-xl font-bold">{tName(locale, s)}</p>
-              <p className="mt-0.5 text-sm text-muted">
+              <p className="font-display lines-2 line-clamp-2 text-xl font-black">
+                {tName(locale, s)}
+              </p>
+              <p className="lines-1 mt-1 line-clamp-1 text-sm text-muted">
                 {locale === "ml" ? s.location_ml : s.location_en}
               </p>
               {live.length ? (
-                <p className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-live">
+                <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-live">
                   <span className="live-dot" />
-                  {tName(locale, live[0].programme)}
+                  <span className="line-clamp-1">{tName(locale, live[0].programme)}</span>
                 </p>
               ) : (
                 <p className="mt-3 text-sm text-muted">

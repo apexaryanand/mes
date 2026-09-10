@@ -45,7 +45,7 @@ export default async function HousePage({
         </span>
         <div className="min-w-0 flex-1">
           <HouseBadge house={house} className="mb-2" />
-          <h1 className="font-display text-display-md font-bold">{tName(locale, house)}</h1>
+          <h1 className="font-display text-display-md font-black">{tName(locale, house)}</h1>
         </div>
       </header>
 

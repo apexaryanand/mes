@@ -29,7 +29,7 @@ export default async function PhotosPage() {
         {photos.map((item) => (
           <figure
             key={item.id}
-            className="group relative overflow-hidden rounded-[var(--radius)] border border-line bg-paper-white shadow-[var(--shadow-sm)]"
+            className="group relative overflow-hidden border-2 border-fest-ink bg-paper-white shadow-[var(--shadow-hard-xs)] transition-shadow hover:shadow-[var(--shadow-hard-sm)]"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -37,7 +37,7 @@ export default async function PhotosPage() {
               alt={locale === "ml" ? item.title_ml : item.title_en}
               className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-sm font-medium text-white">
+            <figcaption className="absolute inset-x-0 bottom-0 line-clamp-2 bg-fest-ink/85 p-2.5 text-sm font-bold text-paper-white">
               {locale === "ml" ? item.title_ml : item.title_en}
             </figcaption>
           </figure>

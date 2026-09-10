@@ -17,8 +17,8 @@ export default async function ReportingsPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <article key={item.id} className="card overflow-hidden">
-              <div className="aspect-video bg-ink">
+            <article key={item.id} className="card flex flex-col overflow-hidden">
+              <div className="aspect-video border-b-[var(--border-w)] border-fest-ink bg-fest-ink">
                 {item.url.includes("youtube.com") || item.url.includes("youtu.be") ? (
                   <iframe
                     src={item.url.includes("embed") ? item.url : item.url.replace("watch?v=", "embed/")}
@@ -31,7 +31,7 @@ export default async function ReportingsPage() {
                 )}
               </div>
               <div className="p-4">
-                <h2 className="font-display text-lg font-bold">
+                <h2 className="font-display line-clamp-2 text-lg font-black">
                   {locale === "ml" ? item.title_ml : item.title_en}
                 </h2>
                 {item.caption_en ? (
