@@ -19,15 +19,17 @@ export default async function ProgrammesPage() {
             <Link
               key={p.id}
               href={`/programmes/${p.slug}`}
-              className="card card-hover flex items-center justify-between gap-3 p-5"
+              className="card card-hover flex items-center justify-between gap-3 p-4 sm:p-5"
             >
               <div className="min-w-0">
-                <p className="font-display truncate text-xl font-bold">{tName(locale, p)}</p>
-                <p className="text-sm text-muted">
+                <p className="font-display lines-2 line-clamp-2 text-xl font-black">
+                  {tName(locale, p)}
+                </p>
+                <p className="mt-1 text-sm text-muted">
                   {related.length} {t.category.toLowerCase()}
                 </p>
               </div>
-              <span className="text-gold-deep" aria-hidden>
+              <span className="text-lg font-black text-fest-red" aria-hidden>
                 &rarr;
               </span>
             </Link>

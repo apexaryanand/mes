@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { HouseBadge, houseColorHex } from "@/components/public/house-badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Medal } from "@/components/ui/medal";
 import { useI18n } from "@/lib/i18n/provider";
 import { tName } from "@/lib/i18n/dictionaries";
@@ -13,7 +14,7 @@ export function LeadingHouses({ standings }: { standings: HouseStanding[] }) {
   const top = standings.filter((s) => s.overall_rank).slice(0, 8);
 
   if (!top.length) {
-    return <div className="card p-6 text-center text-sm text-muted sm:p-8">{t.noResults}</div>;
+    return <EmptyState icon="results" title={t.noResults} description={t.emptyHint} />;
   }
 
   const podium = top.slice(0, 3);
@@ -30,19 +31,19 @@ export function LeadingHouses({ standings }: { standings: HouseStanding[] }) {
               href={`/houses/${row.house.slug}`}
               className={cn(
                 "card card-hover relative flex flex-col items-center gap-1 overflow-hidden p-2.5 text-center sm:gap-2 sm:p-5",
-                row.overall_rank === 1 && "sm:order-2 ring-2",
-                row.overall_rank === 2 && "sm:order-1 sm:mt-4",
-                row.overall_rank === 3 && "sm:order-3 sm:mt-4",
+                row.overall_rank === 1 && "sm:order-2",
+                row.overall_rank === 2 && "sm:order-1 sm:mt-6",
+                row.overall_rank === 3 && "sm:order-3 sm:mt-6",
               )}
               style={
                 row.overall_rank === 1
-                  ? { borderColor: hex, boxShadow: `0 8px 24px -8px ${hex}55` }
-                  : { borderLeftWidth: 4, borderLeftColor: hex }
+                  ? { boxShadow: `var(--shadow-hard-lg)`, borderColor: hex }
+                  : { borderLeftWidth: 6, borderLeftColor: hex }
               }
             >
               <Medal rank={row.overall_rank ?? 0} className="h-9 w-9 text-sm sm:h-14 sm:w-14 sm:text-2xl" />
               <HouseBadge house={row.house} className="mt-1" />
-              <p className="font-display line-clamp-2 text-[11px] font-bold leading-tight sm:mt-1 sm:text-base">
+              <p className="font-display lines-2 line-clamp-2 text-[11px] font-black sm:mt-1 sm:text-base">
                 {tName(locale, row.house)}
               </p>
               <p
@@ -58,20 +59,20 @@ export function LeadingHouses({ standings }: { standings: HouseStanding[] }) {
       </div>
 
       {rest.length ? (
-        <ol className="card divide-y divide-line overflow-hidden">
+        <ol className="card divide-y-2 divide-fest-ink/15 overflow-hidden">
           {rest.map((row) => {
             const hex = houseColorHex(row.house.color);
             return (
               <li key={row.house_id}>
                 <Link
                   href={`/houses/${row.house.slug}`}
-                  className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-paper sm:gap-4 sm:px-4 sm:py-3"
-                  style={{ borderLeft: `4px solid ${hex}` }}
+                  className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-fest-yellow-soft sm:gap-4 sm:px-4 sm:py-3"
+                  style={{ borderLeft: `6px solid ${hex}` }}
                 >
                   <Medal rank={row.overall_rank ?? 0} className="h-9 w-9 text-sm" />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate font-semibold">{tName(locale, row.house)}</p>
+                      <p className="line-clamp-2 font-bold">{tName(locale, row.house)}</p>
                       <HouseBadge house={row.house} />
                     </div>
                     <p className="mt-0.5 text-xs text-muted">
@@ -80,7 +81,7 @@ export function LeadingHouses({ standings }: { standings: HouseStanding[] }) {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="tabular text-lg font-bold" style={{ color: hex }}>
+                    <p className="tabular text-lg font-black" style={{ color: hex }}>
                       {row.total_points}
                     </p>
                     <p className="text-[11px] uppercase tracking-wide text-muted">

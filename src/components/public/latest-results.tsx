@@ -1,49 +1,50 @@
 "use client";
 
 import Link from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Medal } from "@/components/ui/medal";
 import { WhatsAppShareButton } from "@/components/public/whatsapp-share";
 import { useI18n } from "@/lib/i18n/provider";
 import { tName } from "@/lib/i18n/dictionaries";
 import { absoluteUrl, resultShareMessage } from "@/lib/share";
 import type { PublishedResultView } from "@/lib/types";
-import { cn, formatClock } from "@/lib/utils";
+import { formatClock } from "@/lib/utils";
 
 export function LatestResults({ results }: { results: PublishedResultView[] }) {
   const { locale, t } = useI18n();
 
   if (!results.length)
-    return <div className="card p-6 text-center text-sm text-muted sm:p-8">{t.noResults}</div>;
+    return <EmptyState icon="results" title={t.noResults} description={t.emptyHint} />;
 
   return (
-    <div className="card mobile-bleed overflow-hidden max-sm:rounded-none max-sm:border-x-0">
+    <div className="card festival-table-card mobile-bleed overflow-hidden max-sm:border-x-0">
       {/* Desktop table */}
       <table className="hidden w-full text-left text-sm md:table">
-        <thead className="bg-kerala-soft text-kerala-dark">
+        <thead>
           <tr>
-            <th className="px-4 py-3 font-semibold">{t.programme}</th>
-            <th className="px-4 py-3 font-semibold">{t.category}</th>
-            <th className="px-4 py-3 text-center font-semibold">{t.rank}</th>
-            <th className="px-4 py-3 font-semibold">{t.participant}</th>
-            <th className="px-4 py-3 font-semibold">{t.house}</th>
-            <th className="px-4 py-3 text-right font-semibold">{t.marks}</th>
-            <th className="px-4 py-3 text-center font-semibold">{t.grade}</th>
-            <th className="px-4 py-3 text-right font-semibold" aria-label={t.shareWhatsApp} />
+            <th className="px-4 py-3 font-black">{t.programme}</th>
+            <th className="px-4 py-3 font-black">{t.category}</th>
+            <th className="px-4 py-3 text-center font-black">{t.rank}</th>
+            <th className="px-4 py-3 font-black">{t.participant}</th>
+            <th className="px-4 py-3 font-black">{t.house}</th>
+            <th className="px-4 py-3 text-right font-black">{t.marks}</th>
+            <th className="px-4 py-3 text-center font-black">{t.grade}</th>
+            <th className="px-4 py-3 text-right font-black" aria-label={t.shareWhatsApp} />
           </tr>
         </thead>
         <tbody>
-          {results.map((block, i) => {
+          {results.map((block) => {
             const first = block.entries[0];
             if (!first) return null;
             return (
               <tr
                 key={block.result_set.id}
-                className={cn("border-t border-line/70", i % 2 === 1 && "bg-paper/40")}
+                className="border-t-2 border-fest-ink/12"
               >
                 <td className="px-4 py-3">
                   <Link
                     href={`/events/${block.event.slug}`}
-                    className="font-medium text-kerala-dark hover:underline"
+                    className="font-bold text-fest-ink underline-offset-2 hover:underline"
                   >
                     {tName(locale, block.event.programme)}
                   </Link>
@@ -67,7 +68,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                   </Link>
                 </td>
                 <td className="px-4 py-3 text-right tabular">{first.marks}</td>
-                <td className="px-4 py-3 text-center font-semibold">{first.grade}</td>
+                <td className="px-4 py-3 text-center font-black">{first.grade}</td>
                 <td className="px-4 py-3 text-right">
                   <WhatsAppShareButton
                     compact
@@ -89,7 +90,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
       </table>
 
       {/* Mobile cards */}
-      <ul className="divide-y divide-line md:hidden">
+      <ul className="divide-y-2 divide-fest-ink/15 md:hidden">
         {results.map((block) => {
           const first = block.entries[0];
           if (!first) return null;
@@ -107,7 +108,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
               <div className="flex items-start justify-between gap-2 sm:gap-3">
                 <Link
                   href={`/events/${block.event.slug}`}
-                  className="font-display text-sm font-bold text-kerala-dark hover:underline sm:text-base"
+                  className="font-display line-clamp-2 text-sm font-black text-fest-ink underline-offset-2 hover:underline sm:text-base"
                 >
                   {tName(locale, block.event.programme)}
                 </Link>
@@ -118,7 +119,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
               <div className="mt-2 flex items-center gap-2.5 sm:mt-3 sm:gap-3">
                 <Medal rank={first.rank} className="h-8 w-8 text-xs sm:h-9 sm:w-9 sm:text-sm" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{first.participant_name}</p>
+                  <p className="line-clamp-2 font-bold">{first.participant_name}</p>
                   <Link
                     href={`/houses/${first.house.slug}`}
                     className="text-sm text-muted hover:underline"
@@ -127,7 +128,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                   </Link>
                 </div>
                 <div className="text-right text-sm">
-                  <p className="tabular font-semibold">{first.marks}</p>
+                  <p className="tabular font-black">{first.marks}</p>
                   <p className="text-muted">{first.grade}</p>
                 </div>
               </div>

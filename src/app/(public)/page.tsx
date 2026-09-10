@@ -3,6 +3,7 @@ import { FestivalHero } from "@/components/public/festival-hero";
 import { HappeningNow } from "@/components/public/happening-now";
 import { LatestResults } from "@/components/public/latest-results";
 import { LeadingHouses } from "@/components/public/leading-houses";
+import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Reveal } from "@/components/ui/reveal";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -114,22 +115,22 @@ export default async function HomePage() {
             linkLabel={t.viewAll}
           />
           {!reportings.length ? (
-            <div className="card p-8 text-center text-sm text-muted">{t.noItems}</div>
+            <EmptyState icon="results" title={t.noItems} description={t.emptyHint} />
           ) : (
             <div className="grid gap-3">
               {reportings.slice(0, 3).map((item) => (
                 <Link
                   key={item.id}
                   href="/reportings"
-                  className="card card-hover flex gap-3 p-3 transition-shadow hover:shadow-md"
+                  className="card card-hover flex items-center gap-3 p-3"
                 >
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-kerala-soft text-kerala-dark">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center border-2 border-fest-ink bg-fest-yellow text-fest-ink">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   </span>
                   <span className="min-w-0">
-                    <p className="truncate font-semibold">
+                    <p className="line-clamp-2 font-bold">
                       {locale === "ml" ? item.title_ml : item.title_en}
                     </p>
                     <p className="text-xs text-muted">{t.reportingsHelp}</p>
@@ -151,7 +152,7 @@ export default async function HomePage() {
               <Link
                 key={item.id}
                 href={item.kind === "video" ? "/videos" : "/photos"}
-                className="group relative overflow-hidden rounded-[var(--radius)] border border-line bg-paper-white shadow-[var(--shadow-sm)]"
+                className="group relative overflow-hidden border-2 border-fest-ink bg-paper-white shadow-[var(--shadow-hard-xs)] transition-shadow hover:shadow-[var(--shadow-hard-sm)]"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -161,15 +162,15 @@ export default async function HomePage() {
                 />
                 {item.kind === "video" ? (
                   <span className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-kerala-dark shadow-lg">
+                    <span className="flex h-12 w-12 items-center justify-center border-2 border-fest-ink bg-fest-yellow text-fest-ink shadow-[var(--shadow-hard-xs)]">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M8 5v14l11-7z" />
                       </svg>
                     </span>
                   </span>
                 ) : null}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                  <p className="text-sm font-medium text-white">
+                <div className="absolute inset-x-0 bottom-0 bg-fest-ink/85 p-2.5">
+                  <p className="line-clamp-2 text-sm font-bold text-paper-white">
                     {locale === "ml" ? item.title_ml : item.title_en}
                   </p>
                 </div>
@@ -186,9 +187,9 @@ export default async function HomePage() {
             <Link
               key={href}
               href={href}
-              className="card card-hover group flex min-h-20 flex-col items-start justify-between gap-2 p-3 sm:min-h-24 sm:gap-3 sm:p-4"
+              className="card card-hover group flex min-h-24 flex-col items-start justify-between gap-2 p-3 sm:min-h-28 sm:gap-3 sm:p-4"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-kerala-soft text-kerala-dark transition-colors group-hover:bg-kerala-dark group-hover:text-white sm:h-10 sm:w-10 sm:rounded-xl">
+              <span className="flex h-9 w-9 items-center justify-center border-2 border-fest-ink bg-fest-yellow text-fest-ink transition-colors group-hover:bg-fest-red group-hover:text-white sm:h-10 sm:w-10">
                 <svg
                   width="18"
                   height="18"
@@ -202,7 +203,7 @@ export default async function HomePage() {
                   <path d={NAV_ICONS[href] ?? "M4 12h16"} />
                 </svg>
               </span>
-              <span className="text-sm font-semibold">{label}</span>
+              <span className="lines-2 line-clamp-2 text-sm font-bold">{label}</span>
             </Link>
           ))}
         </div>

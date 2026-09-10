@@ -77,7 +77,7 @@ export default async function WarRoomDashboard() {
                   <li key={s.id}>
                     <Link
                       href={`/war-room/results/${s.id}`}
-                      className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm transition-colors hover:bg-kerala-soft/40 sm:px-4 sm:py-3"
+                      className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm transition-colors hover:bg-fest-yellow-soft sm:px-4 sm:py-3"
                     >
                       <span className="min-w-0 truncate font-medium">
                         {event ? tName(locale, event.programme) : s.id}

@@ -33,23 +33,23 @@ export default async function StagePage({
           {locale === "ml" ? stage.location_ml : stage.location_en}
         </p>
       </header>
-      <ul className="card divide-y divide-line overflow-hidden">
+      <ul className="card divide-y-2 divide-fest-ink/15 overflow-hidden">
         {events.map((e) => (
           <li key={e.id}>
             <Link
               href={`/events/${e.slug}`}
-              className="flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-kerala-soft/50"
+              className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-fest-yellow-soft sm:gap-4 sm:px-4 sm:py-3.5"
             >
-              <span className="w-20 shrink-0 text-sm">
+              <span className="w-16 shrink-0 text-sm sm:w-20">
                 <span className="block text-xs uppercase tracking-wide text-muted">
                   {t.day} {e.day_number}
                 </span>
-                <span className="tabular font-semibold text-kerala-dark">
+                <span className="tabular font-black text-fest-red">
                   {formatTime(e.start_time, locale)}
                 </span>
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-medium">{tName(locale, e.programme)}</span>
+                <span className="line-clamp-2 block font-bold">{tName(locale, e.programme)}</span>
                 <span className="text-sm text-muted">{tName(locale, e.category)}</span>
               </span>
               <StatusBadge status={e.status} label={statusLabel(locale, e.status)} />

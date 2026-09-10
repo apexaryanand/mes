@@ -33,7 +33,7 @@ export default async function HousesPage() {
                   style={{ borderLeftWidth: 5, borderLeftColor: hex }}
                 >
                   <span
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-display text-lg font-black text-white"
+                    className="font-display flex h-12 w-12 shrink-0 items-center justify-center border-2 border-fest-ink text-lg font-black text-white shadow-[var(--shadow-hard-xs)]"
                     style={{ backgroundColor: hex }}
                   >
                     {standing?.overall_rank ? `#${standing.overall_rank}` : "—"}
@@ -42,7 +42,7 @@ export default async function HousesPage() {
                     <span className="mb-1 flex flex-wrap items-center gap-2">
                       <HouseBadge house={house} />
                     </span>
-                    <span className="block truncate font-display text-lg font-bold">
+                    <span className="font-display lines-1 line-clamp-2 block text-lg font-black">
                       {tName(locale, house)}
                     </span>
                     <span className="block text-sm text-muted">

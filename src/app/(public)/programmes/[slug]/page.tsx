@@ -27,15 +27,15 @@ export default async function ProgrammePage({
         <span className="truncate text-ink">{tName(locale, programme)}</span>
       </nav>
       <h1 className="font-display text-display-md font-bold">{tName(locale, programme)}</h1>
-      <ul className="card divide-y divide-line overflow-hidden">
+      <ul className="card divide-y-2 divide-fest-ink/15 overflow-hidden">
         {events.map((e) => (
           <li key={e.id}>
             <Link
               href={`/events/${e.slug}`}
-              className="flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-kerala-soft/50"
+              className="flex items-center justify-between gap-3 px-3 py-3 transition-colors hover:bg-fest-yellow-soft sm:px-4 sm:py-3.5"
             >
               <div className="min-w-0">
-                <p className="truncate font-medium">{tName(locale, e.category)}</p>
+                <p className="line-clamp-2 font-bold">{tName(locale, e.category)}</p>
                 <p className="text-sm text-muted">
                   {tName(locale, e.stage)} · {t.day} {e.day_number}
                 </p>

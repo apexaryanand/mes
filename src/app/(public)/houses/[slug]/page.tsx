@@ -65,16 +65,16 @@ export default async function HousePage({
       </div>
 
       {houseResults.length ? (
-        <ul className="card divide-y divide-line overflow-hidden">
+        <ul className="card divide-y-2 divide-fest-ink/15 overflow-hidden">
           {houseResults.map(({ block, entry }) => (
             <li key={entry.id}>
               <Link
                 href={`/events/${block.event.slug}`}
-                className="flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-paper"
+                className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-fest-yellow-soft sm:gap-4 sm:px-4 sm:py-3.5"
               >
                 <Medal rank={entry.rank} className="h-9 w-9 text-sm" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{tName(locale, block.event.programme)}</p>
+                  <p className="line-clamp-2 font-bold">{tName(locale, block.event.programme)}</p>
                   <p className="text-sm text-muted">
                     {tName(locale, block.event.category)}
                     {entry.grade ? ` · ${entry.grade} ${t.grade}` : ""}
