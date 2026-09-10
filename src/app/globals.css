@@ -45,10 +45,14 @@
   --radius: 14px;
   --radius-lg: 22px;
 
-  /* Quiet editorial surfaces */
+  /* Electric festival surfaces */
   --surface-dark: #123d32;
   --surface-dark-ink: #f7f3ea;
-  --shadow-festival: 0 12px 32px -10px rgba(18, 61, 50, 0.22);
+  --festival-orange: #f97316;
+  --festival-pink: #ec4899;
+  --festival-cyan: #06b6d4;
+  --festival-violet: #7c3aed;
+  --shadow-festival: 0 16px 36px -12px rgba(18, 61, 50, 0.32);
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -353,6 +357,64 @@ html[lang="ml"] .text-display-lg {
     transform: translateX(-50%);
   }
 }
+
+.festival-hero {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--kerala-green-deep) 94%, var(--festival-violet)), var(--kerala-green-deep));
+}
+.festival-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0.5rem;
+  background: linear-gradient(90deg, var(--festival-orange) 0 20%, var(--festival-pink) 20% 40%, var(--festival-violet) 40% 60%, var(--festival-cyan) 60% 80%, var(--gold) 80%);
+}
+.festival-hero::after {
+  content: "";
+  position: absolute;
+  right: -5rem;
+  top: 3rem;
+  width: 22rem;
+  height: 22rem;
+  border: 1px solid color-mix(in srgb, var(--gold) 42%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2rem color-mix(in srgb, var(--festival-pink) 10%, transparent), 0 0 0 5rem color-mix(in srgb, var(--festival-cyan) 8%, transparent);
+  pointer-events: none;
+}
+.festival-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--gold) 65%, transparent);
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
+  padding: 0.45rem 0.75rem;
+  color: var(--gold-light);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.festival-kicker::before {
+  content: "✦";
+  color: var(--festival-orange);
+}
+.festival-wordmark {
+  text-shadow: 0.08em 0.08em 0 var(--festival-pink), 0.15em 0.15em 0 var(--festival-orange);
+}
+.festival-stat {
+  border-top: 3px solid var(--festival-orange);
+}
+.festival-stat:nth-child(2) { border-color: var(--festival-cyan); }
+.festival-stat:nth-child(3) { border-color: var(--festival-pink); }
+.festival-stat:nth-child(4) { border-color: var(--gold); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .festival-hero::after { animation: festival-orbit 18s linear infinite; }
+}
+@keyframes festival-orbit {
+  to { transform: rotate(360deg); }
+}
+
 
 /* ---- Reveal on scroll ---- */
 .reveal {

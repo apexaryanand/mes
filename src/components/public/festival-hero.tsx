@@ -36,9 +36,7 @@ export function FestivalHero({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="section-eyebrow hero-accent before:bg-gold max-sm:text-[0.65rem]">
-                {t.official}
-              </span>
+              <span className="festival-kicker">{t.official}</span>
               <StatusBadge
                 status={isLive ? "live" : "completed"}
                 label={isLive ? t.live : t.upcoming}
@@ -46,16 +44,16 @@ export function FestivalHero({
               />
             </div>
 
-            <p className="font-display mt-3 text-[clamp(2.5rem,8vw,4.5rem)] font-black leading-none tracking-tight">
+            <p className="festival-wordmark font-display mt-5 text-[clamp(3.8rem,13vw,8.5rem)] font-black leading-[0.78] tracking-[-0.08em] text-white">
               MESTA
             </p>
-            <p className="mt-1 text-sm font-semibold uppercase tracking-[0.25em] text-white/80 sm:text-base">
-              {t.tagline}
+            <p className="mt-4 max-w-xl text-sm font-black uppercase tracking-[0.28em] text-gold-light sm:text-base">
+              {t.tagline} / 3000+ voices / one campus
             </p>
-            <h1 className="mt-3 font-display text-display-hero-compact font-bold text-white/95">
+            <h1 className="mt-4 max-w-2xl font-display text-display-hero-compact font-bold text-white">
               {eventTitle}
             </h1>
-            <p className="mt-2 flex flex-wrap items-center gap-x-2 text-xs hero-muted sm:text-sm">
+            <p className="mt-3 flex flex-wrap items-center gap-x-2 text-xs hero-muted sm:text-sm">
               <span className="font-semibold hero-accent">{venue}</span>
               <span aria-hidden>·</span>
               <span>
@@ -99,25 +97,25 @@ export function FestivalHero({
             label={t.housesCompeting}
             value={houses.length}
             accent="green"
-            className="border-white/20 bg-white/95 shadow-md backdrop-blur"
+            className="festival-stat border-white/20 bg-white/95 shadow-md backdrop-blur"
           />
           <StatCard
             label={t.eventsToday}
             value={todayEventsCount}
             accent="gold"
-            className="border-white/20 bg-white/95 shadow-md backdrop-blur"
+            className="festival-stat border-white/20 bg-white/95 shadow-md backdrop-blur"
           />
           <StatCard
             label={t.resultsPublished}
             value={resultsCount}
             accent="indigo"
-            className="border-white/20 bg-white/95 shadow-md backdrop-blur"
+            className="festival-stat border-white/20 bg-white/95 shadow-md backdrop-blur"
           />
           <StatCard
             label={t.liveNow}
             value={liveCount}
             accent="red"
-            className="border-white/20 bg-white/95 shadow-md backdrop-blur"
+            className="festival-stat border-white/20 bg-white/95 shadow-md backdrop-blur"
           />
         </div>
 
