@@ -15,7 +15,7 @@ export function SectionHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("mb-3 flex items-end justify-between gap-2 sm:mb-5 sm:gap-4", className)}>
+    <div className={cn("festival-section-header mb-3 flex items-end justify-between gap-2 sm:mb-5 sm:gap-4", className)}>
       <div className="min-w-0">
         {eyebrow ? <span className="section-eyebrow max-sm:text-[0.65rem]">{eyebrow}</span> : null}
         <h2 className="font-display mt-1 text-xl font-bold sm:mt-1.5 sm:text-display-md">{title}</h2>

@@ -13,7 +13,7 @@ export default function PublicLayout({
       <SiteHeader />
       <MobileQuickNav />
       <RealtimeRefresh />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-3 sm:px-4 sm:py-4 md:py-6">
+      <main className="festival-main mx-auto w-full max-w-6xl flex-1 px-3 py-3 sm:px-4 sm:py-4 md:py-6">
         {children}
       </main>
       <SiteFooter />

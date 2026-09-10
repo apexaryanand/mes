@@ -511,3 +511,52 @@ main > div > section:not(.festival-hero) .chip-active { background: #e83f2f; bor
     transform: none;
   }
 }
+
+/* ---- End-to-end festival system ---- */
+.festival-main {
+  background-image: radial-gradient(color-mix(in srgb, #14213d 14%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.festival-card {
+  border: 3px solid #14213d;
+  border-radius: 0;
+  box-shadow: 5px 5px 0 #14213d;
+  position: relative;
+}
+.festival-card:nth-child(3n) { box-shadow: 5px 5px 0 #e83f2f; }
+.festival-card:nth-child(4n) { box-shadow: 5px 5px 0 #19a974; }
+.festival-card:hover { border-color: #e83f2f; }
+.festival-page-header {
+  border-bottom: 4px solid #14213d;
+  padding-bottom: 1rem;
+  position: relative;
+}
+.festival-page-header::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 5rem;
+  height: 4px;
+  background: #ffd23f;
+}
+.festival-section-header h2,
+.festival-page-header h1 { text-transform: uppercase; }
+.festival-section-header .section-eyebrow,
+.festival-page-header .section-eyebrow { color: #e83f2f; }
+.festival-section-header .section-eyebrow::before,
+.festival-page-header .section-eyebrow::before { background: #19a974; }
+.festival-stat-card { border-radius: 0; border-width: 3px; box-shadow: 4px 4px 0 #14213d; }
+.festival-status { border: 2px solid #14213d; border-radius: 0.25rem; box-shadow: 2px 2px 0 #ffd23f; }
+.festival-button { border-radius: 0.25rem; border: 3px solid #14213d; box-shadow: 4px 4px 0 #14213d; text-transform: uppercase; letter-spacing: .04em; }
+.festival-button:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 #14213d; }
+.festival-table-card { border-radius: 0; box-shadow: 5px 5px 0 #14213d; }
+.festival-table-card thead { background: #14213d; color: #ffd23f; }
+.festival-table-card tbody tr:nth-child(even) { background: color-mix(in srgb, #ffd23f 14%, transparent); }
+.festival-table-card tbody tr:hover { background: color-mix(in srgb, #e83f2f 12%, transparent); }
+
+@media (max-width: 639px) {
+  .festival-main { background-size: 18px 18px; }
+  .festival-card { box-shadow: 3px 3px 0 #14213d; }
+  .festival-page-header { padding-bottom: .75rem; }
+}

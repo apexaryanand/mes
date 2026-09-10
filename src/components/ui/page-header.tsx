@@ -14,7 +14,7 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-wrap items-end justify-between gap-4", className)}>
+    <div className={cn("festival-page-header flex flex-wrap items-end justify-between gap-4", className)}>
       <div className="min-w-0">
         {eyebrow ? <span className="section-eyebrow">{eyebrow}</span> : null}
         <h1 className="font-display mt-1 text-xl font-bold sm:mt-1.5 sm:text-display-md">{title}</h1>

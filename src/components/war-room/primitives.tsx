@@ -10,7 +10,7 @@ export function TableCard({
   return (
     <div
       className={cn(
-        "card overflow-hidden max-sm:mobile-bleed max-sm:rounded-none max-sm:border-x-0",
+        "card festival-table-card overflow-hidden max-sm:mobile-bleed max-sm:rounded-none max-sm:border-x-0",
         className,
       )}
     >

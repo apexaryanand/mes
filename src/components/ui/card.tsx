@@ -13,7 +13,7 @@ export function Card({
   as?: React.ElementType;
 } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <Tag className={cn("card", hover && "card-hover", className)} {...rest}>
+    <Tag className={cn("card festival-card", hover && "card-hover", className)} {...rest}>
       {children}
     </Tag>
   );
