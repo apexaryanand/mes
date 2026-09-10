@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
@@ -15,7 +16,7 @@ export default async function NewsPage() {
     <div className="grid gap-5 sm:gap-8">
       <PageHeader eyebrow={t.official} title={t.news} />
       {!articles.length ? (
-        <div className="card p-10 text-center text-muted">{t.noItems}</div>
+        <EmptyState icon="results" title={t.noItems} description={t.emptyHint} />
       ) : null}
 
       {lead ? (

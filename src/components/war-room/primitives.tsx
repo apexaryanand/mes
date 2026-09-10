@@ -38,6 +38,5 @@ export function Th({
   );
 }
 
-export const wrInput =
-  "min-h-11 rounded-xl border border-line bg-paper-white px-3 text-sm focus:border-gold";
-export const wrLabel = "grid gap-1.5 text-sm font-medium";
+export const wrInput = "field-input text-sm";
+export const wrLabel = "field-label";

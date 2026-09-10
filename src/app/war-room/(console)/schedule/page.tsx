@@ -101,7 +101,7 @@ export default async function ScheduleAdminPage() {
                       <select
                         name="status"
                         defaultValue={e.status}
-                        className="rounded-lg border border-line bg-paper-white px-2 py-1.5 text-sm focus:border-gold"
+                        className="field-input min-h-9 w-auto px-2 py-1.5 text-sm"
                       >
                         {STATUSES.map((s) => (
                           <option key={s} value={s}>
@@ -109,7 +109,7 @@ export default async function ScheduleAdminPage() {
                           </option>
                         ))}
                       </select>
-                      <button className="rounded-full border border-line px-3 text-sm font-semibold text-kerala-dark transition-colors hover:border-gold">
+                      <button className="chip shrink-0 hover:bg-fest-yellow">
                         {t.edit}
                       </button>
                     </form>

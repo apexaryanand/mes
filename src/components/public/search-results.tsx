@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useI18n } from "@/lib/i18n/provider";
 import type { SearchHit } from "@/lib/types";
 
@@ -17,10 +18,10 @@ export function SearchResults({
 
   return (
     <div className="grid gap-4">
-      <form className="surface-glass sticky top-[52px] z-10 -mx-3 border-y border-line px-3 py-2 sm:-mx-4 sm:px-4 sm:py-3 md:mx-0 md:rounded-full md:border">
+      <form className="surface-glass sticky top-[var(--header-h)] z-20 -mx-3 border-y-2 border-fest-ink px-3 py-2 sm:-mx-4 sm:px-4 sm:py-3 md:mx-0 md:border-x-2">
         <div className="relative">
           <svg
-            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"
+            className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-fest-ink"
             width="18"
             height="18"
             viewBox="0 0 24 24"
@@ -37,12 +38,12 @@ export function SearchResults({
             defaultValue={query}
             autoFocus
             placeholder={t.searchPlaceholder}
-            className="min-h-12 w-full rounded-full border border-line bg-paper-white pl-11 pr-4 text-base focus:border-gold"
+            className="field-input min-h-12 pl-11 pr-4 text-base"
           />
         </div>
       </form>
       {!query ? null : grouped.length === 0 ? (
-        <div className="card p-10 text-center text-muted">{t.noItems}</div>
+        <EmptyState icon="search" title={t.noItems} description={t.emptyHint} />
       ) : (
         <ul className="grid gap-3">
           {grouped.map((hit) => (
@@ -52,7 +53,7 @@ export function SearchResults({
                   {t.searchTypes[hit.type]}
                 </span>
                 <span className="min-w-0">
-                  <span className="block font-medium">
+                  <span className="block font-bold">
                     {locale === "ml" ? hit.title_ml : hit.title_en}
                   </span>
                   {hit.subtitle_en ? (

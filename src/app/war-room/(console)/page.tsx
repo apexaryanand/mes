@@ -132,7 +132,7 @@ export default async function WarRoomDashboard() {
 const accentBar: Record<string, string> = {
   red: "before:bg-live",
   green: "before:bg-kerala",
-  gold: "before:[background:var(--grad-gold)]",
+  gold: "before:bg-fest-yellow",
   indigo: "before:bg-indigo",
 };
 

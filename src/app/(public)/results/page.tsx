@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ResultTable } from "@/components/public/result-table";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
@@ -114,7 +115,7 @@ export default async function ResultsPage({
 
       <div className="grid gap-5 sm:gap-10">
         {filtered.length === 0 ? (
-          <div className="card p-10 text-center text-muted">{t.noResults}</div>
+          <EmptyState icon="results" title={t.noResults} description={t.emptyHint} />
         ) : null}
         {filtered.map((block) => (
           <section key={block.result_set.id} className="grid gap-4">
@@ -168,7 +169,7 @@ function FilterSelect({
       <select
         name={name}
         defaultValue={value ?? ""}
-        className="min-h-11 rounded-xl border border-line bg-paper-white px-3 font-normal transition-colors focus:border-gold"
+        className="field-input font-normal"
       >
         <option value="">{allLabel}</option>
         {options.map(([v, l]) => (

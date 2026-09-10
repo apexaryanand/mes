@@ -28,7 +28,7 @@ export default async function ArticlesAdminPage() {
 
   const articles = await getAllArticlesAdmin();
   const field =
-    "min-h-11 rounded-xl border border-line bg-paper-white px-3 text-sm focus:border-gold";
+    "field-input text-sm";
   return (
     <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1fr_1.1fr]">
       <form action={createArticle} className="card grid h-fit gap-3 p-3 sm:p-5">

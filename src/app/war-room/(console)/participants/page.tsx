@@ -55,7 +55,7 @@ export default async function ParticipantsAdminPage() {
           Format: house_slug,full_name,full_name_ml,class_name,chest_number
         </p>
         <textarea name="csv" rows={6} className={`${wrInput} min-h-32 font-mono text-xs`} />
-        <button className="min-h-11 rounded-full border border-line text-sm font-semibold">Import CSV</button>
+        <button className="chip min-h-11 justify-center">Import CSV</button>
       </form>
 
       <TableCard className="lg:col-span-2">

@@ -40,7 +40,7 @@ export default async function UsersPage() {
             <select
               name="role"
               defaultValue={p.role}
-              className="min-h-10 rounded-xl border border-line bg-paper-white px-2.5 text-sm focus:border-gold"
+              className="field-input min-h-10 w-auto px-2.5 text-sm"
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>

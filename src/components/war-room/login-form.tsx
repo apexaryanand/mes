@@ -13,34 +13,37 @@ export function LoginForm() {
   return (
     <form action={action} className="grid gap-4">
       <input type="hidden" name="next" value={params.get("next") ?? "/war-room"} />
-      <label className="grid gap-1.5 text-sm font-medium">
+      <label className="field-label">
         {t.email}
         <input
           name="email"
           type="email"
           required
           autoComplete="email"
-          className="min-h-11 rounded-xl border border-line bg-paper-white px-3 font-normal focus:border-gold"
+          className="field-input font-normal"
         />
       </label>
-      <label className="grid gap-1.5 text-sm font-medium">
+      <label className="field-label">
         {t.password}
         <input
           name="password"
           type="password"
           required
           autoComplete="current-password"
-          className="min-h-11 rounded-xl border border-line bg-paper-white px-3 font-normal focus:border-gold"
+          className="field-input font-normal"
         />
       </label>
       <button
         disabled={pending}
-        className="min-h-12 rounded-full bg-kerala-dark font-semibold text-white shadow-[var(--shadow-md)] transition-all hover:bg-kerala-deep disabled:opacity-60"
+        className="festival-button mt-1 min-h-12 bg-fest-yellow font-bold text-fest-ink disabled:opacity-60"
       >
         {t.login}
       </button>
       {state?.error ? (
-        <p className="rounded-xl bg-live-soft px-4 py-3 text-sm font-medium text-live">
+        <p
+          role="alert"
+          className="border-2 border-fest-red bg-live-soft px-4 py-3 text-sm font-bold text-fest-red"
+        >
           {state.error}
         </p>
       ) : null}

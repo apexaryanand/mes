@@ -51,7 +51,7 @@ export default async function ResultEditorPage({
         : set.status;
   const activeStep = steps.findIndex((s) => s.key === normalized);
   const inputCls =
-    "rounded-lg border border-line bg-paper-white px-2.5 py-1.5 text-sm focus:border-gold disabled:bg-paper disabled:text-muted";
+    "field-input min-h-9 w-auto px-2.5 py-1.5 text-sm";
 
   const rows = entries.length
     ? entries

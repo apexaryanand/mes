@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { ButtonLink } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getMedia } from "@/lib/data/queries";
@@ -16,7 +17,13 @@ export default async function VideosPage() {
         </ButtonLink>
       </PageHeader>
       {!videos.length ? (
-        <div className="card p-10 text-center text-muted">{t.noItems}</div>
+        <EmptyState
+          icon="media"
+          title={t.noItems}
+          description={t.emptyHint}
+          actionHref="/submit"
+          actionLabel={t.submitMedia}
+        />
       ) : null}
       <div className="grid gap-5 md:grid-cols-2">
         {videos.map((item) => (

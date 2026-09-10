@@ -9,33 +9,33 @@ export default async function LoginPage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
+    <div className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
       {/* Brand panel */}
-      <div className="relative hidden overflow-hidden bg-kerala-deep text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="absolute inset-0 bg-kerala-dark/20" aria-hidden />
+      <div className="relative hidden overflow-hidden bg-fest-ink text-paper lg:flex lg:flex-col lg:justify-between">
         <div
-          className="absolute -left-24 -top-24 h-96 w-96 rounded-full opacity-30 blur-3xl [background:var(--grad-gold)]"
+          className="absolute inset-0 opacity-[0.14] [background-image:radial-gradient(var(--fest-yellow)_1.5px,transparent_1.5px)] [background-size:26px_26px]"
           aria-hidden
         />
         <div className="relative p-10">
-          <span className="section-eyebrow text-gold-light before:[background:var(--grad-gold)]">
+          <span className="section-eyebrow text-fest-yellow before:bg-fest-yellow">
             {t.official}
           </span>
         </div>
         <div className="relative p-10">
-          <p className="font-display text-display-lg font-black text-white">{t.brand}</p>
-          <p className="mt-3 max-w-sm text-white/70">{t.footerNote}</p>
+          <p className="font-display text-display-lg font-black text-paper-white">{t.brand}</p>
+          <div className="rule-festival mt-5 w-40" aria-hidden />
+          <p className="mt-4 max-w-sm text-paper/70">{t.footerNote}</p>
         </div>
-        <div className="relative p-10 text-sm text-white/50">{t.littleKites}</div>
+        <div className="relative p-10 text-sm text-paper/50">{t.littleKites}</div>
       </div>
 
       {/* Form panel */}
-      <div className="flex items-center justify-center bg-[#f1f0ec] px-3 py-6 sm:px-4 sm:py-10">
+      <div className="festival-main flex items-center justify-center bg-paper px-3 py-8 sm:px-4 sm:py-10">
         <div className="w-full max-w-md">
-          <div className="mb-4 flex items-start justify-between gap-3 sm:mb-6">
-            <div>
+          <div className="mb-4 flex items-end justify-between gap-3 sm:mb-6">
+            <div className="min-w-0">
               <p className="section-eyebrow">{t.warRoom}</p>
-              <h1 className="font-display text-display-md mt-1 font-bold">{t.login}</h1>
+              <h1 className="font-display text-display-md mt-1.5 font-black">{t.login}</h1>
             </div>
             <LanguageToggle compact />
           </div>
@@ -47,7 +47,7 @@ export default async function LoginPage() {
           <p className="mt-6 text-sm">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-kerala-dark hover:text-gold-deep"
+              className="nav-underline inline-flex items-center gap-1.5 font-bold text-fest-ink"
             >
               <span aria-hidden>&larr;</span>
               {t.home}

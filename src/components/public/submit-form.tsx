@@ -12,51 +12,42 @@ export function SubmitForm() {
   });
 
   return (
-    <form action={action} className="card grid gap-4 p-6">
-      <label className="grid gap-1.5 text-sm font-medium">
+    <form action={action} className="card grid gap-4 p-5 sm:p-6">
+      <label className="field-label">
         {t.yourName}
-        <input
-          name="name"
-          className="min-h-11 rounded-xl border border-line bg-paper-white px-3 font-normal focus:border-gold"
-        />
+        <input name="name" className="field-input font-normal" />
       </label>
-      <label className="grid gap-1.5 text-sm font-medium">
+      <label className="field-label">
         {t.caption}
-        <input
-          name="caption"
-          className="min-h-11 rounded-xl border border-line bg-paper-white px-3 font-normal focus:border-gold"
-        />
+        <input name="caption" className="field-input font-normal" />
       </label>
-      <label className="grid gap-1.5 text-sm font-medium">
+      <label className="field-label">
         {t.details}
-        <textarea
-          name="details"
-          rows={3}
-          className="rounded-xl border border-line bg-paper-white px-3 py-2 font-normal focus:border-gold"
-        />
+        <textarea name="details" rows={3} className="field-input font-normal" />
       </label>
-      <label className="grid gap-1.5 text-sm font-medium">
+      <label className="field-label">
         {t.upload}
         <input name="kind" type="hidden" value="photo" />
         <input
           name="file"
           type="file"
           accept="image/*,video/*"
-          className="min-h-11 rounded-xl border border-line bg-paper-white px-3 py-2 text-sm font-normal file:mr-3 file:rounded-full file:border-0 file:bg-kerala-soft file:px-4 file:py-1.5 file:text-sm file:font-semibold file:text-kerala-dark"
+          className="field-input py-2 text-sm font-normal file:mr-3 file:border-0 file:bg-fest-yellow file:px-3 file:py-1.5 file:text-sm file:font-bold file:text-fest-ink"
         />
       </label>
       <button
         disabled={pending}
-        className="min-h-12 rounded-full bg-kerala-dark font-semibold text-white shadow-[var(--shadow-md)] transition-all hover:bg-kerala-deep disabled:opacity-60"
+        className="festival-button mt-1 min-h-12 bg-fest-ink font-bold text-fest-yellow disabled:opacity-60"
       >
         {t.send}
       </button>
       {state.message ? (
         <p
+          role="status"
           className={
             state.ok
-              ? "rounded-xl bg-kerala-soft px-4 py-3 text-sm font-medium text-kerala-dark"
-              : "rounded-xl bg-live-soft px-4 py-3 text-sm font-medium text-live"
+              ? "border-2 border-fest-green bg-[color-mix(in_srgb,var(--fest-green)_12%,var(--paper-white))] px-4 py-3 text-sm font-bold text-fest-green"
+              : "border-2 border-fest-red bg-live-soft px-4 py-3 text-sm font-bold text-fest-red"
           }
         >
           {state.message}

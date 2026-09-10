@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
@@ -12,7 +13,7 @@ export default async function InterviewsPage() {
     <div className="grid gap-5 sm:gap-8">
       <PageHeader eyebrow={t.official} title={t.interviews} />
       {!interviews.length ? (
-        <div className="card p-10 text-center text-muted">{t.noItems}</div>
+        <EmptyState icon="media" title={t.noItems} description={t.emptyHint} />
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {interviews.map((item) => (

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
@@ -30,7 +31,7 @@ export default async function SchedulePage({
   return (
     <div className="grid gap-8">
       <PageHeader eyebrow={t.stages} title={t.schedule} />
-      <div className="surface-glass sticky top-[52px] z-10 -mx-3 flex flex-wrap gap-1.5 rounded-none border-y border-line px-3 py-2 sm:-mx-4 sm:gap-2 sm:px-4 sm:py-3 md:mx-0 md:rounded-full md:border">
+      <div className="surface-glass sticky top-[var(--header-h)] z-20 -mx-3 flex flex-wrap gap-1.5 border-y-2 border-fest-ink px-3 py-2 sm:-mx-4 sm:gap-2 sm:px-4 sm:py-3 md:mx-0 md:border-x-2">
         {[1, 2, 3].map((d) => (
           <Link
             key={d}
@@ -45,26 +46,26 @@ export default async function SchedulePage({
         </Link>
       </div>
       {byStage.length === 0 ? (
-        <div className="card p-10 text-center text-muted">{t.noItems}</div>
+        <EmptyState title={t.noItems} description={t.emptyHint} />
       ) : null}
       {byStage.map((group) => (
         <section key={group.stage.id}>
-          <h2 className="font-display mb-4 flex items-center gap-2 text-2xl font-bold">
-            <span className="h-5 w-1.5 rounded-full [background:var(--grad-gold)]" />
+          <h2 className="font-display mb-4 flex items-center gap-2.5 text-2xl font-black">
+            <span className="h-6 w-2 shrink-0 bg-fest-red" aria-hidden />
             {tName(locale, group.stage)}
           </h2>
-          <ol className="card divide-y divide-line overflow-hidden">
+          <ol className="card divide-y-2 divide-fest-ink/15 overflow-hidden">
             {group.items.map((e) => (
               <li key={e.id}>
                 <Link
                   href={`/events/${e.slug}`}
-                  className="flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-kerala-soft/50"
+                  className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-fest-yellow-soft sm:gap-4 sm:px-4 sm:py-3.5"
                 >
-                  <span className="w-20 shrink-0 tabular text-sm font-bold text-kerala-dark">
+                  <span className="tabular w-16 shrink-0 text-sm font-black text-fest-red sm:w-20">
                     {formatTime(e.start_time, locale)}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-medium">
+                    <span className="line-clamp-2 block font-bold">
                       {tName(locale, e.programme)}
                     </span>
                     <span className="text-xs text-muted">{tName(locale, e.category)}</span>

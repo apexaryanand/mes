@@ -4,6 +4,7 @@ import { EventResultActions } from "@/components/public/event-result-actions";
 import { ResultTable } from "@/components/public/result-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ButtonLink } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
@@ -84,7 +85,7 @@ export default async function EventPage({
           />
         </>
       ) : (
-        <div className="card p-10 text-center text-muted">{t.noResults}</div>
+        <EmptyState icon="results" title={t.noResults} description={t.emptyHint} />
       )}
 
       {relatedInterviews[0] ? (

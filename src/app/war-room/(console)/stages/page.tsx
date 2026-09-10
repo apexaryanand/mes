@@ -42,7 +42,7 @@ export default async function StagesAdminPage() {
         {stages.map((s) => (
           <article
             key={s.id}
-            className="card relative overflow-hidden p-3 pl-4 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:[background:var(--grad-gold)] sm:p-4 sm:pl-5 sm:before:w-1.5"
+            className="card relative overflow-hidden p-3 pl-4 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-fest-yellow sm:p-4 sm:pl-5 sm:before:w-1.5"
           >
             <h2 className="font-display font-bold">{tName(locale, s)}</h2>
             <p className="text-sm text-muted">{s.location_en}</p>

@@ -210,7 +210,7 @@ export function WarRoomShell({
           <Link
             href="/"
             aria-label={t.viewSite}
-            className="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:border-gold hover:text-kerala-dark sm:gap-1.5 sm:px-3.5 sm:py-2 sm:text-sm"
+            className="chip gap-1 px-2.5 py-1.5 text-xs sm:gap-1.5 sm:px-3.5 sm:py-2 sm:text-sm"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M5 12h14M13 6l6 6-6 6" />
