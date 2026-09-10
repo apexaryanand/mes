@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
@@ -20,15 +21,13 @@ export default async function StagePage({
 
   return (
     <div className="grid gap-6">
-      <nav className="flex items-center gap-1.5 text-sm text-muted">
-        <Link href="/stages" className="hover:text-kerala-dark">
-          {t.stages}
-        </Link>
-        <span aria-hidden>/</span>
-        <span className="truncate text-ink">{tName(locale, stage)}</span>
-      </nav>
+      <Breadcrumb
+        parentHref="/stages"
+        parentLabel={t.stages}
+        current={tName(locale, stage)}
+      />
       <header>
-        <h1 className="font-display text-display-md font-bold">{tName(locale, stage)}</h1>
+        <h1 className="font-display text-display-md font-black">{tName(locale, stage)}</h1>
         <p className="mt-1 text-muted">
           {locale === "ml" ? stage.location_ml : stage.location_en}
         </p>

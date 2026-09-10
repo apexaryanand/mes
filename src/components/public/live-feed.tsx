@@ -1,6 +1,7 @@
 "use client";
 
 import { WhatsAppShareButton } from "@/components/public/whatsapp-share";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useI18n } from "@/lib/i18n/provider";
 import { tName } from "@/lib/i18n/dictionaries";
 import { absoluteUrl, liveUpdateShareMessage } from "@/lib/share";
@@ -10,25 +11,24 @@ import { formatDateTime } from "@/lib/utils";
 export function LiveFeed({ updates }: { updates: LiveUpdateView[] }) {
   const { locale, t } = useI18n();
 
-  if (!updates.length)
-    return <div className="card p-6 text-center text-sm text-muted sm:p-8">{t.noItems}</div>;
+  if (!updates.length) return <EmptyState title={t.noItems} description={t.emptyHint} />;
 
   return (
-    <ol className="relative ml-0.5 border-l-2 border-line pl-4 sm:ml-1 sm:pl-6">
+    <ol className="relative ml-0.5 border-l-2 border-fest-ink pl-4 sm:ml-1 sm:pl-6">
       {updates.map((u) => (
         <li key={u.id} className="relative pb-4 last:pb-0 sm:pb-6">
           <span className="absolute -left-[23px] top-1 flex h-3.5 w-3.5 items-center justify-center sm:-left-[31px] sm:h-4 sm:w-4">
             <span className="live-dot" />
           </span>
           <div className="card p-3 sm:p-4">
-            <p className="flex flex-wrap items-center gap-x-1.5 text-[10px] font-semibold uppercase tracking-wide text-gold-deep sm:gap-x-2 sm:text-xs">
+            <p className="flex flex-wrap items-center gap-x-1.5 text-[10px] font-black uppercase tracking-wide text-fest-red sm:gap-x-2 sm:text-xs">
               {formatDateTime(u.created_at, locale)}
               {u.stage ? (
                 <>
-                  <span className="text-line" aria-hidden>
+                  <span className="text-fest-ink/40" aria-hidden>
                     &bull;
                   </span>
-                  <span className="text-kerala-dark">{tName(locale, u.stage)}</span>
+                  <span className="text-fest-ink">{tName(locale, u.stage)}</span>
                 </>
               ) : null}
             </p>

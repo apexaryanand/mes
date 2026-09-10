@@ -108,7 +108,7 @@ export default async function ResultsPage({
             ["delayed", t.delayed],
           ]}
         />
-        <button className="min-h-11 rounded-full bg-kerala-dark px-5 font-semibold text-white transition-colors hover:bg-kerala-deep md:col-span-3">
+        <button className="festival-button min-h-11 bg-fest-ink px-5 font-bold text-fest-yellow md:col-span-3">
           {t.filter}
         </button>
       </form>
@@ -122,7 +122,7 @@ export default async function ResultsPage({
             <div>
               <Link
                 href={`/events/${block.event.slug}`}
-                className="font-display text-display-md font-bold hover:underline"
+                className="font-display text-display-md font-black underline-offset-4 hover:underline"
               >
                 {tName(locale, block.event.programme)}
               </Link>
@@ -164,7 +164,7 @@ function FilterSelect({
   options: Array<[string, string] | string[]>;
 }) {
   return (
-    <label className="grid gap-1.5 text-sm font-medium">
+    <label className="field-label">
       {label}
       <select
         name={name}

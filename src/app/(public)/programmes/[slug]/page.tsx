@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
@@ -19,14 +20,12 @@ export default async function ProgrammePage({
 
   return (
     <div className="grid gap-6">
-      <nav className="flex items-center gap-1.5 text-sm text-muted">
-        <Link href="/programmes" className="hover:text-kerala-dark">
-          {t.programmes}
-        </Link>
-        <span aria-hidden>/</span>
-        <span className="truncate text-ink">{tName(locale, programme)}</span>
-      </nav>
-      <h1 className="font-display text-display-md font-bold">{tName(locale, programme)}</h1>
+      <Breadcrumb
+        parentHref="/programmes"
+        parentLabel={t.programmes}
+        current={tName(locale, programme)}
+      />
+      <h1 className="font-display text-display-md font-black">{tName(locale, programme)}</h1>
       <ul className="card divide-y-2 divide-fest-ink/15 overflow-hidden">
         {events.map((e) => (
           <li key={e.id}>

@@ -29,7 +29,7 @@ export function OfficialResultsPanel({ resultSet }: { resultSet: ResultSet }) {
   return (
     <div className="card flex flex-wrap items-center justify-between gap-4 p-4">
       <div className="min-w-0">
-        <p className="text-xs font-bold uppercase tracking-wider text-gold-deep">
+        <p className="section-eyebrow">
           {t.officialDocuments}
         </p>
         {showAppeal ? (
@@ -51,7 +51,7 @@ export function OfficialResultsPanel({ resultSet }: { resultSet: ResultSet }) {
         <Link
           href={resultSet.official_sheet_url!}
           download
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-kerala-dark px-5 text-sm font-semibold text-white shadow-[var(--shadow-md)] transition-colors hover:bg-kerala-deep"
+          className="festival-button inline-flex min-h-11 items-center gap-2 bg-fest-ink px-5 text-sm font-bold text-fest-yellow"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M12 3v12M7 10l5 5 5-5M4 21h16" />

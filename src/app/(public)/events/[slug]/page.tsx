@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { EventResultActions } from "@/components/public/event-result-actions";
 import { ResultTable } from "@/components/public/result-table";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -40,16 +41,17 @@ export default async function EventPage({
 
   return (
     <div className="grid gap-5 sm:gap-8">
-      <nav className="flex items-center gap-1.5 text-sm text-muted">
-        <Link href="/results" className="hover:text-kerala-dark">
-          {t.results}
-        </Link>
-        <span aria-hidden>/</span>
-        <span className="truncate text-ink">{tName(locale, event.programme)}</span>
-      </nav>
+      <Breadcrumb
+        parentHref="/results"
+        parentLabel={t.results}
+        current={tName(locale, event.programme)}
+      />
 
-      <header className="hero-on-dark relative overflow-hidden rounded-[var(--radius-lg)] bg-kerala-deep p-6 text-white md:p-8">
-        <div className="absolute inset-0 bg-kerala-dark/20" aria-hidden />
+      <header className="hero-on-dark relative overflow-hidden border-[var(--border-w)] border-fest-ink bg-fest-ink p-5 text-paper shadow-[var(--shadow-hard)] sm:p-6 md:p-8">
+        <div
+          className="absolute inset-0 opacity-[0.12] [background-image:radial-gradient(var(--fest-yellow)_1.5px,transparent_1.5px)] [background-size:24px_24px]"
+          aria-hidden
+        />
         <div className="relative">
           <StatusBadge
             status={event.status}
@@ -105,7 +107,7 @@ export default async function EventPage({
               <Link
                 key={item.id}
                 href={item.kind === "video" ? "/videos" : "/photos"}
-                className="group overflow-hidden rounded-[var(--radius)] border border-line"
+                className="group overflow-hidden border-2 border-fest-ink shadow-[var(--shadow-hard-xs)] transition-shadow hover:shadow-[var(--shadow-hard-sm)]"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -127,7 +129,7 @@ export default async function EventPage({
               <li key={a.id}>
                 <Link
                   href={`/news/${a.slug}`}
-                  className="card card-hover block p-4 font-medium hover:text-kerala-dark"
+                  className="card card-hover block p-4 font-bold"
                 >
                   {locale === "ml" ? a.title_ml : a.title_en}
                 </Link>

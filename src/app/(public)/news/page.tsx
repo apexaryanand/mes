@@ -24,12 +24,18 @@ export default async function NewsPage() {
           href={`/news/${lead.slug}`}
           className="card card-hover grid gap-4 overflow-hidden md:grid-cols-2"
         >
-          <div className="relative min-h-48 bg-kerala-deep">
-            <div className="absolute inset-0 bg-kerala-dark/20" aria-hidden />
+          <div className="relative flex min-h-44 items-end overflow-hidden bg-fest-ink p-5 md:min-h-full">
+            <div
+              className="absolute inset-0 opacity-[0.14] [background-image:radial-gradient(var(--fest-yellow)_1.5px,transparent_1.5px)] [background-size:22px_22px]"
+              aria-hidden
+            />
+            <span className="section-eyebrow relative text-fest-yellow before:bg-fest-yellow">
+              {t.news}
+            </span>
           </div>
-          <div className="p-6">
+          <div className="p-5 sm:p-6">
             <span className="chip py-1 text-xs">{lead.category}</span>
-            <h2 className="font-display mt-3 text-display-md font-bold leading-tight">
+            <h2 className="font-display mt-3 text-display-md font-black">
               {locale === "ml" ? lead.title_ml : lead.title_en}
             </h2>
             <p className="mt-3 text-muted">
@@ -46,10 +52,10 @@ export default async function NewsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {rest.map((a) => (
           <Link key={a.id} href={`/news/${a.slug}`} className="card card-hover flex flex-col p-5">
-            <span className="text-xs font-bold uppercase tracking-wider text-gold-deep">
+            <span className="text-xs font-black uppercase tracking-wider text-fest-red">
               {a.category}
             </span>
-            <h2 className="font-display mt-2 text-xl font-bold leading-snug">
+            <h2 className="font-display lines-2 mt-2 line-clamp-3 text-xl font-black">
               {locale === "ml" ? a.title_ml : a.title_en}
             </h2>
             <p className="mt-2 flex-1 text-sm text-muted">

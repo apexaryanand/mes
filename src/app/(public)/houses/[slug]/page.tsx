@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HouseBadge, houseColorHex } from "@/components/public/house-badge";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Medal } from "@/components/ui/medal";
 import { StatCard } from "@/components/ui/stat-card";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
@@ -29,20 +31,14 @@ export default async function HousePage({
 
   return (
     <div className="grid gap-5 sm:gap-8">
-      <nav className="flex items-center gap-1.5 text-sm text-muted" aria-label="Breadcrumb">
-        <Link href="/houses" className="hover:text-kerala-dark">
-          {t.houses}
-        </Link>
-        <span aria-hidden>/</span>
-        <span className="truncate text-ink">{tName(locale, house)}</span>
-      </nav>
+      <Breadcrumb parentHref="/houses" parentLabel={t.houses} current={tName(locale, house)} />
 
       <header
         className="card flex flex-wrap items-center gap-4 p-5"
         style={{ borderLeftWidth: 6, borderLeftColor: hex }}
       >
         <span
-          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl font-display text-2xl font-black text-white"
+          className="font-display flex h-16 w-16 shrink-0 items-center justify-center border-2 border-fest-ink text-2xl font-black text-white shadow-[var(--shadow-hard-xs)]"
           style={{ backgroundColor: hex }}
         >
           {house.short_name?.charAt(0) ?? house.name_en.charAt(0)}
@@ -89,16 +85,13 @@ export default async function HousePage({
           ))}
         </ul>
       ) : (
-        <div className="card p-10 text-center">
-          <p className="font-display text-lg font-bold">{t.noResults}</p>
-          <p className="mt-2 text-sm text-muted">{t.heroTagline}</p>
-          <Link
-            href="/results"
-            className="mt-4 inline-flex min-h-11 items-center rounded-full bg-kerala-dark px-5 text-sm font-semibold text-white"
-          >
-            {t.exploreResults}
-          </Link>
-        </div>
+        <EmptyState
+          icon="results"
+          title={t.noResults}
+          description={t.heroTagline}
+          actionHref="/results"
+          actionLabel={t.exploreResults}
+        />
       )}
     </div>
   );

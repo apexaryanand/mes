@@ -22,10 +22,13 @@ export default async function InterviewsPage() {
             href={`/interviews/${item.slug}`}
             className="card card-hover group relative flex flex-col overflow-hidden"
           >
-            <div className="relative aspect-video bg-kerala-deep">
-              <div className="absolute inset-0 bg-kerala-dark/20" aria-hidden />
+            <div className="relative aspect-video overflow-hidden border-b-[var(--border-w)] border-fest-ink bg-fest-ink">
+              <div
+                className="absolute inset-0 opacity-[0.16] [background-image:radial-gradient(var(--fest-yellow)_1.5px,transparent_1.5px)] [background-size:20px_20px]"
+                aria-hidden
+              />
               <span className="absolute inset-0 flex items-center justify-center">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-kerala-dark shadow-lg transition-transform group-hover:scale-110">
+                <span className="flex h-14 w-14 items-center justify-center border-[var(--border-w)] border-fest-ink bg-fest-yellow text-fest-ink shadow-[var(--shadow-hard-sm)] transition-transform group-hover:scale-110">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M8 5v14l11-7z" />
                   </svg>
@@ -33,8 +36,10 @@ export default async function InterviewsPage() {
               </span>
             </div>
             <div className="p-4">
-              <p className="font-display text-xl font-bold">{item.winner_name}</p>
-              <p className="mt-0.5 text-sm text-muted">
+              <p className="font-display lines-1 line-clamp-2 text-xl font-black">
+                {item.winner_name}
+              </p>
+              <p className="mt-1 line-clamp-2 text-sm text-muted">
                 {tName(locale, item.house)} · {tName(locale, item.programme)}
               </p>
             </div>
