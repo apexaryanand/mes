@@ -4,15 +4,13 @@ import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type { AppRole } from "@/lib/types";
 
-const ROLES: AppRole[] = [
-  "super_admin",
-  "results_operator",
-  "results_verifier",
-  "reporter",
-  "media_moderator",
-  "editor",
-  "photographer",
-];
+const ROLES: AppRole[] = ["super_admin", "war_room", "media_team"];
+
+const ROLE_LABELS: Record<AppRole, string> = {
+  super_admin: "Super Admin",
+  war_room: "War Room",
+  media_team: "Media Team",
+};
 
 export default async function UsersPage() {
   const locale = await getRequestLocale();
@@ -21,6 +19,9 @@ export default async function UsersPage() {
 
   return (
     <div className="grid gap-3">
+      <p className="text-sm text-muted">
+        Create accounts in Supabase Auth, then assign one of three roles here.
+      </p>
       {profiles.length ? (
         profiles.map((p) => (
           <form
@@ -43,7 +44,7 @@ export default async function UsersPage() {
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>
-                  {r.replace(/_/g, " ")}
+                  {ROLE_LABELS[r]}
                 </option>
               ))}
             </select>

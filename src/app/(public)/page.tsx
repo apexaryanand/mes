@@ -2,7 +2,6 @@ import Link from "next/link";
 import { HappeningNow } from "@/components/public/happening-now";
 import { LatestResults } from "@/components/public/latest-results";
 import { LeadingSchools } from "@/components/public/leading-schools";
-import { LiveFeed } from "@/components/public/live-feed";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -11,8 +10,8 @@ import { Reveal } from "@/components/ui/reveal";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import {
-  getLiveUpdates,
   getMedia,
+  getReportings,
   getPublishedResults,
   getScheduledEvents,
   getSchools,
@@ -36,14 +35,14 @@ const NAV_ICONS: Record<string, string> = {
 export default async function HomePage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
-  const [settings, events, results, standings, updates, media, schools] =
+  const [settings, events, results, standings, reportings, media, schools] =
     await Promise.all([
       getSettings(),
       getScheduledEvents(),
       getPublishedResults(),
       getStandings(),
-      getLiveUpdates(),
-      getMedia(),
+      getReportings(),
+      getMedia("photo"),
       getSchools(),
     ]);
 
@@ -58,14 +57,12 @@ export default async function HomePage() {
     [t.programmes, "/programmes"],
     [t.schedule, "/schedule"],
     [t.stages, "/stages"],
-    [t.liveUpdates, "/live"],
+    [t.reportings, "/reportings"],
     [t.news, "/news"],
     [t.photos, "/photos"],
     [t.videos, "/videos"],
     [t.interviews, "/interviews"],
   ] as const;
-
-  const tickerItems = updates.slice(0, 8).map((u) => u.body);
 
   return (
     <div className="grid gap-5 sm:gap-8 md:gap-10">
@@ -141,18 +138,6 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {tickerItems.length ? (
-          <div className="ticker-viewport relative hidden border-t border-white/20 bg-black/25 py-2 sm:block">
-            <div className="ticker-track px-3 text-sm hero-muted sm:px-4">
-              {[...tickerItems, ...tickerItems].map((item, i) => (
-                <span key={i} className="inline-flex items-center gap-3">
-                  <span className="live-dot shrink-0" />
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-        ) : null}
       </section>
 
       <Reveal as="section">
@@ -188,12 +173,36 @@ export default async function HomePage() {
       <section className="grid gap-5 sm:gap-10 lg:grid-cols-2">
         <Reveal>
           <SectionHeader
-            eyebrow={t.reporter}
-            title={t.liveUpdates}
-            linkHref="/live"
+            eyebrow={t.reportings}
+            title={t.reportings}
+            linkHref="/reportings"
             linkLabel={t.viewAll}
           />
-          <LiveFeed updates={updates.slice(0, 5)} />
+          {!reportings.length ? (
+            <div className="card p-8 text-center text-sm text-muted">{t.noItems}</div>
+          ) : (
+            <div className="grid gap-3">
+              {reportings.slice(0, 3).map((item) => (
+                <Link
+                  key={item.id}
+                  href="/reportings"
+                  className="card flex gap-3 p-3 transition-shadow hover:shadow-md"
+                >
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-kerala-soft text-kerala-dark">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </span>
+                  <span className="min-w-0">
+                    <p className="truncate font-semibold">
+                      {locale === "ml" ? item.title_ml : item.title_en}
+                    </p>
+                    <p className="text-xs text-muted">{t.reportingsHelp}</p>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
         </Reveal>
         <Reveal delay={120}>
           <SectionHeader

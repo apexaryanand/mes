@@ -6,7 +6,7 @@ import { useI18n } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
-  { href: "/live", key: "liveUpdates", icon: "M12 2v6m0 8v6M2 12h6m8 0h6" },
+  { href: "/reportings", key: "reportings", icon: "M10 9l5 3-5 3M4 6h16v12H4z" },
   { href: "/results", key: "results", icon: "M3 5h18M3 10h18M3 15h12" },
   { href: "/stages", key: "stages", icon: "M3 7h18l-2 5H5zM5 12v7M19 12v7" },
   { href: "/schedule", key: "schedule", icon: "M4 5h16v15H4zM4 9h16M8 3v4M16 3v4" },

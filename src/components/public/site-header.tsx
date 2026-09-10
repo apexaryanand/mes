@@ -29,7 +29,7 @@ export function SiteHeader() {
     { href: "/", label: t.home },
     { href: "/results", label: t.results },
     { href: "/schedule", label: t.schedule },
-    { href: "/live", label: t.liveUpdates },
+    { href: "/reportings", label: t.reportings },
     { href: "/schools", label: t.schools },
     { href: "/news", label: t.news },
   ];

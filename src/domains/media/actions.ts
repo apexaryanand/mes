@@ -45,6 +45,7 @@ export async function submitPublicMedia(
     storage_path: path,
     submitted_by_name: name || "Visitor",
     status: "pending",
+    section: "gallery",
   });
   if (error) return { ok: false, message: error.message };
   return { ok: true, message: t.submissionReceived };

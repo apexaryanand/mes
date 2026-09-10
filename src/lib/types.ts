@@ -1,13 +1,6 @@
 export type Locale = "ml" | "en";
 
-export type AppRole =
-  | "super_admin"
-  | "results_operator"
-  | "results_verifier"
-  | "reporter"
-  | "media_moderator"
-  | "editor"
-  | "photographer";
+export type AppRole = "super_admin" | "war_room" | "media_team";
 
 export type EventStatus =
   | "upcoming"
@@ -29,6 +22,7 @@ export type AppealStatus = "none" | "open" | "under_review" | "closed";
 export type GradeCode = "A" | "B" | "C";
 export type ItemKind = "individual" | "group";
 export type MediaKind = "photo" | "video";
+export type MediaSection = "gallery" | "reporting";
 export type MediaStatus = "pending" | "approved" | "rejected";
 export type LiveStatus = "upcoming" | "live" | "concluded";
 
@@ -243,6 +237,7 @@ export type InterviewView = Interview & {
 export type MediaItem = {
   id: string;
   kind: MediaKind;
+  section: MediaSection;
   title_en: string;
   title_ml: string;
   caption_en: string | null;
@@ -282,7 +277,7 @@ export type AuditLog = {
 };
 
 export type SearchHit = {
-  type: "school" | "programme" | "event" | "article" | "live_update";
+  type: "school" | "programme" | "event" | "article";
   id: string;
   slug?: string;
   title_en: string;

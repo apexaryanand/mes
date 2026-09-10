@@ -35,17 +35,20 @@ export default async function ResultEditorPage({
   if (!event) notFound();
   const entries = await getResultEntries(set.id);
   const locked = set.status === "published";
-  const operator = can(profile?.role, ["results_operator"]);
-  const verifier = can(profile?.role, ["results_verifier"]);
+  const editor = can(profile?.role, ["war_room"]);
   const defaultSchoolId = schools[0]?.id ?? "";
 
   const steps: Array<{ key: string; label: string }> = [
     { key: "draft", label: t.draft },
-    { key: "entered", label: t.entered },
-    { key: "verified", label: t.verified },
+    { key: "entered", label: t.submitForConfirmation },
     { key: "published", label: t.published },
   ];
-  const normalized = set.status === "correction_draft" ? "draft" : set.status;
+  const normalized =
+    set.status === "correction_draft"
+      ? "draft"
+      : set.status === "verified"
+        ? "entered"
+        : set.status;
   const activeStep = steps.findIndex((s) => s.key === normalized);
   const inputCls =
     "rounded-lg border border-line bg-paper-white px-2.5 py-1.5 text-sm focus:border-gold disabled:bg-paper disabled:text-muted";
@@ -185,7 +188,7 @@ export default async function ResultEditorPage({
             </tbody>
           </table>
         </div>
-        {operator && !locked ? (
+        {editor && !locked ? (
           <button className="mt-4 min-h-11 rounded-full bg-ink px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90">
             {t.saveDraft}
           </button>
@@ -193,32 +196,27 @@ export default async function ResultEditorPage({
       </form>
 
       <div className="flex flex-wrap gap-2">
-        {operator && (set.status === "draft" || set.status === "correction_draft") ? (
+        {editor && (set.status === "draft" || set.status === "correction_draft") ? (
           <form action={transitionResultForm}>
             <input type="hidden" name="id" value={set.id} />
             <input type="hidden" name="next" value="entered" />
-            <button className="min-h-11 rounded-full bg-amber-600 px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90">{t.submitForVerification}</button>
+            <button className="min-h-11 rounded-full bg-amber-600 px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90">
+              {t.submitForConfirmation}
+            </button>
           </form>
         ) : null}
-        {verifier && set.status === "entered" ? (
-          <form action={transitionResultForm}>
-            <input type="hidden" name="id" value={set.id} />
-            <input type="hidden" name="next" value="verified" />
-            <button className="min-h-11 rounded-full bg-sky-700 px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90">{t.verify}</button>
-          </form>
-        ) : null}
-        {verifier && set.status === "verified" ? (
+        {editor && set.status === "entered" ? (
           <form action={transitionResultForm}>
             <input type="hidden" name="id" value={set.id} />
             <input type="hidden" name="next" value="published" />
             <ConfirmSubmit
               className="min-h-11 rounded-full bg-kerala-dark px-5 text-sm font-semibold text-white transition-colors hover:bg-kerala-deep"
-              label={t.publish}
+              label={t.confirmAndPublish}
               message={t.confirmPublish}
             />
           </form>
         ) : null}
-        {verifier && set.status === "published" ? (
+        {editor && set.status === "published" ? (
           <form action={startCorrectionForm}>
             <input type="hidden" name="id" value={set.id} />
             <ConfirmSubmit

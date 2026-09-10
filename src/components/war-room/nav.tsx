@@ -19,7 +19,7 @@ const GROUPS: NavGroup[] = [
       {
         href: "/war-room",
         key: "dashboard",
-        roles: ["super_admin", "results_operator", "results_verifier", "editor", "media_moderator", "photographer", "reporter"],
+        roles: ["super_admin", "war_room", "media_team"],
         icon: "M4 13h6V4H4zM14 20h6V4h-6zM4 20h6v-4H4z",
       },
     ],
@@ -27,11 +27,11 @@ const GROUPS: NavGroup[] = [
   {
     titleKey: "sectionResults",
     items: [
-      { href: "/war-room/results", key: "resultManagement", roles: ["super_admin", "results_operator", "results_verifier"], icon: "M9 11l3 3 8-8M4 6h16M4 12h6M4 18h10" },
-      { href: "/war-room/schedule", key: "scheduleManagement", roles: ["super_admin", "results_operator", "results_verifier"], icon: "M4 5h16v15H4zM4 9h16M8 3v4M16 3v4" },
-      { href: "/war-room/schools", key: "schools", roles: ["super_admin", "results_operator"], icon: "M4 20V9l8-5 8 5v11M9 20v-6h6v6" },
-      { href: "/war-room/participants", key: "participant", roles: ["super_admin", "results_operator"], icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" },
-      { href: "/war-room/programmes", key: "programmes", roles: ["super_admin", "results_operator"], icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
+      { href: "/war-room/results", key: "resultManagement", roles: ["super_admin", "war_room"], icon: "M9 11l3 3 8-8M4 6h16M4 12h6M4 18h10" },
+      { href: "/war-room/schedule", key: "scheduleManagement", roles: ["super_admin", "war_room"], icon: "M4 5h16v15H4zM4 9h16M8 3v4M16 3v4" },
+      { href: "/war-room/schools", key: "schools", roles: ["super_admin"], icon: "M4 20V9l8-5 8 5v11M9 20v-6h6v6" },
+      { href: "/war-room/participants", key: "participant", roles: ["super_admin"], icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" },
+      { href: "/war-room/programmes", key: "programmes", roles: ["super_admin"], icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
       { href: "/war-room/categories", key: "category", roles: ["super_admin"], icon: "M4 6h16M4 12h10M4 18h6" },
       { href: "/war-room/stages", key: "stages", roles: ["super_admin"], icon: "M3 7h18l-2 5H5zM5 12v7M19 12v7" },
     ],
@@ -39,11 +39,10 @@ const GROUPS: NavGroup[] = [
   {
     titleKey: "sectionEditorial",
     items: [
-      { href: "/war-room/live", key: "liveUpdates", roles: ["super_admin", "editor", "reporter"], icon: "M12 2v6m0 8v6M2 12h6m8 0h6" },
-      { href: "/war-room/media", key: "mediaModeration", roles: ["super_admin", "media_moderator", "photographer"], icon: "M4 6h16v12H4zM8 6l1.5-2h5L16 6M12 15a3 3 0 100-6 3 3 0 000 6z" },
-      { href: "/war-room/articles", key: "articleManagement", roles: ["super_admin", "editor"], icon: "M4 5h16v14H4zM8 9h8M8 13h8M8 17h5" },
-      { href: "/war-room/interviews", key: "interviewManagement", roles: ["super_admin", "editor", "photographer"], icon: "M4 6h16v10H4zM8 20h8M12 16v4" },
-      { href: "/reporter", key: "reporter", roles: ["super_admin", "reporter"], icon: "M12 3v10m0 0l-3-3m3 3l3-3M5 21h14" },
+      { href: "/war-room/media", key: "mediaModeration", roles: ["super_admin", "war_room"], icon: "M4 6h16v12H4zM8 6l1.5-2h5L16 6M12 15a3 3 0 100-6 3 3 0 000 6z" },
+      { href: "/war-room/articles", key: "articleManagement", roles: ["super_admin", "war_room", "media_team"], icon: "M4 5h16v14H4zM8 9h8M8 13h8M8 17h5" },
+      { href: "/war-room/uploads", key: "mediaUploads", roles: ["super_admin", "media_team"], icon: "M12 16V4m0 0l-4 4m4-4l4 4M4 20h16" },
+      { href: "/war-room/interviews", key: "interviewManagement", roles: ["super_admin", "media_team"], icon: "M4 6h16v10H4zM8 20h8M12 16v4" },
     ],
   },
   {
@@ -51,7 +50,7 @@ const GROUPS: NavGroup[] = [
     items: [
       { href: "/war-room/settings", key: "settings", roles: ["super_admin"], icon: "M12 8v4m0 4h.01M4.93 4.93l14.14 14.14M12 3a9 9 0 109 9" },
       { href: "/war-room/users", key: "userManagement", roles: ["super_admin"], icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21v-2a5 5 0 015-5h4a5 5 0 015 5v2" },
-      { href: "/war-room/audit", key: "auditLogs", roles: ["super_admin", "results_verifier"], icon: "M9 5h6M9 5a2 2 0 012-2h2a2 2 0 012 2M5 5h14v16H5zM9 12l2 2 4-4" },
+      { href: "/war-room/audit", key: "auditLogs", roles: ["super_admin", "war_room"], icon: "M9 5h6M9 5a2 2 0 012-2h2a2 2 0 012 2M5 5h14v16H5zM9 12l2 2 4-4" },
     ],
   },
 ];
@@ -63,6 +62,12 @@ function NavIcon({ d }: { d: string }) {
     </svg>
   );
 }
+
+const ROLE_LABELS: Record<AppRole, string> = {
+  super_admin: "Super Admin",
+  war_room: "War Room",
+  media_team: "Media Team",
+};
 
 export function WarRoomShell({
   role,
@@ -92,7 +97,7 @@ export function WarRoomShell({
     n.href === "/war-room" ? pathname === n.href : pathname.startsWith(n.href),
   );
   const title = activeItem
-    ? (t[activeItem.key as keyof typeof t] as string)
+    ? (t[activeItem.key as keyof typeof t] as string) || activeItem.key
     : t.warRoom;
 
   const sidebar = (
@@ -137,7 +142,7 @@ export function WarRoomShell({
                     <span className={cn(active ? "text-gold-light" : "text-white/60")}>
                       <NavIcon d={item.icon} />
                     </span>
-                    {t[item.key as keyof typeof t] as string}
+                    {(t[item.key as keyof typeof t] as string) || item.key}
                   </Link>
                 );
               })}
@@ -153,7 +158,7 @@ export function WarRoomShell({
           </span>
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-white">{name}</p>
-            <p className="truncate text-xs text-gold-light">{role.replace(/_/g, " ")}</p>
+            <p className="truncate text-xs text-gold-light">{ROLE_LABELS[role] ?? role}</p>
           </div>
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -170,12 +175,10 @@ export function WarRoomShell({
 
   return (
     <div className="flex min-h-screen bg-[#f1f0ec] text-ink">
-      {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 [background:var(--grad-hero)] md:block">
         <div className="sticky top-0 h-screen">{sidebar}</div>
       </aside>
 
-      {/* Mobile slide-over */}
       <div className={cn("fixed inset-0 z-50 md:hidden", open ? "pointer-events-auto" : "pointer-events-none")}>
         <div
           className={cn("absolute inset-0 bg-black/50 transition-opacity", open ? "opacity-100" : "opacity-0")}
@@ -192,7 +195,6 @@ export function WarRoomShell({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Top bar */}
         <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-white/90 px-3 py-2 backdrop-blur sm:gap-3 sm:px-4 sm:py-3 md:px-6">
           <button
             type="button"

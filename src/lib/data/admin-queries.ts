@@ -100,7 +100,7 @@ export async function getAllProfiles(): Promise<Profile[]> {
   return (data ?? []).map((p) => ({
     id: p.id as string,
     display_name: p.display_name as string,
-    role: p.role,
+    role: p.role as Profile["role"],
     email: null,
     is_active: p.is_active as boolean,
   }));

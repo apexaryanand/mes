@@ -33,9 +33,7 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isProtected =
     path.startsWith("/war-room") && !path.startsWith("/war-room/login");
-  const isReporter = path.startsWith("/reporter");
-
-  if ((isProtected || isReporter) && !user) {
+  if (isProtected && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/war-room/login";
     url.searchParams.set("next", path);

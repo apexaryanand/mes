@@ -3,14 +3,13 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { StatCard } from "@/components/ui/stat-card";
 import { getSessionProfile } from "@/lib/auth";
 import {
-  getAllLiveUpdatesAdmin,
   getAllMediaAdmin,
   getAllResultSets,
   getRecentPublished,
 } from "@/lib/data/admin-queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
-import { getLiveUpdates, getScheduledEvents } from "@/lib/data/queries";
+import { getScheduledEvents } from "@/lib/data/queries";
 import { cn } from "@/lib/utils";
 
 export default async function WarRoomDashboard() {
@@ -29,8 +28,6 @@ export default async function WarRoomDashboard() {
   const awaitingVerification = resultSets.filter((s) => s.status === "entered");
   const pendingMedia = (await getAllMediaAdmin()).filter((m) => m.status === "pending");
   const published = await getRecentPublished(6);
-  const updates = await getLiveUpdates();
-  const allUpdates = await getAllLiveUpdatesAdmin();
 
   return (
     <div className="grid gap-4 sm:gap-6">
@@ -111,22 +108,15 @@ export default async function WarRoomDashboard() {
           )}
         </Panel>
 
-        <Panel title={t.recentReports} accent="indigo">
-          {allUpdates.length ? (
+        <Panel title={t.awaitingModeration} accent="indigo">
+          {pendingMedia.length ? (
             <ul className="divide-y divide-line">
-              {allUpdates.slice(0, 5).map((u) => (
-                <li key={u.id} className="px-3 py-2.5 text-sm sm:px-4 sm:py-3">
-                  <span className="font-medium text-kerala-dark">{u.reporter_name}: </span>
-                  <span className="text-muted">{u.body.slice(0, 120)}</span>
-                </li>
-              ))}
-            </ul>
-          ) : updates.length ? (
-            <ul className="divide-y divide-line">
-              {updates.slice(0, 5).map((u) => (
-                <li key={u.id} className="px-3 py-2.5 text-sm sm:px-4 sm:py-3">
-                  <span className="font-medium text-kerala-dark">{u.reporter_name}: </span>
-                  <span className="text-muted">{u.body.slice(0, 120)}</span>
+              {pendingMedia.slice(0, 5).map((m) => (
+                <li key={m.id} className="px-3 py-2.5 text-sm sm:px-4 sm:py-3">
+                  <span className="font-medium text-kerala-dark">
+                    {locale === "ml" ? m.title_ml : m.title_en}
+                  </span>
+                  <span className="text-muted"> · {m.submitted_by_name}</span>
                 </li>
               ))}
             </ul>

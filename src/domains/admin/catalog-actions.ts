@@ -20,7 +20,7 @@ function parseCsv(text: string) {
 
 export async function saveSchoolForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator"])) return;
+  if (!can(profile?.role, [])) return;
 
   const name_en = String(formData.get("name_en") ?? "").trim();
   const name_ml = String(formData.get("name_ml") ?? "").trim();
@@ -58,7 +58,7 @@ export async function saveSchoolForm(formData: FormData) {
 
 export async function deleteSchoolForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator"])) return;
+  if (!can(profile?.role, [])) return;
   const id = String(formData.get("id"));
   const sb = await requireServerSupabase();
   const { error } = await sb.from("schools").delete().eq("id", id);
@@ -69,7 +69,7 @@ export async function deleteSchoolForm(formData: FormData) {
 
 export async function importSchoolsCsvForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator"])) return;
+  if (!can(profile?.role, [])) return;
   const csv = String(formData.get("csv") ?? "");
   const rows = parseCsv(csv);
   if (!rows.length) return;
@@ -102,7 +102,7 @@ export async function importSchoolsCsvForm(formData: FormData) {
 
 export async function saveParticipantForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator"])) return;
+  if (!can(profile?.role, [])) return;
 
   const school_id = String(formData.get("school_id") ?? "");
   const full_name = String(formData.get("full_name") ?? "").trim();
@@ -137,7 +137,7 @@ export async function saveParticipantForm(formData: FormData) {
 
 export async function deleteParticipantForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator"])) return;
+  if (!can(profile?.role, [])) return;
   const id = String(formData.get("id"));
   const sb = await requireServerSupabase();
   const { error } = await sb.from("participants").delete().eq("id", id);
@@ -148,7 +148,7 @@ export async function deleteParticipantForm(formData: FormData) {
 
 export async function importParticipantsCsvForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator"])) return;
+  if (!can(profile?.role, [])) return;
   const csv = String(formData.get("csv") ?? "");
   const rows = parseCsv(csv);
   if (!rows.length) return;
@@ -208,7 +208,7 @@ export async function saveCategoryForm(formData: FormData) {
 
 export async function saveProgrammeForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator"])) return;
+  if (!can(profile?.role, [])) return;
 
   const name_en = String(formData.get("name_en") ?? "").trim();
   const name_ml = String(formData.get("name_ml") ?? "").trim();
@@ -282,7 +282,7 @@ export async function saveStageForm(formData: FormData) {
 
 export async function saveScheduledEventForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator", "results_verifier"])) {
+  if (!can(profile?.role, [])) {
     return;
   }
 

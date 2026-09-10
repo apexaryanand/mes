@@ -1,3 +1,4 @@
+import { resolveMediaUrl } from "@/lib/media-url";
 import { createServerSupabase } from "@/lib/supabase/server";
 import type {
   Article,
@@ -206,13 +207,17 @@ export async function getInterviews(): Promise<InterviewView[]> {
   });
 }
 
-export async function getMedia(kind?: "photo" | "video"): Promise<MediaItemView[]> {
+export async function getMedia(
+  kind?: "photo" | "video",
+  section: "gallery" | "reporting" = "gallery",
+): Promise<MediaItemView[]> {
   const sb = await remoteClient();
   if (!sb) return [];
   let q = sb
     .from("media")
     .select("*")
     .eq("status", "approved")
+    .eq("section", section)
     .order("published_at", { ascending: false });
   if (kind) q = q.eq("kind", kind);
   const { data } = await q;
@@ -223,22 +228,28 @@ export async function getMedia(kind?: "photo" | "video"): Promise<MediaItemView[
     const r = row as MediaItemView;
     return {
       ...r,
+      section: (r.section ?? "gallery") as MediaItemView["section"],
+      url: resolveMediaUrl(r.url),
+      thumbnail_url: r.thumbnail_url ? resolveMediaUrl(r.thumbnail_url) : null,
       event: events.find((e) => e.id === r.scheduled_event_id) ?? null,
       school: schools.find((s) => s.id === r.school_id) ?? null,
     };
   });
 }
 
+export async function getReportings(): Promise<MediaItemView[]> {
+  return getMedia("video", "reporting");
+}
+
 export async function searchPublic(query: string): Promise<SearchHit[]> {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const hits: SearchHit[] = [];
-  const [schoolList, programmeList, events, articleList, updates] = await Promise.all([
+  const [schoolList, programmeList, events, articleList] = await Promise.all([
     getSchools(),
     getProgrammes(),
     getScheduledEvents(),
     getArticles(),
-    getLiveUpdates(),
   ]);
 
   for (const s of schoolList) {
@@ -289,19 +300,6 @@ export async function searchPublic(query: string): Promise<SearchHit[]> {
         title_en: a.title_en,
         title_ml: a.title_ml,
         href: `/news/${a.slug}`,
-      });
-    }
-  }
-  for (const u of updates) {
-    if (u.body.toLowerCase().includes(q)) {
-      hits.push({
-        type: "live_update",
-        id: u.id,
-        title_en: u.body.slice(0, 80),
-        title_ml: u.body.slice(0, 80),
-        href: "/live",
-        subtitle_en: u.reporter_name,
-        subtitle_ml: u.reporter_name,
       });
     }
   }

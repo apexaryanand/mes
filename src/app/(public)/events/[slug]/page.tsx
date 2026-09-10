@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EventResultActions } from "@/components/public/event-result-actions";
-import { LiveFeed } from "@/components/public/live-feed";
 import { ResultTable } from "@/components/public/result-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ButtonLink } from "@/components/ui/button";
@@ -12,7 +11,6 @@ import {
   getArticles,
   getEventBySlug,
   getInterviews,
-  getLiveUpdates,
   getMedia,
   getResultForEvent,
 } from "@/lib/data/queries";
@@ -29,15 +27,12 @@ export default async function EventPage({
   const event = await getEventBySlug(slug);
   if (!event) notFound();
 
-  const [result, updates, media, articles, interviews] = await Promise.all([
+  const [result, media, articles, interviews] = await Promise.all([
     getResultForEvent(event.id),
-    getLiveUpdates(),
     getMedia(),
     getArticles(),
     getInterviews(),
   ]);
-
-  const relatedUpdates = updates.filter((u) => u.scheduled_event_id === event.id);
   const relatedMedia = media.filter((m) => m.scheduled_event_id === event.id);
   const relatedArticles = articles.filter((a) => a.related_event_id === event.id);
   const relatedInterviews = interviews.filter((i) => i.scheduled_event_id === event.id);
@@ -120,13 +115,6 @@ export default async function EventPage({
               </Link>
             ))}
           </div>
-        </section>
-      ) : null}
-
-      {relatedUpdates.length ? (
-        <section>
-          <SectionHeader eyebrow={t.reporter} title={t.liveUpdates} />
-          <LiveFeed updates={relatedUpdates} />
         </section>
       ) : null}
 

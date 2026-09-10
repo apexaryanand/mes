@@ -56,7 +56,7 @@ export async function saveResultDraft(input: {
   }>;
 }) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator"])) return { error: "Not allowed." };
+  if (!can(profile?.role, ["war_room"])) return { error: "Not allowed." };
 
   const sb = await requireServerSupabase();
   const { data: set } = await sb
@@ -115,9 +115,13 @@ export async function transitionResult(resultSetId: string, next: ResultSetStatu
   if (!set) return { error: "Not found." };
 
   const op = profile?.role;
-  if (next === "entered" && !can(op, ["results_operator"])) return { error: "Not allowed." };
-  if ((next === "verified" || next === "published") && !can(op, ["results_verifier"])) {
-    return { error: "Not allowed." };
+  if (!can(op, ["war_room"])) return { error: "Not allowed." };
+
+  if (next === "entered" && !["draft", "correction_draft"].includes(set.status as string)) {
+    return { error: "Can only submit drafts for confirmation." };
+  }
+  if (next === "published" && set.status !== "entered" && set.status !== "verified") {
+    return { error: "Confirm only after submission for review." };
   }
   if (set.status === "published" && next !== "correction_draft") {
     return { error: "Published results are locked." };
@@ -132,13 +136,11 @@ export async function transitionResult(resultSetId: string, next: ResultSetStatu
     patch.entered_at = new Date().toISOString();
     patch.entered_by = profile?.id ?? null;
   }
-  if (next === "verified") {
-    patch.verified_at = new Date().toISOString();
-    patch.verified_by = profile?.id ?? null;
-  }
   if (next === "published") {
     patch.published_at = new Date().toISOString();
     patch.published_by = profile?.id ?? null;
+    patch.verified_at = new Date().toISOString();
+    patch.verified_by = profile?.id ?? null;
   }
 
   const { error } = await sb.from("result_sets").update(patch).eq("id", resultSetId);
@@ -148,7 +150,7 @@ export async function transitionResult(resultSetId: string, next: ResultSetStatu
 
 export async function startCorrection(resultSetId: string) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_verifier"])) return { error: "Not allowed." };
+  if (!can(profile?.role, ["war_room"])) return { error: "Not allowed." };
 
   const sb = await requireServerSupabase();
   const { data: published } = await sb.from("result_sets").select("*").eq("id", resultSetId).maybeSingle();
@@ -195,7 +197,7 @@ export async function startCorrection(resultSetId: string) {
 
 export async function updateEventStatus(eventId: string, status: EventStatus) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator", "results_verifier"])) {
+  if (!can(profile?.role, ["war_room"])) {
     return { error: "Not allowed." };
   }
   const sb = await requireServerSupabase();
@@ -207,39 +209,9 @@ export async function updateEventStatus(eventId: string, status: EventStatus) {
   return { ok: true };
 }
 
-export async function publishLiveUpdate(input: {
-  stageId: string;
-  eventId?: string;
-  body: string;
-}) {
-  const profile = await getSessionProfile();
-  if (!can(profile?.role, ["reporter"])) return { error: "Not allowed." };
-  if (!input.body.trim()) return { error: "Write an update first." };
-
-  const sb = await requireServerSupabase();
-  const { error } = await sb.from("live_updates").insert({
-    stage_id: input.stageId,
-    scheduled_event_id: input.eventId ?? null,
-    reporter_id: profile?.id ?? null,
-    reporter_name: profile?.display_name ?? "Reporter",
-    body: input.body.trim(),
-  });
-  if (error) return { error: error.message };
-  return { ok: true };
-}
-
-export async function removeLiveUpdate(id: string) {
-  const profile = await getSessionProfile();
-  if (!can(profile?.role, ["editor", "reporter"])) return { error: "Not allowed." };
-  const sb = await requireServerSupabase();
-  const { error } = await sb.from("live_updates").update({ is_removed: true }).eq("id", id);
-  if (error) return { error: error.message };
-  return { ok: true };
-}
-
 export async function moderateMedia(id: string, status: MediaStatus) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["media_moderator"])) return { error: "Not allowed." };
+  if (!can(profile?.role, ["war_room"])) return { error: "Not allowed." };
   const sb = await requireServerSupabase();
   const { error } = await sb
     .from("media")
@@ -255,7 +227,7 @@ export async function moderateMedia(id: string, status: MediaStatus) {
 
 export async function saveArticle(article: Partial<Article> & { title_en: string; title_ml: string }) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["editor"])) return { error: "Not allowed." };
+  if (!can(profile?.role, ["war_room", "media_team"])) return { error: "Not allowed." };
 
   const sb = await requireServerSupabase();
   const payload = {
@@ -270,7 +242,7 @@ export async function saveArticle(article: Partial<Article> & { title_en: string
     related_school_id: article.related_school_id ?? null,
     is_published: Boolean(article.is_published),
     published_at: article.is_published ? new Date().toISOString() : null,
-    author_name: profile?.display_name ?? "Editor",
+    author_name: profile?.display_name ?? "Staff",
     updated_at: new Date().toISOString(),
   };
 
@@ -298,7 +270,7 @@ export async function saveInterview(
   },
 ) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["editor", "photographer"])) return { error: "Not allowed." };
+  if (!can(profile?.role, ["media_team"])) return { error: "Not allowed." };
 
   const sb = await requireServerSupabase();
   const { error } = await sb.from("interviews").insert({
@@ -358,23 +330,9 @@ export async function moderateMediaForm(formData: FormData) {
   await bump();
 }
 
-export async function removeLiveUpdateForm(formData: FormData) {
-  await removeLiveUpdate(String(formData.get("id")));
-  await bump();
-}
-
-export async function publishLiveUpdateForm(formData: FormData) {
-  await publishLiveUpdate({
-    stageId: String(formData.get("stageId")),
-    eventId: String(formData.get("eventId") || "") || undefined,
-    body: String(formData.get("body") ?? ""),
-  });
-  await bump();
-}
-
 export async function createDraftForEventForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["results_operator"])) return;
+  if (!can(profile?.role, ["war_room"])) return;
 
   const eventId = String(formData.get("eventId"));
   const existing = await getActiveResultSetForEvent(eventId);

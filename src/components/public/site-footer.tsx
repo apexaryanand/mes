@@ -20,7 +20,7 @@ export function SiteFooter() {
       links: [
         [t.schedule, "/schedule"],
         [t.stages, "/stages"],
-        [t.liveUpdates, "/live"],
+        [t.reportings, "/reportings"],
       ],
     },
     {
