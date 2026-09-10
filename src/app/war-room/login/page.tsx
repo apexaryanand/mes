@@ -11,8 +11,8 @@ export default async function LoginPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Brand panel */}
-      <div className="relative hidden overflow-hidden text-white lg:flex lg:flex-col lg:justify-between [background:var(--grad-hero)]">
-        <div className="kolam-bg absolute inset-0 opacity-[0.12]" aria-hidden />
+      <div className="relative hidden overflow-hidden bg-kerala-deep text-white lg:flex lg:flex-col lg:justify-between">
+        <div className="absolute inset-0 bg-kerala-dark/20" aria-hidden />
         <div
           className="absolute -left-24 -top-24 h-96 w-96 rounded-full opacity-30 blur-3xl [background:var(--grad-gold)]"
           aria-hidden

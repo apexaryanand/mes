@@ -47,8 +47,8 @@ export default async function EventPage({
         <span className="truncate text-ink">{tName(locale, event.programme)}</span>
       </nav>
 
-      <header className="hero-on-dark relative overflow-hidden rounded-[var(--radius-lg)] p-6 text-white md:p-8 [background:var(--grad-hero)]">
-        <div className="kolam-bg absolute inset-0 opacity-[0.1]" aria-hidden />
+      <header className="hero-on-dark relative overflow-hidden rounded-[var(--radius-lg)] bg-kerala-deep p-6 text-white md:p-8">
+        <div className="absolute inset-0 bg-kerala-dark/20" aria-hidden />
         <div className="relative">
           <StatusBadge
             status={event.status}

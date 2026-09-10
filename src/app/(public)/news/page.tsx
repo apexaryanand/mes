@@ -23,8 +23,8 @@ export default async function NewsPage() {
           href={`/news/${lead.slug}`}
           className="card card-hover grid gap-4 overflow-hidden md:grid-cols-2"
         >
-          <div className="relative min-h-48 [background:var(--grad-hero)]">
-            <div className="kolam-bg absolute inset-0 opacity-[0.12]" aria-hidden />
+          <div className="relative min-h-48 bg-kerala-deep">
+            <div className="absolute inset-0 bg-kerala-dark/20" aria-hidden />
           </div>
           <div className="p-6">
             <span className="chip py-1 text-xs">{lead.category}</span>

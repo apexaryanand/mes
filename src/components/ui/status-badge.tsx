@@ -44,7 +44,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide",
+        "festival-status inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide",
         palette[status] ?? (dark ? "bg-white/10 text-white/70" : "bg-line text-muted"),
       )}
     >

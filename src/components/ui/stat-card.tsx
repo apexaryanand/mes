@@ -25,7 +25,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "card relative overflow-hidden p-3 pl-4 text-ink sm:p-4 sm:pl-5",
+        "card festival-stat-card relative overflow-hidden p-3 pl-4 text-ink sm:p-4 sm:pl-5",
         "before:absolute before:left-0 before:top-0 before:h-full before:w-1",
         accents[accent],
         className,
