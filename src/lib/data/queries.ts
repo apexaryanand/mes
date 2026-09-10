@@ -39,7 +39,11 @@ export async function remoteClient() {
 export async function getSettings(): Promise<EventSettings> {
   const sb = await remoteClient();
   if (!sb) return EMPTY_SETTINGS;
-  const { data } = await sb.from("event_settings").select("*").limit(1).maybeSingle();
+  const { data } = await sb
+    .from("event_settings")
+    .select("*")
+    .eq("slug", "mesta-2026")
+    .maybeSingle();
   return (data as EventSettings | null) ?? EMPTY_SETTINGS;
 }
 
