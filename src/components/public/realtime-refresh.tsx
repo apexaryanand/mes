@@ -7,7 +7,7 @@ import { createBrowserSupabase } from "@/lib/supabase/client";
 const TABLES = [
   "result_sets",
   "result_entries",
-  "school_standings",
+  "house_standings",
   "scheduled_events",
   "live_updates",
   "media",

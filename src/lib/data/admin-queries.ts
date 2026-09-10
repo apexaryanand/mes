@@ -30,7 +30,7 @@ export async function getResultEntries(setId: string): Promise<ResultEntryView[]
   const sb = await requireServerSupabase();
   const { data } = await sb
     .from("result_entries")
-    .select("*, school:schools(*)")
+    .select("*, house:houses(*)")
     .eq("result_set_id", setId)
     .order("rank", { ascending: true, nullsFirst: false });
   return (data ?? []) as ResultEntryView[];
@@ -41,7 +41,7 @@ export async function getRecentPublished(limit = 6): Promise<PublishedResultView
   const { data } = await sb
     .from("result_sets")
     .select(
-      "*, scheduled_event:scheduled_events(*, programme:programmes(*), category:categories(*), stage:stages(*)), result_entries(*, school:schools(*))",
+      "*, scheduled_event:scheduled_events(*, programme:programmes(*), category:categories(*), stage:stages(*)), result_entries(*, house:houses(*))",
     )
     .eq("status", "published")
     .is("deleted_at", null)
@@ -83,7 +83,7 @@ export async function getAllInterviewsAdmin() {
   const sb = await requireServerSupabase();
   const { data } = await sb
     .from("interviews")
-    .select("*, school:schools(*), programme:programmes(*)")
+    .select("*, house:houses(*), programme:programmes(*)")
     .order("created_at", { ascending: false });
   return data ?? [];
 }

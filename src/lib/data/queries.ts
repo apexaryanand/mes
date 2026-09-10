@@ -3,13 +3,13 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import type {
   Article,
   EventSettings,
+  HouseStanding,
   InterviewView,
   LiveUpdateView,
   MediaItemView,
   Participant,
   PublishedResultView,
   ScheduledEventView,
-  SchoolStanding,
   SearchHit,
 } from "@/lib/types";
 import { DEFAULT_SCORING_RULES } from "@/lib/types";
@@ -17,11 +17,11 @@ import { isSupabaseConfigured } from "@/lib/utils";
 
 export const EMPTY_SETTINGS: EventSettings = {
   id: "00000000-0000-0000-0000-000000000000",
-  slug: "kalolsavam",
-  name_en: "Kalolsavam",
-  name_ml: "കലോത്സവം",
-  venue_en: "",
-  venue_ml: "",
+  slug: "mesta-2026",
+  name_en: "MESTA — Mes Track & Arts",
+  name_ml: "മെസ്റ്റാ — Mes Track & Arts",
+  venue_en: "MES HSS Irimbiliyam",
+  venue_ml: "MES HSS ഇരിമ്പിളിയം",
   location_en: "",
   location_ml: "",
   start_date: new Date().toISOString().slice(0, 10),
@@ -43,16 +43,16 @@ export async function getSettings(): Promise<EventSettings> {
   return (data as EventSettings | null) ?? EMPTY_SETTINGS;
 }
 
-export async function getSchools() {
+export async function getHouses() {
   const sb = await remoteClient();
   if (!sb) return [];
-  const { data } = await sb.from("schools").select("*").order("name_en");
+  const { data } = await sb.from("houses").select("*").order("name_en");
   return data ?? [];
 }
 
-export async function getSchoolBySlug(slug: string) {
-  const schools = await getSchools();
-  return schools.find((s) => s.slug === slug) ?? null;
+export async function getHouseBySlug(slug: string) {
+  const houses = await getHouses();
+  return houses.find((h) => h.slug === slug) ?? null;
 }
 
 export async function getCategories() {
@@ -91,7 +91,7 @@ export async function getParticipants(): Promise<Participant[]> {
   if (!sb) return [];
   const { data } = await sb
     .from("participants")
-    .select("*, school:schools(*)")
+    .select("*, house:houses(*)")
     .order("full_name");
   return (data ?? []) as Participant[];
 }
@@ -112,14 +112,14 @@ export async function getEventBySlug(slug: string) {
   return events.find((e) => e.slug === slug) ?? null;
 }
 
-export async function getStandings(): Promise<SchoolStanding[]> {
+export async function getStandings(): Promise<HouseStanding[]> {
   const sb = await remoteClient();
   if (!sb) return [];
   const { data } = await sb
-    .from("school_standings")
-    .select("*, school:schools(*)")
+    .from("house_standings")
+    .select("*, house:houses(*)")
     .order("overall_rank", { nullsFirst: false });
-  return ((data ?? []) as SchoolStanding[]).sort(
+  return ((data ?? []) as HouseStanding[]).sort(
     (a, b) => (a.overall_rank ?? 999) - (b.overall_rank ?? 999),
   );
 }
@@ -130,7 +130,7 @@ export async function getPublishedResults(): Promise<PublishedResultView[]> {
   const { data } = await sb
     .from("result_sets")
     .select(
-      "*, scheduled_event:scheduled_events(*, programme:programmes(*), category:categories(*), stage:stages(*)), result_entries(*, school:schools(*))",
+      "*, scheduled_event:scheduled_events(*, programme:programmes(*), category:categories(*), stage:stages(*)), result_entries(*, house:houses(*))",
     )
     .eq("status", "published")
     .is("deleted_at", null)
@@ -196,7 +196,7 @@ export async function getInterviews(): Promise<InterviewView[]> {
   if (!sb) return [];
   const { data } = await sb
     .from("interviews")
-    .select("*, school:schools(*), programme:programmes(*)")
+    .select("*, house:houses(*), programme:programmes(*)")
     .eq("is_published", true)
     .order("published_at", { ascending: false });
   if (!data?.length) return [];
@@ -223,7 +223,7 @@ export async function getMedia(
   const { data } = await q;
   if (!data?.length) return [];
   const events = await getScheduledEvents();
-  const schools = await getSchools();
+  const houses = await getHouses();
   return data.map((row) => {
     const r = row as MediaItemView;
     return {
@@ -232,7 +232,7 @@ export async function getMedia(
       url: resolveMediaUrl(r.url),
       thumbnail_url: r.thumbnail_url ? resolveMediaUrl(r.thumbnail_url) : null,
       event: events.find((e) => e.id === r.scheduled_event_id) ?? null,
-      school: schools.find((s) => s.id === r.school_id) ?? null,
+      house: houses.find((h) => h.id === r.house_id) ?? null,
     };
   });
 }
@@ -245,22 +245,22 @@ export async function searchPublic(query: string): Promise<SearchHit[]> {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const hits: SearchHit[] = [];
-  const [schoolList, programmeList, events, articleList] = await Promise.all([
-    getSchools(),
+  const [houseList, programmeList, events, articleList] = await Promise.all([
+    getHouses(),
     getProgrammes(),
     getScheduledEvents(),
     getArticles(),
   ]);
 
-  for (const s of schoolList) {
-    if (`${s.name_en} ${s.name_ml} ${s.code ?? ""}`.toLowerCase().includes(q)) {
+  for (const h of houseList) {
+    if (`${h.name_en} ${h.name_ml} ${h.code ?? ""}`.toLowerCase().includes(q)) {
       hits.push({
-        type: "school",
-        id: s.id,
-        slug: s.slug,
-        title_en: s.name_en,
-        title_ml: s.name_ml,
-        href: `/schools/${s.slug}`,
+        type: "house",
+        id: h.id,
+        slug: h.slug,
+        title_en: h.name_en,
+        title_ml: h.name_ml,
+        href: `/houses/${h.slug}`,
       });
     }
   }

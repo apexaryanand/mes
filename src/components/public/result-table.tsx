@@ -30,7 +30,7 @@ export function ResultTable({
           <tr>
             <th className="px-4 py-3 font-semibold">{t.rank}</th>
             <th className="px-4 py-3 font-semibold">{t.participant}</th>
-            <th className="px-4 py-3 font-semibold">{t.school}</th>
+            <th className="px-4 py-3 font-semibold">{t.house}</th>
             <th className="px-4 py-3 text-right font-semibold">{t.marks}</th>
             <th className="px-4 py-3 text-center font-semibold">{t.grade}</th>
             <th className="px-4 py-3 text-right font-semibold">{t.points}</th>
@@ -51,10 +51,10 @@ export function ResultTable({
               <td className="px-4 py-3 font-medium">{row.participant_name ?? "—"}</td>
               <td className="px-4 py-3">
                 <Link
-                  href={`/schools/${row.school.slug}`}
+                  href={`/houses/${row.house.slug}`}
                   className="text-kerala-dark hover:underline"
                 >
-                  {tName(locale, row.school)}
+                  {tName(locale, row.house)}
                 </Link>
               </td>
               <td className="px-4 py-3 text-right tabular">{row.marks ?? "—"}</td>
@@ -76,10 +76,10 @@ export function ResultTable({
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{row.participant_name ?? "—"}</p>
                 <Link
-                  href={`/schools/${row.school.slug}`}
+                  href={`/houses/${row.house.slug}`}
                   className="text-sm text-kerala-dark hover:underline"
                 >
-                  {tName(locale, row.school)}
+                  {tName(locale, row.house)}
                 </Link>
                 <p className="mt-1 text-xs text-muted">
                   {t.marks}: {row.marks ?? "—"} · {t.grade}: {row.grade ?? "—"}
@@ -98,7 +98,7 @@ export function ResultTable({
                     programme: programmeName,
                     category: categoryName,
                     winner: row.participant_name ?? undefined,
-                    school: tName(locale, row.school),
+                    house: tName(locale, row.house),
                     rank: row.rank,
                     pageUrl: absoluteUrl(`/events/${eventSlug}`),
                   })}

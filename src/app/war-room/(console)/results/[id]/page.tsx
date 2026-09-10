@@ -8,7 +8,7 @@ import { can, getSessionProfile } from "@/lib/auth";
 import { getResultEntries, getResultSetById } from "@/lib/data/admin-queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
-import { getParticipants, getScheduledEvents, getSchools } from "@/lib/data/queries";
+import { getHouses, getParticipants, getScheduledEvents } from "@/lib/data/queries";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
 import { suggestGrade } from "@/domains/results/scoring";
@@ -26,9 +26,9 @@ export default async function ResultEditorPage({
   const profile = await getSessionProfile();
   const set = await getResultSetById(id);
   if (!set) notFound();
-  const [events, schools, participants] = await Promise.all([
+  const [events, houses, participants] = await Promise.all([
     getScheduledEvents(),
-    getSchools(),
+    getHouses(),
     getParticipants(),
   ]);
   const event = events.find((e) => e.id === set.scheduled_event_id);
@@ -36,7 +36,7 @@ export default async function ResultEditorPage({
   const entries = await getResultEntries(set.id);
   const locked = set.status === "published";
   const editor = can(profile?.role, ["war_room"]);
-  const defaultSchoolId = schools[0]?.id ?? "";
+  const defaultHouseId = houses[0]?.id ?? "";
 
   const steps: Array<{ key: string; label: string }> = [
     { key: "draft", label: t.draft },
@@ -58,7 +58,7 @@ export default async function ResultEditorPage({
     : [
         {
           id: "",
-          school_id: defaultSchoolId,
+          house_id: defaultHouseId,
           participant_id: null,
           participant_name: "",
           marks: null,
@@ -66,7 +66,7 @@ export default async function ResultEditorPage({
           rank: 1,
           points: 0,
           result_set_id: set.id,
-          school: schools[0],
+          house: houses[0],
         },
       ];
 
@@ -131,7 +131,7 @@ export default async function ResultEditorPage({
                 <th className="rounded-l-lg px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.rank}</th>
                 <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">Registered</th>
                 <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.participant}</th>
-                <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.school}</th>
+                <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.house}</th>
                 <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.marks}</th>
                 <th className="rounded-r-lg px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.grade}</th>
               </tr>
@@ -152,7 +152,7 @@ export default async function ResultEditorPage({
                     >
                       <option value="">Manual entry</option>
                       {participants
-                        .filter((p) => p.school_id === row.school_id || !row.school_id)
+                        .filter((p) => p.house_id === row.house_id || !row.house_id)
                         .map((p) => (
                           <option key={p.id} value={p.id}>
                             {p.full_name}
@@ -164,10 +164,10 @@ export default async function ResultEditorPage({
                     <input name={`name_${i}`} defaultValue={row.participant_name ?? ""} disabled={locked} className={cn(inputCls, "min-w-40 w-full")} />
                   </td>
                   <td className="px-3 py-2">
-                    <select name={`school_${i}`} defaultValue={row.school_id} disabled={locked} className={inputCls}>
-                      {schools.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {tName(locale, s)}
+                    <select name={`house_${i}`} defaultValue={row.house_id} disabled={locked} className={inputCls}>
+                      {houses.map((h) => (
+                        <option key={h.id} value={h.id}>
+                          {tName(locale, h)}
                         </option>
                       ))}
                     </select>

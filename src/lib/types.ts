@@ -25,6 +25,14 @@ export type MediaKind = "photo" | "video";
 export type MediaSection = "gallery" | "reporting";
 export type MediaStatus = "pending" | "approved" | "rejected";
 export type LiveStatus = "upcoming" | "live" | "concluded";
+export type HouseColor = "blue" | "red" | "yellow" | "green";
+
+export const HOUSE_COLOR_HEX: Record<HouseColor, string> = {
+  blue: "#2563eb",
+  red: "#dc2626",
+  yellow: "#eab308",
+  green: "#16a34a",
+};
 
 export type ScoringRules = {
   grade_points: Record<GradeCode, number>;
@@ -58,24 +66,25 @@ export type EventSettings = {
   scoring_rules: ScoringRules;
 };
 
-export type School = {
+export type House = {
   id: string;
   slug: string;
   code: string | null;
   name_en: string;
   name_ml: string;
   short_name: string | null;
+  color: HouseColor | null;
 };
 
 export type Participant = {
   id: string;
-  school_id: string;
+  house_id: string;
   full_name: string;
   full_name_ml: string | null;
   class_name: string | null;
   chest_number: string | null;
   created_at: string;
-  school?: School;
+  house?: House;
 };
 
 export type Category = {
@@ -93,7 +102,7 @@ export type Programme = {
   name_en: string;
   name_ml: string;
   item_kind: ItemKind;
-  allows_multiple_per_school: boolean;
+  allows_multiple_per_house: boolean;
 };
 
 export type Stage = {
@@ -148,7 +157,7 @@ export type ResultSet = {
 export type ResultEntry = {
   id: string;
   result_set_id: string;
-  school_id: string;
+  house_id: string;
   participant_id: string | null;
   participant_name: string | null;
   marks: number | null;
@@ -158,7 +167,7 @@ export type ResultEntry = {
 };
 
 export type ResultEntryView = ResultEntry & {
-  school: School;
+  house: House;
 };
 
 export type PublishedResultView = {
@@ -167,9 +176,9 @@ export type PublishedResultView = {
   entries: ResultEntryView[];
 };
 
-export type SchoolStanding = {
-  school_id: string;
-  school: School;
+export type HouseStanding = {
+  house_id: string;
+  house: House;
   total_points: number;
   grade_a_count: number;
   grade_b_count: number;
@@ -208,7 +217,7 @@ export type Article = {
   author_name: string;
   category: string;
   related_event_id: string | null;
-  related_school_id: string | null;
+  related_house_id: string | null;
   published_at: string | null;
   is_published: boolean;
 };
@@ -217,7 +226,7 @@ export type Interview = {
   id: string;
   slug: string;
   winner_name: string;
-  school_id: string;
+  house_id: string;
   programme_id: string;
   scheduled_event_id: string | null;
   rank: number | null;
@@ -229,7 +238,7 @@ export type Interview = {
 };
 
 export type InterviewView = Interview & {
-  school: School;
+  house: House;
   programme: Programme;
   event: ScheduledEventView | null;
 };
@@ -245,7 +254,7 @@ export type MediaItem = {
   url: string;
   thumbnail_url: string | null;
   scheduled_event_id: string | null;
-  school_id: string | null;
+  house_id: string | null;
   submitted_by_name: string | null;
   status: MediaStatus;
   published_at: string | null;
@@ -254,7 +263,7 @@ export type MediaItem = {
 
 export type MediaItemView = MediaItem & {
   event: ScheduledEventView | null;
-  school: School | null;
+  house: House | null;
 };
 
 export type Profile = {
@@ -277,7 +286,7 @@ export type AuditLog = {
 };
 
 export type SearchHit = {
-  type: "school" | "programme" | "event" | "article";
+  type: "house" | "programme" | "event" | "article";
   id: string;
   slug?: string;
   title_en: string;

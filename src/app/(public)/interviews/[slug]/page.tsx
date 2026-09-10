@@ -29,7 +29,7 @@ export default async function InterviewPage({
       <header>
         <h1 className="font-display text-display-md font-bold">{item.winner_name}</h1>
         <p className="mt-1 text-muted">
-          {tName(locale, item.school)} · {tName(locale, item.programme)}
+          {tName(locale, item.house)} · {tName(locale, item.programme)}
           {item.rank ? ` · ${item.rank}` : ""}
         </p>
         <div className="mt-3">

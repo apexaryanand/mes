@@ -5,6 +5,6 @@ export {
 } from "@/lib/data/queries";
 export {
   computeEntryPoints,
-  computeSchoolStandings,
+  computeHouseStandings,
   suggestGrade,
 } from "@/domains/results/scoring";

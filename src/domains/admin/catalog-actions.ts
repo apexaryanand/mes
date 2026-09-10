@@ -1,7 +1,6 @@
 "use server";
 
 import { can, getSessionProfile } from "@/lib/auth";
-import { uniqueSlug } from "@/lib/slug";
 import { requireServerSupabase } from "@/lib/supabase/require";
 import type { EventSettings, ItemKind, ScoringRules } from "@/lib/types";
 
@@ -18,84 +17,24 @@ function parseCsv(text: string) {
     .map((line) => line.split(",").map((cell) => cell.trim()));
 }
 
-export async function saveSchoolForm(formData: FormData) {
+export async function saveHouseForm(formData: FormData) {
   const profile = await getSessionProfile();
   if (!can(profile?.role, [])) return;
 
   const name_en = String(formData.get("name_en") ?? "").trim();
   const name_ml = String(formData.get("name_ml") ?? "").trim();
-  const code = String(formData.get("code") ?? "").trim() || null;
   const short_name = String(formData.get("short_name") ?? "").trim() || null;
   const id = String(formData.get("id") ?? "");
 
-  if (!name_en || !name_ml) return;
+  if (!name_en || !name_ml || !id) return;
 
   const sb = await requireServerSupabase();
-  const { data: existing } = await sb.from("schools").select("slug");
-  const slugs = (existing ?? []).map((s) => s.slug as string);
-
-  if (id) {
-    const { error } = await sb
-      .from("schools")
-      .update({ name_en, name_ml, code, short_name })
-      .eq("id", id);
-    if (error) return;
-  } else {
-    const slug = uniqueSlug(name_en, slugs);
-    const { error } = await sb.from("schools").insert({
-      slug,
-      name_en,
-      name_ml,
-      code,
-      short_name,
-    });
-    if (error) return;
-  }
-
-  await bump();
-  return;
-}
-
-export async function deleteSchoolForm(formData: FormData) {
-  const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
-  const id = String(formData.get("id"));
-  const sb = await requireServerSupabase();
-  const { error } = await sb.from("schools").delete().eq("id", id);
+  const { error } = await sb
+    .from("houses")
+    .update({ name_en, name_ml, short_name })
+    .eq("id", id);
   if (error) return;
-  await bump();
-  return;
-}
 
-export async function importSchoolsCsvForm(formData: FormData) {
-  const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
-  const csv = String(formData.get("csv") ?? "");
-  const rows = parseCsv(csv);
-  if (!rows.length) return;
-
-  const sb = await requireServerSupabase();
-  const { data: existing } = await sb.from("schools").select("slug");
-  const slugs = (existing ?? []).map((s) => s.slug as string);
-  const inserts = [];
-
-  for (const row of rows) {
-    const [code, name_en, name_ml, short_name] = row;
-    if (!name_en || !name_ml) continue;
-    const slug = uniqueSlug(name_en, [...slugs, ...inserts.map((i) => i.slug)]);
-    inserts.push({
-      slug,
-      code: code || null,
-      name_en,
-      name_ml,
-      short_name: short_name || null,
-    });
-    slugs.push(slug);
-  }
-
-  if (!inserts.length) return;
-  const { error } = await sb.from("schools").insert(inserts);
-  if (error) return;
   await bump();
   return;
 }
@@ -104,25 +43,25 @@ export async function saveParticipantForm(formData: FormData) {
   const profile = await getSessionProfile();
   if (!can(profile?.role, [])) return;
 
-  const school_id = String(formData.get("school_id") ?? "");
+  const house_id = String(formData.get("house_id") ?? "");
   const full_name = String(formData.get("full_name") ?? "").trim();
   const full_name_ml = String(formData.get("full_name_ml") ?? "").trim() || null;
   const class_name = String(formData.get("class_name") ?? "").trim() || null;
   const chest_number = String(formData.get("chest_number") ?? "").trim() || null;
   const id = String(formData.get("id") ?? "");
 
-  if (!school_id || !full_name) return;
+  if (!house_id || !full_name) return;
 
   const sb = await requireServerSupabase();
   if (id) {
     const { error } = await sb
       .from("participants")
-      .update({ school_id, full_name, full_name_ml, class_name, chest_number })
+      .update({ house_id, full_name, full_name_ml, class_name, chest_number })
       .eq("id", id);
     if (error) return;
   } else {
     const { error } = await sb.from("participants").insert({
-      school_id,
+      house_id,
       full_name,
       full_name_ml,
       class_name,
@@ -154,16 +93,16 @@ export async function importParticipantsCsvForm(formData: FormData) {
   if (!rows.length) return;
 
   const sb = await requireServerSupabase();
-  const { data: schools } = await sb.from("schools").select("id, code");
-  const byCode = new Map((schools ?? []).map((s) => [String(s.code), s.id as string]));
+  const { data: houses } = await sb.from("houses").select("id, slug");
+  const bySlug = new Map((houses ?? []).map((h) => [String(h.slug), h.id as string]));
 
   const inserts = [];
   for (const row of rows) {
-    const [school_code, full_name, full_name_ml, class_name, chest_number] = row;
-    const school_id = byCode.get(school_code);
-    if (!school_id || !full_name) continue;
+    const [house_slug, full_name, full_name_ml, class_name, chest_number] = row;
+    const house_id = bySlug.get(house_slug);
+    if (!house_id || !full_name) continue;
     inserts.push({
-      school_id,
+      house_id,
       full_name,
       full_name_ml: full_name_ml || null,
       class_name: class_name || null,
@@ -226,6 +165,7 @@ export async function saveProgrammeForm(formData: FormData) {
       .eq("id", id);
     if (error) return;
   } else {
+    const { uniqueSlug } = await import("@/lib/slug");
     const { data: existing } = await sb.from("programmes").select("slug");
     const slug = uniqueSlug(name_en, (existing ?? []).map((p) => p.slug as string));
     const { error } = await sb.from("programmes").insert({
@@ -263,6 +203,7 @@ export async function saveStageForm(formData: FormData) {
       .eq("id", id);
     if (error) return;
   } else {
+    const { uniqueSlug } = await import("@/lib/slug");
     const { data: existing } = await sb.from("stages").select("slug");
     const slug = uniqueSlug(name_en, (existing ?? []).map((s) => s.slug as string));
     const { error } = await sb.from("stages").insert({
@@ -323,6 +264,7 @@ export async function saveScheduledEventForm(formData: FormData) {
       .eq("id", id);
     if (error) return;
   } else {
+    const { uniqueSlug } = await import("@/lib/slug");
     const { data: existing } = await sb.from("scheduled_events").select("slug");
     const slug = uniqueSlug(slugBase, (existing ?? []).map((e) => e.slug as string));
     const { error } = await sb.from("scheduled_events").insert({
@@ -368,7 +310,7 @@ export async function saveEventSettingsForm(formData: FormData) {
     if (error) return;
   } else {
     const { error } = await sb.from("event_settings").insert({
-      slug: "mes-hss-irimbiliyam-2026",
+      slug: "mesta-2026",
       ...payload,
       scoring_rules: {
         grade_points: { A: 5, B: 3, C: 1 },

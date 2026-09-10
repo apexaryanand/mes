@@ -25,11 +25,11 @@ const malayalam = Manjari({
 
 export const metadata: Metadata = {
   title: {
-    default: "Kalolsavam Live · MES HSS Irimbiliyam",
-    template: "%s · Kalolsavam Live",
+    default: "MESTA — Mes Track & Arts",
+    template: "%s · MESTA",
   },
   description:
-    "Official live platform for the Sub-District Kerala School Kalolsavam hosted at MES HSS Irimbiliyam, Malappuram.",
+    "Official live platform for MESTA — Mes Track & Arts school kalolsavam at MES HSS Irimbiliyam, Malappuram.",
 };
 
 export default async function RootLayout({

@@ -2,7 +2,7 @@ import { saveInterview } from "@/domains/admin/actions";
 import { getAllInterviewsAdmin } from "@/lib/data/admin-queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
-import { getProgrammes, getSchools } from "@/lib/data/queries";
+import { getHouses, getProgrammes } from "@/lib/data/queries";
 import { revalidatePath } from "next/cache";
 
 async function createInterview(formData: FormData) {
@@ -10,7 +10,7 @@ async function createInterview(formData: FormData) {
   await saveInterview({
     winner_name: String(formData.get("winner_name") ?? ""),
     video_url: String(formData.get("video_url") ?? ""),
-    school_id: String(formData.get("school_id") ?? ""),
+    house_id: String(formData.get("house_id") ?? ""),
     programme_id: String(formData.get("programme_id") ?? ""),
     description_en: String(formData.get("description_en") ?? ""),
     description_ml: String(formData.get("description_ml") ?? ""),
@@ -22,8 +22,8 @@ async function createInterview(formData: FormData) {
 export default async function InterviewsAdminPage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
-  const [schools, programmes, interviews] = await Promise.all([
-    getSchools(),
+  const [houses, programmes, interviews] = await Promise.all([
+    getHouses(),
     getProgrammes(),
     getAllInterviewsAdmin(),
   ]);
@@ -34,25 +34,40 @@ export default async function InterviewsAdminPage() {
     <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1fr_1fr]">
       <form action={createInterview} className="card grid h-fit gap-3 p-3 sm:p-5">
         <p className="section-eyebrow">{t.create}</p>
-        <input name="winner_name" placeholder="Winner name" required className={field} />
+        <label className="grid gap-1 text-sm font-medium">
+          Winner name
+          <input name="winner_name" required className={field} />
+        </label>
         <div className="grid gap-3 sm:grid-cols-2">
-          <select name="school_id" required className={field}>
-            {schools.map((s) => (
-              <option key={s.id} value={s.id}>
-                {tName(locale, s)}
-              </option>
-            ))}
-          </select>
-          <select name="programme_id" required className={field}>
-            {programmes.map((p) => (
-              <option key={p.id} value={p.id}>
-                {tName(locale, p)}
-              </option>
-            ))}
-          </select>
+          <label className="grid gap-1 text-sm font-medium">
+            {t.house}
+            <select name="house_id" required className={field}>
+              {houses.map((h) => (
+                <option key={h.id} value={h.id}>
+                  {tName(locale, h)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-medium">
+            {t.programme}
+            <select name="programme_id" required className={field}>
+              {programmes.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {tName(locale, p)}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
-        <input name="rank" type="number" defaultValue={1} className={field} />
-        <input name="video_url" placeholder="https://www.youtube.com/embed/..." required className={field} />
+        <label className="grid gap-1 text-sm font-medium">
+          {t.rank}
+          <input name="rank" type="number" defaultValue={1} className={field} />
+        </label>
+        <label className="grid gap-1 text-sm font-medium">
+          Video URL
+          <input name="video_url" placeholder="https://www.youtube.com/embed/..." required className={field} />
+        </label>
         <textarea name="description_en" placeholder="Description EN" className={`${field} py-2`} />
         <textarea name="description_ml" placeholder="വിവരണം" className={`${field} py-2`} />
         <button className="min-h-11 rounded-full bg-kerala-dark font-semibold text-white transition-colors hover:bg-kerala-deep">

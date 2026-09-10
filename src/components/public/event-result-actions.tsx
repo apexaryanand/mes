@@ -17,7 +17,7 @@ export function EventResultActions({ result }: { result: PublishedResultView }) 
     programme: tName(locale, result.event.programme),
     category: tName(locale, result.event.category),
     winner: winner.participant_name ?? undefined,
-    school: tName(locale, winner.school),
+    house: tName(locale, winner.house),
     rank: winner.rank,
     pageUrl: absoluteUrl(`/events/${result.event.slug}`),
   });

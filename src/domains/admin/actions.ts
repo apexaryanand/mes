@@ -47,7 +47,7 @@ export async function saveResultDraft(input: {
   resultSetId: string;
   entries: Array<{
     id?: string;
-    school_id: string;
+    house_id: string;
     participant_id?: string | null;
     participant_name: string;
     marks: number | null;
@@ -87,7 +87,7 @@ export async function saveResultDraft(input: {
       }
       rows.push({
         result_set_id: input.resultSetId,
-        school_id: e.school_id,
+        house_id: e.house_id,
         participant_id: e.participant_id ?? null,
         participant_name,
         marks: e.marks,
@@ -172,14 +172,14 @@ export async function startCorrection(resultSetId: string) {
 
   const { data: entries } = await sb
     .from("result_entries")
-    .select("school_id, participant_id, participant_name, marks, grade, rank")
+    .select("house_id, participant_id, participant_name, marks, grade, rank")
     .eq("result_set_id", resultSetId);
 
   if (entries?.length) {
     const { error: copyError } = await sb.from("result_entries").insert(
       entries.map((e) => ({
         result_set_id: newSet.id,
-        school_id: e.school_id,
+        house_id: e.house_id,
         participant_id: e.participant_id,
         participant_name: e.participant_name,
         marks: e.marks,
@@ -239,7 +239,7 @@ export async function saveArticle(article: Partial<Article> & { title_en: string
     body_ml: article.body_ml ?? "",
     category: article.category ?? "News",
     related_event_id: article.related_event_id ?? null,
-    related_school_id: article.related_school_id ?? null,
+    related_house_id: article.related_house_id ?? null,
     is_published: Boolean(article.is_published),
     published_at: article.is_published ? new Date().toISOString() : null,
     author_name: profile?.display_name ?? "Staff",
@@ -261,7 +261,7 @@ export async function saveInterview(
   item: {
     winner_name: string;
     video_url: string;
-    school_id: string;
+    house_id: string;
     programme_id: string;
     scheduled_event_id?: string | null;
     rank?: number | null;
@@ -276,7 +276,7 @@ export async function saveInterview(
   const { error } = await sb.from("interviews").insert({
     slug: `interview-${Date.now()}`,
     winner_name: item.winner_name,
-    school_id: item.school_id,
+    house_id: item.house_id,
     programme_id: item.programme_id,
     scheduled_event_id: item.scheduled_event_id ?? null,
     rank: item.rank ?? 1,
@@ -359,7 +359,7 @@ export async function saveResultDraftForm(formData: FormData) {
   for (let i = 0; i < count; i++) {
     entries.push({
       id: String(formData.get(`id_${i}`) || "") || undefined,
-      school_id: String(formData.get(`school_${i}`)),
+      house_id: String(formData.get(`house_${i}`)),
       participant_id: String(formData.get(`participant_${i}`) || "") || null,
       participant_name: String(formData.get(`name_${i}`) ?? ""),
       marks: formData.get(`marks_${i}`) ? Number(formData.get(`marks_${i}`)) : null,

@@ -6,14 +6,14 @@ import { getRequestLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import {
   getCategories,
+  getHouses,
   getProgrammes,
   getPublishedResults,
-  getSchools,
   getStages,
 } from "@/lib/data/queries";
 
 type Search = Promise<{
-  school?: string;
+  house?: string;
   programme?: string;
   category?: string;
   stage?: string;
@@ -29,16 +29,16 @@ export default async function ResultsPage({
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
   const filters = await searchParams;
-  const [results, schools, programmes, categories, stages] = await Promise.all([
+  const [results, houses, programmes, categories, stages] = await Promise.all([
     getPublishedResults(),
-    getSchools(),
+    getHouses(),
     getProgrammes(),
     getCategories(),
     getStages(),
   ]);
 
   const filtered = results.filter((r) => {
-    if (filters.school && !r.entries.some((e) => e.school.slug === filters.school)) return false;
+    if (filters.house && !r.entries.some((e) => e.house.slug === filters.house)) return false;
     if (filters.programme && r.event.programme.slug !== filters.programme) return false;
     if (filters.category && r.event.category.code !== filters.category) return false;
     if (filters.stage && r.event.stage.slug !== filters.stage) return false;
@@ -62,11 +62,11 @@ export default async function ResultsPage({
       <PageHeader eyebrow={t.official} title={t.results} />
       <form className="card grid gap-3 p-3 sm:gap-4 sm:p-5 md:grid-cols-3">
         <FilterSelect
-          name="school"
-          label={t.school}
-          value={filters.school}
-          allLabel={t.allSchools}
-          options={schools.map((s) => [s.slug, tName(locale, s)])}
+          name="house"
+          label={t.house}
+          value={filters.house}
+          allLabel={t.allHouses}
+          options={houses.map((h) => [h.slug, tName(locale, h)])}
         />
         <FilterSelect
           name="programme"

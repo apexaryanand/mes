@@ -20,24 +20,24 @@ export async function GET(
     `Category: ${tName("en", event.category)}`,
     `Stage: ${tName("en", event.stage)} · Day ${event.day_number}`,
     "",
-    "Rank  Participant                    School              Marks  Grade",
+    "Rank  Participant                    House               Marks  Grade",
     ...(block?.entries.slice(0, 8).map((e) => {
       const name = (e.participant_name ?? "—").slice(0, 22).padEnd(22);
-      const school = tName("en", e.school).slice(0, 18).padEnd(18);
-      return `${String(e.rank).padStart(2)}   ${name}  ${school}  ${String(e.marks ?? "—").padStart(4)}    ${e.grade ?? "—"}`;
+      const house = tName("en", e.house).slice(0, 18).padEnd(18);
+      return `${String(e.rank).padStart(2)}   ${name}  ${house}  ${String(e.marks ?? "—").padStart(4)}    ${e.grade ?? "—"}`;
     }) ?? ["Results not yet published."]),
     "",
     block?.result_set.official_sheet_signed_by
       ? `Signed: ${block.result_set.official_sheet_signed_by}`
-      : "Signed: Convener, Sub-District Kalolsavam",
-    `Generated: ${new Date().toISOString().slice(0, 10)}`,
+      : "Signed: Convener, MESTA",
+      `Generated: ${new Date().toISOString().slice(0, 10)}`,
   ];
 
   const bytes = buildSimplePdf(title, lines);
   return new NextResponse(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="kalolsavam-result-${slug}.pdf"`,
+      "Content-Disposition": `attachment; filename="mesta-result-${slug}.pdf"`,
       "Cache-Control": "public, max-age=300",
     },
   });

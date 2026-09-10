@@ -14,26 +14,26 @@ export function resultShareMessage(opts: {
   programme: string;
   category: string;
   winner?: string;
-  school?: string;
+  house?: string;
   rank?: number | null;
   pageUrl: string;
 }): string {
-  const { locale, programme, category, winner, school, rank, pageUrl } = opts;
+  const { locale, programme, category, winner, house, rank, pageUrl } = opts;
   if (locale === "ml") {
     const parts = [
-      `🏆 കലോത്സവം ഫലം: ${programme}`,
+      `🏆 MESTA ഫലം: ${programme}`,
       category,
       winner && rank ? `${rank} സ്ഥാനം: ${winner}` : null,
-      school ? `സ്കൂൾ: ${school}` : null,
+      house ? `ഹൗസ്: ${house}` : null,
       pageUrl,
     ].filter(Boolean);
     return parts.join("\n");
   }
   const parts = [
-    `🏆 Kalolsavam result: ${programme}`,
+    `🏆 MESTA result: ${programme}`,
     category,
     winner && rank ? `${rank}${rank === 1 ? "st" : rank === 2 ? "nd" : rank === 3 ? "rd" : "th"}: ${winner}` : null,
-    school ? `School: ${school}` : null,
+    house ? `House: ${house}` : null,
     pageUrl,
   ].filter(Boolean);
   return parts.join("\n");
@@ -47,21 +47,21 @@ export function liveUpdateShareMessage(opts: {
 }): string {
   const { locale, body, stage, pageUrl } = opts;
   if (locale === "ml") {
-    return [stage ? `📍 ${stage}` : "📢 കലോത്സവം ലൈവ്", body, pageUrl].join("\n");
+    return [stage ? `📍 ${stage}` : "📢 MESTA ലൈവ്", body, pageUrl].join("\n");
   }
-  return [stage ? `📍 ${stage}` : "📢 Kalolsavam Live", body, pageUrl].join("\n");
+  return [stage ? `📍 ${stage}` : "📢 MESTA Live", body, pageUrl].join("\n");
 }
 
 export function winnerShareMessage(opts: {
   locale: "ml" | "en";
   name: string;
   programme: string;
-  school: string;
+  house: string;
   pageUrl: string;
 }): string {
-  const { locale, name, programme, school, pageUrl } = opts;
+  const { locale, name, programme, house, pageUrl } = opts;
   if (locale === "ml") {
-    return `🎉 വിജയി: ${name}\n${programme} · ${school}\n${pageUrl}`;
+    return `🎉 വിജയി: ${name}\n${programme} · ${house}\n${pageUrl}`;
   }
-  return `🎉 Winner: ${name}\n${programme} · ${school}\n${pageUrl}`;
+  return `🎉 Winner: ${name}\n${programme} · ${house}\n${pageUrl}`;
 }

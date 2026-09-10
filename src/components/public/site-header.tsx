@@ -30,7 +30,7 @@ export function SiteHeader() {
     { href: "/results", label: t.results },
     { href: "/schedule", label: t.schedule },
     { href: "/reportings", label: t.reportings },
-    { href: "/schools", label: t.schools },
+    { href: "/houses", label: t.houses },
     { href: "/news", label: t.news },
   ];
 
@@ -49,8 +49,8 @@ export function SiteHeader() {
     <header className="surface-glass sticky top-0 z-40 border-b border-line">
       <div className="mx-auto flex max-w-6xl items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-3">
         <Link href="/" className="group flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white shadow-[var(--shadow-gold)] [background:var(--grad-hero)] sm:h-9 sm:w-9 sm:rounded-xl">
-            <span className="font-display text-base font-black text-gold-light sm:text-lg">ക</span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white shadow-[var(--shadow-festival)] [background:var(--grad-festival)] sm:h-9 sm:w-9 sm:rounded-xl">
+            <span className="font-display text-[10px] font-black tracking-tight text-white sm:text-xs">M</span>
           </span>
           <span className="min-w-0">
             <span className="font-display block truncate text-base font-bold leading-tight text-kerala-dark sm:text-lg">

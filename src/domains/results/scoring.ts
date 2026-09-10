@@ -1,10 +1,10 @@
 import {
   DEFAULT_SCORING_RULES,
   type GradeCode,
+  type House,
+  type HouseStanding,
   type ItemKind,
   type ResultEntry,
-  type School,
-  type SchoolStanding,
   type ScoringRules,
 } from "../../lib/types";
 
@@ -42,14 +42,14 @@ export function computeEntryPoints(input: {
 
 export type StandingInputEntry = Pick<
   ResultEntry,
-  "school_id" | "grade" | "rank" | "points"
+  "house_id" | "grade" | "rank" | "points"
 >;
 
-export function computeSchoolStandings(
+export function computeHouseStandings(
   entries: StandingInputEntry[],
-  schools: School[],
-): SchoolStanding[] {
-  const bySchool = new Map<
+  houses: House[],
+): HouseStanding[] {
+  const byHouse = new Map<
     string,
     {
       total_points: number;
@@ -60,8 +60,8 @@ export function computeSchoolStandings(
     }
   >();
 
-  for (const school of schools) {
-    bySchool.set(school.id, {
+  for (const house of houses) {
+    byHouse.set(house.id, {
       total_points: 0,
       grade_a_count: 0,
       grade_b_count: 0,
@@ -71,7 +71,7 @@ export function computeSchoolStandings(
   }
 
   for (const entry of entries) {
-    let bucket = bySchool.get(entry.school_id);
+    let bucket = byHouse.get(entry.house_id);
     if (!bucket) {
       bucket = {
         total_points: 0,
@@ -80,7 +80,7 @@ export function computeSchoolStandings(
         grade_c_count: 0,
         wins_count: 0,
       };
-      bySchool.set(entry.school_id, bucket);
+      byHouse.set(entry.house_id, bucket);
     }
     bucket.total_points += entry.points;
     if (entry.grade === "A") bucket.grade_a_count += 1;
@@ -89,12 +89,12 @@ export function computeSchoolStandings(
     if (entry.rank === 1) bucket.wins_count += 1;
   }
 
-  const ranked = schools
-    .map((school) => {
-      const stats = bySchool.get(school.id)!;
+  const ranked = houses
+    .map((house) => {
+      const stats = byHouse.get(house.id)!;
       return {
-        school_id: school.id,
-        school,
+        house_id: house.id,
+        house,
         ...stats,
         overall_rank: null as number | null,
       };
@@ -103,7 +103,7 @@ export function computeSchoolStandings(
       if (b.total_points !== a.total_points) return b.total_points - a.total_points;
       if (b.grade_a_count !== a.grade_a_count) return b.grade_a_count - a.grade_a_count;
       if (b.wins_count !== a.wins_count) return b.wins_count - a.wins_count;
-      return a.school.name_en.localeCompare(b.school.name_en);
+      return a.house.name_en.localeCompare(b.house.name_en);
     });
 
   let lastPoints = Number.NaN;

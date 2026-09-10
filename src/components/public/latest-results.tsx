@@ -25,7 +25,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
             <th className="px-4 py-3 font-semibold">{t.category}</th>
             <th className="px-4 py-3 text-center font-semibold">{t.rank}</th>
             <th className="px-4 py-3 font-semibold">{t.participant}</th>
-            <th className="px-4 py-3 font-semibold">{t.school}</th>
+            <th className="px-4 py-3 font-semibold">{t.house}</th>
             <th className="px-4 py-3 text-right font-semibold">{t.marks}</th>
             <th className="px-4 py-3 text-center font-semibold">{t.grade}</th>
             <th className="px-4 py-3 text-right font-semibold" aria-label={t.shareWhatsApp} />
@@ -60,10 +60,10 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                 <td className="px-4 py-3">{first.participant_name}</td>
                 <td className="px-4 py-3">
                   <Link
-                    href={`/schools/${first.school.slug}`}
+                    href={`/houses/${first.house.slug}`}
                     className="hover:underline"
                   >
-                    {tName(locale, first.school)}
+                    {tName(locale, first.house)}
                   </Link>
                 </td>
                 <td className="px-4 py-3 text-right tabular">{first.marks}</td>
@@ -76,7 +76,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                       programme: tName(locale, block.event.programme),
                       category: tName(locale, block.event.category),
                       winner: first.participant_name ?? undefined,
-                      school: tName(locale, first.school),
+                      house: tName(locale, first.house),
                       rank: first.rank,
                       pageUrl: absoluteUrl(`/events/${block.event.slug}`),
                     })}
@@ -98,7 +98,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
             programme: tName(locale, block.event.programme),
             category: tName(locale, block.event.category),
             winner: first.participant_name ?? undefined,
-            school: tName(locale, first.school),
+            house: tName(locale, first.house),
             rank: first.rank,
             pageUrl: absoluteUrl(`/events/${block.event.slug}`),
           });
@@ -120,10 +120,10 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{first.participant_name}</p>
                   <Link
-                    href={`/schools/${first.school.slug}`}
+                    href={`/houses/${first.house.slug}`}
                     className="text-sm text-muted hover:underline"
                   >
-                    {tName(locale, first.school)}
+                    {tName(locale, first.house)}
                   </Link>
                 </div>
                 <div className="text-right text-sm">

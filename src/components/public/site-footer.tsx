@@ -11,7 +11,7 @@ export function SiteFooter() {
       title: t.results,
       links: [
         [t.results, "/results"],
-        [t.schools, "/schools"],
+        [t.houses, "/houses"],
         [t.programmes, "/programmes"],
       ],
     },

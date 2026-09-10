@@ -12,7 +12,7 @@ export function InterviewShare({ item }: { item: InterviewView }) {
     locale,
     name: item.winner_name,
     programme: tName(locale, item.programme),
-    school: tName(locale, item.school),
+    house: tName(locale, item.house),
     pageUrl: absoluteUrl(`/interviews/${item.slug}`),
   });
   return <WhatsAppShareButton text={text} />;

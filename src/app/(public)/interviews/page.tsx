@@ -34,7 +34,7 @@ export default async function InterviewsPage() {
             <div className="p-4">
               <p className="font-display text-xl font-bold">{item.winner_name}</p>
               <p className="mt-0.5 text-sm text-muted">
-                {tName(locale, item.school)} · {tName(locale, item.programme)}
+                {tName(locale, item.house)} · {tName(locale, item.programme)}
               </p>
             </div>
           </Link>

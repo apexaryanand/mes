@@ -29,7 +29,7 @@ const GROUPS: NavGroup[] = [
     items: [
       { href: "/war-room/results", key: "resultManagement", roles: ["super_admin", "war_room"], icon: "M9 11l3 3 8-8M4 6h16M4 12h6M4 18h10" },
       { href: "/war-room/schedule", key: "scheduleManagement", roles: ["super_admin", "war_room"], icon: "M4 5h16v15H4zM4 9h16M8 3v4M16 3v4" },
-      { href: "/war-room/schools", key: "schools", roles: ["super_admin"], icon: "M4 20V9l8-5 8 5v11M9 20v-6h6v6" },
+      { href: "/war-room/houses", key: "houses", roles: ["super_admin"], icon: "M4 20V9l8-5 8 5v11M9 20v-6h6v6" },
       { href: "/war-room/participants", key: "participant", roles: ["super_admin"], icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" },
       { href: "/war-room/programmes", key: "programmes", roles: ["super_admin"], icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
       { href: "/war-room/categories", key: "category", roles: ["super_admin"], icon: "M4 6h16M4 12h10M4 18h6" },
@@ -103,8 +103,8 @@ export function WarRoomShell({
   const sidebar = (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2.5 px-4 py-4 sm:gap-3 sm:px-5 sm:py-5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 font-display text-base font-black text-gold-light sm:h-10 sm:w-10 sm:text-lg">
-          ക
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 font-display text-sm font-black text-white sm:h-10 sm:w-10">
+          M
         </span>
         <div className="min-w-0">
           <p className="text-[11px] font-bold uppercase tracking-widest text-gold-light">
