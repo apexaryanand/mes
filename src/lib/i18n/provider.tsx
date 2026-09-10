@@ -1,6 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useOptimistic,
+  useTransition,
+} from "react";
 import { dictionaries, type Dictionary } from "@/lib/i18n/dictionaries";
 import type { Locale } from "@/lib/types";
 
@@ -10,15 +18,10 @@ type I18nContextValue = {
   locale: Locale;
   t: Dictionary;
   setLocale: (locale: Locale) => void;
+  switching: boolean;
 };
 
 const I18nContext = createContext<I18nContextValue | null>(null);
-
-function readCookie(): Locale {
-  if (typeof document === "undefined") return "ml";
-  const match = document.cookie.match(/(?:^|; )kalolsavam_locale=(ml|en)/);
-  return match?.[1] === "en" ? "en" : "ml";
-}
 
 export function I18nProvider({
   children,
@@ -27,15 +30,22 @@ export function I18nProvider({
   children: React.ReactNode;
   initialLocale?: Locale;
 }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof document === "undefined") return initialLocale;
-    return readCookie();
-  });
+  const router = useRouter();
+  const [switching, startTransition] = useTransition();
+  // The server layout is the source of truth; the optimistic value only covers
+  // the gap until the refreshed markup arrives, then falls back to it.
+  const [locale, showLocale] = useOptimistic(initialLocale);
 
   const setLocale = (next: Locale) => {
-    setLocaleState(next);
+    if (next === locale) return;
     document.cookie = `${COOKIE}=${next}; path=/; max-age=31536000; SameSite=Lax`;
     document.documentElement.lang = next;
+    // Most of the page is server-rendered from this cookie, so updating the
+    // client dictionary alone would leave half the UI in the old language.
+    startTransition(() => {
+      showLocale(next);
+      router.refresh();
+    });
   };
 
   useEffect(() => {
@@ -43,8 +53,9 @@ export function I18nProvider({
   }, [locale]);
 
   const value = useMemo(
-    () => ({ locale, t: dictionaries[locale], setLocale }),
-    [locale],
+    () => ({ locale, t: dictionaries[locale], setLocale, switching }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [locale, switching],
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

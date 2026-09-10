@@ -5,10 +5,12 @@ import type { Locale } from "@/lib/types";
 import type { Metadata } from "next";
 import "./globals.css";
 
+// 900 is loaded because font-synthesis is disabled site-wide: without the real
+// weight, every font-black in Latin would silently render as 700.
 const ui = Source_Sans_3({
   variable: "--font-ui",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "600", "700", "900"],
 });
 
 const display = Source_Serif_4({

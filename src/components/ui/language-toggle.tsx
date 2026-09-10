@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  * the header or nudges the surrounding controls.
  */
 export function LanguageToggle({ compact = false }: { compact?: boolean }) {
-  const { locale, setLocale, t } = useI18n();
+  const { locale, setLocale, switching, t } = useI18n();
 
   const options: Array<{ value: "ml" | "en"; label: string; full: string }> = [
     { value: "ml", label: "മല", full: t.malayalam },
@@ -34,8 +34,10 @@ export function LanguageToggle({ compact = false }: { compact?: boolean }) {
               active
                 ? "bg-fest-ink text-fest-yellow"
                 : "text-muted hover:bg-fest-yellow-soft hover:text-fest-ink",
+              switching && "cursor-progress",
             )}
             aria-pressed={active}
+            aria-busy={switching}
           >
             {compact ? opt.label : opt.full}
           </button>
