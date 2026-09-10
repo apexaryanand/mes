@@ -4,9 +4,9 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "https://xtpyedwnbdctfxwyhkwy.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY": "sb_publishable_QL5G62JwvLQsuDiP_gRvSg_8Jmia23X",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0cHllZHduYmRjdGZ4d3loa3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMzg4MDksImV4cCI6MjEwNDYxNDgwOX0.PagZpK62kx5vAf40V7toQ_kdTWZ3RLsp20BMcZFF96I",
-    "NEXT_PUBLIC_SITE_URL": "https://mesta-mes-track-arts.vercel.app"
+    "NEXT_PUBLIC_SUPABASE_URL": "https://irxeptdvvihnjmrwnjpp.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY": "sb_publishable_JOTC1f8I14biXJTya1aFUQ_-fW9vwh6",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyeGVwdGR2dmlobmptcnduanBwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NjA1MTUsImV4cCI6MjEwNDUzNjUxNX0.wxpBFsD3nb0dvfloFmww2tQ6Lvit7TPx3r57iry28mw",
+    "NEXT_PUBLIC_SITE_URL": "https://mes-hss-kalolsavam.vercel.app"
   }
 }
