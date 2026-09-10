@@ -31,15 +31,12 @@ export function FestivalHero({
   const venue = locale === "ml" ? settings.venue_ml : settings.venue_en;
 
   return (
-    <section className="hero-on-dark festival-hero relative -mt-3 mx-[calc(50%-50vw)] w-screen overflow-hidden text-white sm:-mt-6">
-      <div className="festival-mesh absolute inset-0" aria-hidden />
-      <div className="confetti-dots absolute inset-0 opacity-30" aria-hidden />
-
-      <div className="relative mx-auto w-full max-w-6xl px-3 py-5 sm:px-4 sm:py-7 md:px-6 md:py-9">
+    <section className="hero-on-dark festival-hero relative -mt-3 mx-[calc(50%-50vw)] w-screen overflow-hidden bg-kerala-deep text-white sm:-mt-6">
+      <div className="relative mx-auto w-full max-w-6xl px-3 py-8 sm:px-4 sm:py-12 md:px-6 md:py-16">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="section-eyebrow hero-accent before:[background:var(--grad-festival)] max-sm:text-[0.65rem]">
+              <span className="section-eyebrow hero-accent before:bg-gold max-sm:text-[0.65rem]">
                 {t.official}
               </span>
               <StatusBadge

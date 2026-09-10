@@ -175,7 +175,7 @@ export function WarRoomShell({
 
   return (
     <div className="flex min-h-screen bg-[#f1f0ec] text-ink">
-      <aside className="hidden w-64 shrink-0 [background:var(--grad-hero)] md:block">
+      <aside className="hidden w-64 shrink-0 bg-kerala-deep md:block">
         <div className="sticky top-0 h-screen">{sidebar}</div>
       </aside>
 
@@ -186,7 +186,7 @@ export function WarRoomShell({
         />
         <div
           className={cn(
-            "absolute left-0 top-0 h-full w-72 max-w-[82vw] [background:var(--grad-hero)] shadow-[var(--shadow-lg)] transition-transform duration-300",
+            "absolute left-0 top-0 h-full w-72 max-w-[82vw] bg-kerala-deep shadow-[var(--shadow-lg)] transition-transform duration-300",
             open ? "translate-x-0" : "-translate-x-full",
           )}
         >

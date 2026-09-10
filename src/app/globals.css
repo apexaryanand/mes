@@ -16,10 +16,10 @@
   --gold-light: #e2c988;
   --gold-deep: #9a7b32;
 
-  /* Festival accents */
-  --marigold: #f5a623;
-  --temple-red: #c41e3a;
-  --indigo: #3b3a86;
+  /* Editorial accents */
+  --marigold: #b98b3e;
+  --temple-red: #9e3f32;
+  --indigo: #365b63;
 
   /* Neutrals */
   --ink: #1a1a1a;
@@ -45,18 +45,10 @@
   --radius: 14px;
   --radius-lg: 22px;
 
-  /* Gradients */
-  --grad-hero: radial-gradient(120% 140% at 12% 0%, #1e3a8a 0%, #7c2d12 35%, #052a0e 100%);
-  --grad-festival: linear-gradient(
-    125deg,
-    var(--house-blue) 0%,
-    var(--house-red) 28%,
-    var(--house-yellow) 58%,
-    var(--house-green) 100%
-  );
-  --grad-gold: linear-gradient(100deg, #9a7b32 0%, #c4a35a 40%, #e2c988 100%);
-  --grad-warm: linear-gradient(135deg, #c41e3a 0%, #f5a623 100%);
-  --shadow-festival: 0 12px 32px -10px rgba(37, 99, 235, 0.35), 0 8px 20px -8px rgba(220, 38, 38, 0.25);
+  /* Quiet editorial surfaces */
+  --surface-dark: #123d32;
+  --surface-dark-ink: #f7f3ea;
+  --shadow-festival: 0 12px 32px -10px rgba(18, 61, 50, 0.22);
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -246,7 +238,7 @@ html[lang="ml"] .text-display-lg {
 
 /* ---- Decorative ---- */
 .gradient-text {
-  background: var(--grad-gold);
+  background: var(--gold);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -266,37 +258,7 @@ html[lang="ml"] .text-display-lg {
   width: 1.5rem;
   height: 2px;
   border-radius: 2px;
-  background: var(--grad-gold);
-}
-
-.kolam-bg {
-  background-image: url("/images/kolam-motif.svg");
-  background-repeat: repeat;
-  background-size: 340px;
-}
-
-/* MESTA festival surfaces */
-.festival-mesh {
-  background: var(--grad-festival);
-  background-size: 200% 200%;
-  animation: festival-shift 14s ease-in-out infinite;
-}
-
-.confetti-dots {
-  background-image: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.35) 1px, transparent 1px),
-    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.25) 1px, transparent 1px),
-    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.2) 1.5px, transparent 1.5px);
-  background-size: 48px 48px, 64px 64px, 80px 80px;
-}
-
-@keyframes festival-shift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+  background: var(--gold);
 }
 
 /* Fancy underline for nav links */
@@ -312,7 +274,7 @@ html[lang="ml"] .text-display-lg {
   width: 100%;
   transform: scaleX(0);
   transform-origin: left;
-  background: var(--grad-gold);
+  background: var(--gold);
   transition: transform 0.25s ease;
 }
 .nav-underline:hover::after,
