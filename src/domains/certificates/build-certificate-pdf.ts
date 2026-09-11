@@ -1,78 +1,107 @@
+import { readFile } from "fs/promises";
+import path from "path";
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import {
+  formatCertificateDate,
+  formatCertificateNumber,
+  rankPrizeDisplay,
+} from "@/lib/certificates";
+import type { Locale } from "@/lib/types";
+
 export type CertificatePdfInput = {
-  festivalName: string;
-  venue: string;
+  entryId: string;
+  locale: Locale;
   participantName: string;
   programme: string;
   category: string;
-  house: string;
-  rankLabel: string;
-  grade: string | null;
-  marks: number | null;
-  publishedDate: string;
+  rank: number;
+  publishedAt: string | null;
 };
 
-function safe(s: string): string {
-  return s.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+const DESIGN_W = 1491;
+const DESIGN_H = 1055;
+const PAGE_W = 842;
+const PAGE_H = 595;
+const SX = PAGE_W / DESIGN_W;
+const SY = PAGE_H / DESIGN_H;
+
+const NAVY = rgb(0.1, 0.2, 0.32);
+const GOLD = rgb(0.72, 0.54, 0.12);
+
+function pdfSafe(text: string): string {
+  return text.normalize("NFKD").replace(/[^\x00-\x7F]/g, "");
 }
 
-/** Single-page portrait certificate PDF (ASCII-safe Helvetica). */
-export function buildCertificatePdf(input: CertificatePdfInput): Uint8Array {
-  const detail =
-    input.grade && input.marks != null
-      ? `Grade ${input.grade} · Marks ${input.marks}`
-      : input.grade
-        ? `Grade ${input.grade}`
-        : input.marks != null
-          ? `Marks ${input.marks}`
-          : "";
+function toPdfY(designY: number): number {
+  return PAGE_H - designY * SY;
+}
 
-  const stream = [
-    "BT",
-    "/F1 16 Tf",
-    `72 750 Td (${safe(input.festivalName)}) Tj`,
-    "0 -20 Td /F1 10 Tf",
-    `(${safe(input.venue)}) Tj`,
-    "0 -36 Td /F1 14 Tf",
-    "(CERTIFICATE OF ACHIEVEMENT) Tj",
-    "0 -28 Td /F1 11 Tf",
-    "(This is to certify that) Tj",
-    "0 -26 Td /F1 18 Tf",
-    `(${safe(input.participantName)}) Tj`,
-    "0 -28 Td /F1 11 Tf",
-    `(has been awarded ${safe(input.rankLabel)} in) Tj`,
-    "0 -18 Td",
-    `(${safe(input.programme)} — ${safe(input.category)}) Tj`,
-    "0 -18 Td",
-    `(${safe(`Representing ${input.house}`)}) Tj`,
-    ...(detail ? ["0 -18 Td", `(${safe(detail)}) Tj`] : []),
-    "0 -28 Td",
-    `(Date: ${safe(input.publishedDate)}) Tj`,
-    "0 -24 Td",
-    "(Convener, MESTA Kalolsavam) Tj",
-    "ET",
-  ].join("\n");
+function drawCentered(
+  page: ReturnType<PDFDocument["addPage"]>,
+  text: string,
+  centerX: number,
+  designY: number,
+  size: number,
+  font: Awaited<ReturnType<PDFDocument["embedFont"]>>,
+  color: ReturnType<typeof rgb>,
+) {
+  const safe = pdfSafe(text);
+  if (!safe.trim()) return;
+  const fontSize = size * SX;
+  const width = font.widthOfTextAtSize(safe, fontSize);
+  page.drawText(safe, {
+    x: centerX * SX - width / 2,
+    y: toPdfY(designY) - fontSize * 0.35,
+    size: fontSize,
+    font,
+    color,
+  });
+}
 
-  const streamLen = stream.length;
-  const objects = [
-    "1 0 obj<< /Type /Catalog /Pages 2 0 R >>endobj",
-    "2 0 obj<< /Type /Pages /Kids [3 0 R] /Count 1 >>endobj",
-    "3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources<< /Font<< /F1 5 0 R >> >> >>endobj",
-    `4 0 obj<< /Length ${streamLen} >>stream\n${stream}\nendstream endobj`,
-    "5 0 obj<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>endobj",
-  ];
+function drawLeft(
+  page: ReturnType<PDFDocument["addPage"]>,
+  text: string,
+  designX: number,
+  designY: number,
+  size: number,
+  font: Awaited<ReturnType<PDFDocument["embedFont"]>>,
+  color: ReturnType<typeof rgb>,
+) {
+  const safe = pdfSafe(text);
+  if (!safe.trim()) return;
+  const fontSize = size * SX;
+  page.drawText(safe, {
+    x: designX * SX,
+    y: toPdfY(designY) - fontSize * 0.35,
+    size: fontSize,
+    font,
+    color,
+  });
+}
 
-  let pdf = "%PDF-1.4\n";
-  const offsets: number[] = [0];
-  for (const obj of objects) {
-    offsets.push(pdf.length);
-    pdf += `${obj}\n`;
-  }
-  const xrefPos = pdf.length;
-  pdf += `xref\n0 ${objects.length + 1}\n`;
-  pdf += "0000000000 65535 f \n";
-  for (let i = 1; i <= objects.length; i++) {
-    pdf += `${String(offsets[i]).padStart(10, "0")} 00000 n \n`;
-  }
-  pdf += `trailer<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;
-  return new TextEncoder().encode(pdf);
+/** Landscape A4 PDF with the official template image and dynamic text overlays. */
+export async function buildCertificatePdf(input: CertificatePdfInput): Promise<Uint8Array> {
+  const templatePath = path.join(process.cwd(), "public/images/certificate-template.png");
+  const templateBytes = await readFile(templatePath);
+
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([PAGE_W, PAGE_H]);
+  const png = await pdfDoc.embedPng(templateBytes);
+  page.drawImage(png, { x: 0, y: 0, width: PAGE_W, height: PAGE_H });
+
+  const serifBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+  const serif = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+
+  const prize = rankPrizeDisplay(input.rank);
+  const certNo = formatCertificateNumber(input.entryId, input.publishedAt);
+  const date = formatCertificateDate(input.publishedAt, input.locale);
+
+  drawCentered(page, input.participantName, DESIGN_W / 2, 418, 42, serifBold, NAVY);
+  drawCentered(page, prize, DESIGN_W / 2, 525, 34, serifBold, GOLD);
+  drawCentered(page, input.programme, DESIGN_W / 2, 600, 28, serifBold, NAVY);
+  drawCentered(page, input.category, DESIGN_W / 2, 660, 20, serifBold, NAVY);
+  drawLeft(page, date, 112, 935, 16, serif, NAVY);
+  drawLeft(page, certNo, 112, 990, 14, serif, NAVY);
+
+  return pdfDoc.save();
 }
