@@ -1,4 +1,5 @@
 import { saveArticle } from "@/domains/admin/actions";
+import { WrSubmit } from "@/components/war-room/primitives";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getAllArticlesAdmin } from "@/lib/data/admin-queries";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -43,12 +44,12 @@ export default async function ArticlesAdminPage() {
         <textarea name="body_ml" rows={5} placeholder="ഉള്ളടക്കം" className={`${field} py-2`} />
         <input name="category" defaultValue="News" className={field} />
         <label className="flex items-center gap-2 text-sm font-medium">
-          <input type="checkbox" name="publish" className="h-4 w-4 rounded accent-[var(--kerala-green)]" />
+          <input type="checkbox" name="publish" className="h-4 w-4 rounded accent-fest-green" />
           {t.publish}
         </label>
-        <button className="min-h-11 rounded-full bg-kerala-dark font-semibold text-white transition-colors hover:bg-kerala-deep">
+        <WrSubmit>
           {t.create}
-        </button>
+        </WrSubmit>
       </form>
       <ul className="grid h-fit gap-2">
         {articles.map((a) => (

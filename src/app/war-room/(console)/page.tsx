@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { WrEmpty, WrPanel } from "@/components/war-room/primitives";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StatCard } from "@/components/ui/stat-card";
 import { getSessionProfile } from "@/lib/auth";
@@ -10,7 +11,6 @@ import {
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getScheduledEvents } from "@/lib/data/queries";
-import { cn } from "@/lib/utils";
 
 export default async function WarRoomDashboard() {
   const locale = await getRequestLocale();
@@ -30,15 +30,15 @@ export default async function WarRoomDashboard() {
   const published = await getRecentPublished(6);
 
   return (
-    <div className="grid gap-4 sm:gap-6">
-      <div>
-        <p className="text-sm text-muted">
-          {t.signedInAs} <span className="font-medium text-ink">{profile?.display_name}</span> ·{" "}
-          <span className="text-gold-deep">{profile?.role?.replace(/_/g, " ")}</span>
-        </p>
-      </div>
+    <div className="grid gap-6">
+      <p className="text-sm text-muted">
+        {t.signedInAs}{" "}
+        <span className="font-bold text-fest-ink">{profile?.display_name}</span>
+        <span className="text-muted"> · </span>
+        <span className="font-bold text-fest-red">{profile?.role?.replace(/_/g, " ")}</span>
+      </p>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-3 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
         <StatCard label={t.happeningNow} value={live.length} accent="red" />
         <StatCard label={t.completed} value={completed.length} accent="green" />
         <StatCard label={t.awaitingEntry} value={awaitingEntry.length} accent="gold" />
@@ -46,17 +46,17 @@ export default async function WarRoomDashboard() {
         <StatCard label={t.awaitingModeration} value={pendingMedia.length} accent="indigo" />
       </div>
 
-      <div className="grid gap-3 sm:gap-5 lg:grid-cols-2">
-        <Panel title={t.happeningNow} accent="red">
+      <div className="grid gap-4 xl:grid-cols-2">
+        <WrPanel title={t.happeningNow} accent="red">
           {live.length ? (
-            <ul className="divide-y divide-line">
+            <ul className="divide-y-2 divide-fest-ink/10">
               {live.map((e) => (
                 <li
                   key={e.id}
-                  className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm sm:px-4 sm:py-3"
+                  className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm"
                 >
                   <span className="min-w-0 truncate">
-                    <span className="font-medium">{tName(locale, e.programme)}</span>
+                    <span className="font-bold">{tName(locale, e.programme)}</span>
                     <span className="text-muted"> · {tName(locale, e.stage)}</span>
                   </span>
                   <StatusBadge status="live" label={t.live} />
@@ -64,22 +64,22 @@ export default async function WarRoomDashboard() {
               ))}
             </ul>
           ) : (
-            <Empty label={t.noItems} />
+            <WrEmpty label={t.noItems} />
           )}
-        </Panel>
+        </WrPanel>
 
-        <Panel title={t.awaitingVerification} accent="gold">
+        <WrPanel title={t.awaitingVerification} accent="gold">
           {awaitingVerification.length ? (
-            <ul className="divide-y divide-line">
+            <ul className="divide-y-2 divide-fest-ink/10">
               {awaitingVerification.map((s) => {
                 const event = events.find((e) => e.id === s.scheduled_event_id);
                 return (
                   <li key={s.id}>
                     <Link
                       href={`/war-room/results/${s.id}`}
-                      className="flex items-center justify-between gap-2 px-3 py-2.5 text-sm transition-colors hover:bg-fest-yellow-soft sm:px-4 sm:py-3"
+                      className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-fest-yellow-soft"
                     >
-                      <span className="min-w-0 truncate font-medium">
+                      <span className="min-w-0 truncate font-bold">
                         {event ? tName(locale, event.programme) : s.id}
                       </span>
                       <StatusBadge status="entered" label={t.entered} />
@@ -89,31 +89,31 @@ export default async function WarRoomDashboard() {
               })}
             </ul>
           ) : (
-            <Empty label={t.noItems} />
+            <WrEmpty label={t.noItems} />
           )}
-        </Panel>
+        </WrPanel>
 
-        <Panel title={t.recentPublished} accent="green">
+        <WrPanel title={t.recentPublished} accent="green">
           {published.length ? (
-            <ul className="divide-y divide-line">
+            <ul className="divide-y-2 divide-fest-ink/10">
               {published.map((p) => (
-                <li key={p.result_set.id} className="px-3 py-2.5 text-sm sm:px-4 sm:py-3">
-                  <span className="font-medium">{tName(locale, p.event.programme)}</span>
+                <li key={p.result_set.id} className="px-4 py-2.5 text-sm">
+                  <span className="font-bold">{tName(locale, p.event.programme)}</span>
                   <span className="text-muted"> · {tName(locale, p.event.category)}</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <Empty label={t.noItems} />
+            <WrEmpty label={t.noItems} />
           )}
-        </Panel>
+        </WrPanel>
 
-        <Panel title={t.awaitingModeration} accent="indigo">
+        <WrPanel title={t.awaitingModeration} accent="violet">
           {pendingMedia.length ? (
-            <ul className="divide-y divide-line">
+            <ul className="divide-y-2 divide-fest-ink/10">
               {pendingMedia.slice(0, 5).map((m) => (
-                <li key={m.id} className="px-3 py-2.5 text-sm sm:px-4 sm:py-3">
-                  <span className="font-medium text-kerala-dark">
+                <li key={m.id} className="px-4 py-2.5 text-sm">
+                  <span className="font-bold text-fest-ink">
                     {locale === "ml" ? m.title_ml : m.title_en}
                   </span>
                   <span className="text-muted"> · {m.submitted_by_name}</span>
@@ -121,46 +121,10 @@ export default async function WarRoomDashboard() {
               ))}
             </ul>
           ) : (
-            <Empty label={t.noItems} />
+            <WrEmpty label={t.noItems} />
           )}
-        </Panel>
+        </WrPanel>
       </div>
     </div>
   );
-}
-
-const accentBar: Record<string, string> = {
-  red: "before:bg-live",
-  green: "before:bg-kerala",
-  gold: "before:bg-fest-yellow",
-  indigo: "before:bg-indigo",
-};
-
-function Panel({
-  title,
-  accent,
-  children,
-}: {
-  title: string;
-  accent: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="card overflow-hidden">
-      <h2
-        className={cn(
-          "relative border-b border-line px-3 py-2.5 pl-4 text-sm font-semibold sm:px-4 sm:py-3 sm:pl-5 sm:text-base",
-          "before:absolute before:left-0 before:top-0 before:h-full before:w-1 sm:before:w-1.5",
-          accentBar[accent],
-        )}
-      >
-        {title}
-      </h2>
-      {children}
-    </section>
-  );
-}
-
-function Empty({ label }: { label: string }) {
-  return <p className="px-3 py-6 text-center text-sm text-muted sm:px-4 sm:py-8">{label}</p>;
 }

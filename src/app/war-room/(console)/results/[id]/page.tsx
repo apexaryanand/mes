@@ -6,13 +6,14 @@ import {
 } from "@/domains/admin/actions";
 import { can, getSessionProfile } from "@/lib/auth";
 import { getResultEntries, getResultSetById } from "@/lib/data/admin-queries";
-import { getDictionary, tName } from "@/lib/i18n/dictionaries";
+import { getDictionary, tName, statusLabel } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getHouses, getParticipants, getScheduledEvents } from "@/lib/data/queries";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
+import { Button } from "@/components/ui/button";
+import { WrStepBar, WrSubmit, TableCard, Th, Td } from "@/components/war-room/primitives";
 import { suggestGrade } from "@/domains/results/scoring";
-import { statusLabel } from "@/lib/i18n/dictionaries";
 import { cn } from "@/lib/utils";
 
 export default async function ResultEditorPage({
@@ -38,10 +39,10 @@ export default async function ResultEditorPage({
   const editor = can(profile?.role, ["war_room"]);
   const defaultHouseId = houses[0]?.id ?? "";
 
-  const steps: Array<{ key: string; label: string }> = [
-    { key: "draft", label: t.draft },
-    { key: "entered", label: t.submitForConfirmation },
-    { key: "published", label: t.published },
+  const steps = [
+    { label: t.draft },
+    { label: t.submitForConfirmation },
+    { label: t.published },
   ];
   const normalized =
     set.status === "correction_draft"
@@ -49,9 +50,9 @@ export default async function ResultEditorPage({
       : set.status === "verified"
         ? "entered"
         : set.status;
-  const activeStep = steps.findIndex((s) => s.key === normalized);
-  const inputCls =
-    "field-input min-h-9 w-auto px-2.5 py-1.5 text-sm";
+  const activeStep = steps.findIndex((_, i) => ["draft", "entered", "published"][i] === normalized);
+
+  const inputCls = "field-input min-h-9 w-auto px-2.5 py-1.5 text-sm";
 
   const rows = entries.length
     ? entries
@@ -71,79 +72,52 @@ export default async function ResultEditorPage({
       ];
 
   return (
-    <div className="grid gap-3 sm:gap-5">
-      <div className="card p-3 sm:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-3">
+    <div className="grid gap-5">
+      <div className="card p-4 lg:p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="font-display text-lg font-bold sm:text-2xl">{tName(locale, event.programme)}</h2>
+            <h2 className="font-display text-xl font-black lg:text-2xl">
+              {tName(locale, event.programme)}
+            </h2>
             <p className="text-sm text-muted">
               {tName(locale, event.category)} · {tName(locale, event.stage)}
             </p>
           </div>
           <StatusBadge status={set.status} label={statusLabel(locale, set.status)} />
         </div>
-
-        <ol className="mt-4 flex items-center gap-0.5 sm:mt-5 sm:gap-1">
-          {steps.map((step, i) => {
-            const done = activeStep >= 0 && i <= activeStep;
-            return (
-              <li key={step.key} className="flex flex-1 items-center gap-0.5 last:flex-none sm:gap-1">
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <span
-                    className={cn(
-                      "flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold sm:h-7 sm:w-7 sm:text-xs",
-                      done ? "bg-kerala-dark text-white" : "bg-line text-muted",
-                    )}
-                    title={step.label}
-                  >
-                    {i + 1}
-                  </span>
-                  <span
-                    className={cn(
-                      "hidden text-xs font-semibold sm:inline",
-                      done ? "text-kerala-dark" : "text-muted",
-                    )}
-                  >
-                    {step.label}
-                  </span>
-                </div>
-                {i < steps.length - 1 ? (
-                  <span
-                    className={cn(
-                      "h-0.5 flex-1 rounded",
-                      activeStep > i ? "bg-kerala-dark" : "bg-line",
-                    )}
-                  />
-                ) : null}
-              </li>
-            );
-          })}
-        </ol>
+        <div className="mt-5">
+          <WrStepBar steps={steps} activeIndex={activeStep} />
+        </div>
       </div>
 
-      <form action={saveResultDraftForm} className="card mobile-bleed p-3 max-sm:rounded-none max-sm:border-x-0 sm:p-4">
+      <form action={saveResultDraftForm}>
         <input type="hidden" name="resultSetId" value={set.id} />
         <input type="hidden" name="count" value={Math.max(rows.length, 1)} />
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[860px] text-sm">
-            <thead className="bg-paper">
-              <tr className="text-left">
-                <th className="rounded-l-lg px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.rank}</th>
-                <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">Registered</th>
-                <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.participant}</th>
-                <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.house}</th>
-                <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.marks}</th>
-                <th className="rounded-r-lg px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t.grade}</th>
+        <TableCard>
+          <table className="min-w-[860px] text-sm">
+            <thead>
+              <tr>
+                <Th>{t.rank}</Th>
+                <Th>Registered</Th>
+                <Th>{t.participant}</Th>
+                <Th>{t.house}</Th>
+                <Th>{t.marks}</Th>
+                <Th>{t.grade}</Th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row, i) => (
-                <tr key={row.id || i} className="border-t border-line">
-                  <td className="px-3 py-2">
+                <tr key={row.id || i}>
+                  <Td>
                     <input type="hidden" name={`id_${i}`} defaultValue={row.id} />
-                    <input name={`rank_${i}`} defaultValue={row.rank ?? i + 1} disabled={locked} className={cn(inputCls, "w-16")} />
-                  </td>
-                  <td className="px-3 py-2">
+                    <input
+                      name={`rank_${i}`}
+                      defaultValue={row.rank ?? i + 1}
+                      disabled={locked}
+                      className={cn(inputCls, "w-16")}
+                    />
+                  </Td>
+                  <Td>
                     <select
                       name={`participant_${i}`}
                       defaultValue={row.participant_id ?? ""}
@@ -154,44 +128,60 @@ export default async function ResultEditorPage({
                       {participants
                         .filter((p) => p.house_id === row.house_id || !row.house_id)
                         .map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.full_name}
-                          </option>
+                          <option key={p.id} value={p.id}>{p.full_name}</option>
                         ))}
                     </select>
-                  </td>
-                  <td className="px-3 py-2">
-                    <input name={`name_${i}`} defaultValue={row.participant_name ?? ""} disabled={locked} className={cn(inputCls, "min-w-40 w-full")} />
-                  </td>
-                  <td className="px-3 py-2">
-                    <select name={`house_${i}`} defaultValue={row.house_id} disabled={locked} className={inputCls}>
+                  </Td>
+                  <Td>
+                    <input
+                      name={`name_${i}`}
+                      defaultValue={row.participant_name ?? ""}
+                      disabled={locked}
+                      className={cn(inputCls, "min-w-40 w-full")}
+                    />
+                  </Td>
+                  <Td>
+                    <select
+                      name={`house_${i}`}
+                      defaultValue={row.house_id}
+                      disabled={locked}
+                      className={inputCls}
+                    >
                       {houses.map((h) => (
-                        <option key={h.id} value={h.id}>
-                          {tName(locale, h)}
-                        </option>
+                        <option key={h.id} value={h.id}>{tName(locale, h)}</option>
                       ))}
                     </select>
-                  </td>
-                  <td className="px-3 py-2">
-                    <input name={`marks_${i}`} defaultValue={row.marks ?? ""} disabled={locked} className={cn(inputCls, "w-20")} />
-                  </td>
-                  <td className="px-3 py-2">
-                    <select name={`grade_${i}`} defaultValue={row.grade ?? suggestGrade(row.marks) ?? ""} disabled={locked} className={inputCls}>
+                  </Td>
+                  <Td>
+                    <input
+                      name={`marks_${i}`}
+                      defaultValue={row.marks ?? ""}
+                      disabled={locked}
+                      className={cn(inputCls, "w-20")}
+                    />
+                  </Td>
+                  <Td>
+                    <select
+                      name={`grade_${i}`}
+                      defaultValue={row.grade ?? suggestGrade(row.marks) ?? ""}
+                      disabled={locked}
+                      className={inputCls}
+                    >
                       <option value="">—</option>
                       <option value="A">A</option>
                       <option value="B">B</option>
                       <option value="C">C</option>
                     </select>
-                  </td>
+                  </Td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </TableCard>
         {editor && !locked ? (
-          <button className="mt-4 min-h-11 rounded-full bg-ink px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90">
-            {t.saveDraft}
-          </button>
+          <div className="mt-4">
+            <WrSubmit>{t.saveDraft}</WrSubmit>
+          </div>
         ) : null}
       </form>
 
@@ -200,9 +190,7 @@ export default async function ResultEditorPage({
           <form action={transitionResultForm}>
             <input type="hidden" name="id" value={set.id} />
             <input type="hidden" name="next" value="entered" />
-            <button className="min-h-11 rounded-full bg-amber-600 px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90">
-              {t.submitForConfirmation}
-            </button>
+            <WrSubmit variant="gold">{t.submitForConfirmation}</WrSubmit>
           </form>
         ) : null}
         {editor && set.status === "entered" ? (
@@ -210,7 +198,7 @@ export default async function ResultEditorPage({
             <input type="hidden" name="id" value={set.id} />
             <input type="hidden" name="next" value="published" />
             <ConfirmSubmit
-              className="min-h-11 rounded-full bg-kerala-dark px-5 text-sm font-semibold text-white transition-colors hover:bg-kerala-deep"
+              className="festival-button inline-flex min-h-11 items-center bg-fest-ink px-5 text-sm font-bold text-fest-yellow"
               label={t.confirmAndPublish}
               message={t.confirmPublish}
             />
@@ -220,7 +208,7 @@ export default async function ResultEditorPage({
           <form action={startCorrectionForm}>
             <input type="hidden" name="id" value={set.id} />
             <ConfirmSubmit
-              className="min-h-11 rounded-full border border-live px-5 text-sm font-semibold text-live transition-colors hover:bg-live-soft"
+              className="festival-button inline-flex min-h-11 items-center border-fest-red bg-paper-white px-5 text-sm font-bold text-fest-red"
               label={t.startCorrection}
               message={t.confirmDestructive}
             />

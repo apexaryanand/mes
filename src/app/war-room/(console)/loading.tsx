@@ -1,19 +1,27 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-// One boundary for the whole console: every screen here is a header plus a
-// table or panel list, so a shared placeholder matches all of them.
 export default function Loading() {
   return (
-    <div className="grid gap-4 sm:gap-6" role="status" aria-busy="true">
+    <div className="grid gap-5" role="status" aria-busy="true">
       <span className="sr-only">Loading</span>
-      <Skeleton className="h-8 w-56 max-w-full" />
-      <div className="card divide-y-2 divide-fest-ink/15 overflow-hidden">
-        <Skeleton className="h-11 rounded-none" />
+      <div className="flex items-end justify-between gap-4 border-b-2 border-fest-ink/15 pb-4">
+        <div>
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="mt-2 h-7 w-48" />
+        </div>
+        <Skeleton className="h-9 w-28" />
+      </div>
+      <div className="grid gap-3 lg:grid-cols-2">
+        <Skeleton className="h-28" />
+        <Skeleton className="h-28" />
+      </div>
+      <div className="card festival-table-card overflow-hidden">
+        <Skeleton className="h-10 rounded-none" />
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-4 px-4 py-3">
+          <div key={i} className="flex items-center gap-4 border-t-2 border-fest-ink/10 px-4 py-2.5">
             <Skeleton className="h-4 flex-1" />
-            <Skeleton className="h-4 w-24 shrink-0" />
-            <Skeleton className="h-7 w-20 shrink-0" />
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-6 w-16" />
           </div>
         ))}
       </div>

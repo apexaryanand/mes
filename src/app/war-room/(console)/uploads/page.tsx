@@ -1,7 +1,7 @@
 import { uploadStaffMediaForm } from "@/domains/media/staff-actions";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
-import { wrInput, wrLabel } from "@/components/war-room/primitives";
+import { wrInput, wrLabel, WrSubmit } from "@/components/war-room/primitives";
 
 export default async function MediaUploadsPage() {
   const locale = await getRequestLocale();
@@ -30,9 +30,9 @@ export default async function MediaUploadsPage() {
           File
           <input name="file" type="file" accept="image/*" required className={field} />
         </label>
-        <button className="min-h-11 rounded-full bg-kerala-dark text-sm font-semibold text-white">
+        <WrSubmit>
           {t.upload}
-        </button>
+        </WrSubmit>
       </form>
 
       <form action={uploadStaffMediaForm} className="card grid gap-3 p-3 sm:p-5">
@@ -55,9 +55,9 @@ export default async function MediaUploadsPage() {
           Or video URL
           <input name="video_url" placeholder="https://..." className={field} />
         </label>
-        <button className="min-h-11 rounded-full bg-kerala-dark text-sm font-semibold text-white">
+        <WrSubmit>
           {t.upload}
-        </button>
+        </WrSubmit>
       </form>
 
       <form action={uploadStaffMediaForm} className="card grid gap-3 p-3 sm:p-5 lg:col-span-2">
@@ -87,9 +87,9 @@ export default async function MediaUploadsPage() {
           Or YouTube / embed URL
           <input name="video_url" placeholder="https://www.youtube.com/embed/..." className={field} />
         </label>
-        <button className="min-h-11 rounded-full bg-kerala-dark text-sm font-semibold text-white">
+        <WrSubmit>
           {t.publish}
-        </button>
+        </WrSubmit>
       </form>
     </div>
   );

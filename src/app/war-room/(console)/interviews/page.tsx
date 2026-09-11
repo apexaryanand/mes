@@ -1,4 +1,5 @@
 import { saveInterview } from "@/domains/admin/actions";
+import { WrSubmit } from "@/components/war-room/primitives";
 import { getAllInterviewsAdmin } from "@/lib/data/admin-queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
@@ -70,14 +71,14 @@ export default async function InterviewsAdminPage() {
         </label>
         <textarea name="description_en" placeholder="Description EN" className={`${field} py-2`} />
         <textarea name="description_ml" placeholder="വിവരണം" className={`${field} py-2`} />
-        <button className="min-h-11 rounded-full bg-kerala-dark font-semibold text-white transition-colors hover:bg-kerala-deep">
+        <WrSubmit>
           {t.create}
-        </button>
+        </WrSubmit>
       </form>
       <ul className="grid h-fit gap-2">
         {interviews.map((i) => (
           <li key={i.id} className="card flex items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-kerala-soft text-kerala-dark">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-fest-yellow-soft font-bold text-fest-ink">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5v14l11-7z" />
               </svg>
