@@ -58,7 +58,8 @@ export function SiteHeader() {
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="sticky top-0 z-40 border-b-4 border-fest-ink bg-paper/95 backdrop-blur-md">
+    <>
+    <header className="sticky top-0 z-40 border-b-4 border-fest-ink bg-paper">
       <div className="mx-auto flex h-[var(--header-h)] max-w-6xl items-center gap-2 px-3 sm:gap-3 sm:px-4">
         <Link
           href="/"
@@ -144,8 +145,9 @@ export function SiteHeader() {
           </button>
         </div>
       </div>
+    </header>
 
-      {/* Mobile drawer */}
+      {/* Outside <header>: backdrop-filter on the bar used to clip this drawer. */}
       <div
         className={cn("fixed inset-0 z-50 md:hidden", open ? "pointer-events-auto" : "pointer-events-none")}
         aria-hidden={!open}
@@ -203,6 +205,6 @@ export function SiteHeader() {
           </div>
         </nav>
       </div>
-    </header>
+    </>
   );
 }

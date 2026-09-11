@@ -31,7 +31,7 @@ export default async function SchedulePage({
   return (
     <div className="grid gap-8">
       <PageHeader eyebrow={t.stages} title={t.schedule} />
-      <div className="surface-glass sticky top-[var(--header-h)] z-20 -mx-3 flex flex-wrap gap-1.5 border-y-2 border-fest-ink px-3 py-2 sm:-mx-4 sm:gap-2 sm:px-4 sm:py-3 md:mx-0 md:border-x-2">
+      <div className="surface-glass sticky top-[var(--stack-top)] z-20 -mx-3 flex flex-wrap gap-1.5 border-y-2 border-fest-ink px-3 py-2 sm:-mx-4 sm:gap-2 sm:px-4 sm:py-3 md:mx-0 md:border-x-2">
         {[1, 2, 3].map((d) => (
           <Link
             key={d}

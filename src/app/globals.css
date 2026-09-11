@@ -90,7 +90,9 @@
 
   /* ---- Layout ---- */
   --header-h: 3.5rem;
-  --quicknav-h: 2.75rem;
+  --quicknav-h: 3.25rem;
+  /* Filter bars stick below the mobile quick nav; on md+ that bar is hidden. */
+  --stack-top: calc(var(--header-h) + var(--quicknav-h));
 
   /* ---- Language-safe vertical rhythm ----
      One rhythm for both scripts. Malayalam needs the taller metrics, so both
@@ -186,6 +188,13 @@ html {
   }
 }
 
+/* The quick nav is mobile-only, so nothing stacks under it from md up. */
+@media (min-width: 768px) {
+  :root {
+    --quicknav-h: 0rem;
+  }
+}
+
 body {
   font-family: var(--font-ui), var(--font-malayalam), system-ui, sans-serif;
   min-height: 100%;
@@ -198,7 +207,7 @@ body {
 
 /* Anchored sections clear the sticky header. */
 :target {
-  scroll-margin-top: calc(var(--header-h) + var(--quicknav-h) + 1rem);
+  scroll-margin-top: calc(var(--stack-top) + 1rem);
 }
 
 /* =========================================================================
