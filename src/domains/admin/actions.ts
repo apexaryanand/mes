@@ -303,18 +303,21 @@ export async function moderateMedia(id: string, status: MediaStatus) {
   return { ok: true };
 }
 
-export async function saveArticle(article: Partial<Article> & { title_en: string; title_ml: string }) {
+export async function saveArticle(article: Partial<Article> & { title_en: string }) {
   const profile = await getSessionProfile();
   if (!can(profile?.role, ["war_room", "media_team"])) return { error: "Not allowed." };
 
   const sb = await requireServerSupabase();
+  const title = article.title_en;
+  const excerpt = article.excerpt_en ?? "";
+  const body = article.body_en ?? "";
   const payload = {
-    title_en: article.title_en,
-    title_ml: article.title_ml,
-    excerpt_en: article.excerpt_en ?? "",
-    excerpt_ml: article.excerpt_ml ?? "",
-    body_en: article.body_en ?? "",
-    body_ml: article.body_ml ?? "",
+    title_en: title,
+    title_ml: title,
+    excerpt_en: excerpt,
+    excerpt_ml: excerpt,
+    body_en: body,
+    body_ml: body,
     category: article.category ?? "News",
     related_event_id: article.related_event_id ?? null,
     related_house_id: article.related_house_id ?? null,
@@ -359,7 +362,7 @@ export async function saveInterview(
     scheduled_event_id: item.scheduled_event_id ?? null,
     rank: item.rank ?? 1,
     description_en: item.description_en ?? "",
-    description_ml: item.description_ml ?? "",
+    description_ml: item.description_en ?? "",
     video_url: item.video_url,
     published_at: new Date().toISOString(),
     is_published: true,
@@ -416,7 +419,7 @@ export async function moderateMediaForm(formData: FormData) {
   const status = String(formData.get("status")) as MediaStatus;
   const result = await moderateMedia(id, status);
   if (result && "error" in result && result.error) {
-    await failWarRoom(result.error, "/war-room/media");
+    await failWarRoom(result.error, "/war-room/content?tab=moderation");
   }
   await bump({ public: status === "approved" });
 }
@@ -480,7 +483,7 @@ export async function updateUserRoleForm(formData: FormData) {
   const role = String(formData.get("role")) as AppRole;
   const result = await updateUserRole(profileId, role);
   if (result && "error" in result && result.error) {
-    await failWarRoom(result.error, "/war-room/users");
+    await failWarRoom(result.error, "/war-room/system?tab=users");
   }
   await bump();
 }

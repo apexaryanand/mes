@@ -4,23 +4,30 @@ import {
   transitionResultForm,
   updateEventStatusForm,
 } from "@/domains/admin/actions";
-import { WrEmpty, WrPanel, WrSubmit } from "@/components/war-room/primitives";
+import { AdminPage } from "@/components/admin/admin-page";
+import { AdminSubmit } from "@/components/admin/admin-submit";
+import { WorkQueue, WorkQueueRow } from "@/components/admin/work-queue";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { StatCard } from "@/components/ui/stat-card";
 import { getSessionProfile } from "@/lib/auth";
+import { adminCopy } from "@/lib/admin/copy";
 import {
   getPendingMediaAdmin,
   getAllResultSets,
   getRecentPublished,
 } from "@/lib/data/admin-queries";
-import { getDictionary, tName } from "@/lib/i18n/dictionaries";
-import { getRequestLocale } from "@/lib/i18n/server";
 import { getScheduledEvents } from "@/lib/data/queries";
 
-export default async function WarRoomDashboard() {
-  const locale = await getRequestLocale();
-  const t = getDictionary(locale);
+function Stat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
+      <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">{label}</p>
+      <p className="mt-1 text-2xl font-semibold text-zinc-900">{value}</p>
+    </div>
+  );
+}
+
+export default async function OperationsPage() {
   const [profile, events, resultSets, pendingMedia, published] = await Promise.all([
     getSessionProfile(),
     getScheduledEvents(),
@@ -36,161 +43,131 @@ export default async function WarRoomDashboard() {
       !resultSets.some((s) => s.scheduled_event_id === e.id && s.status !== "archived"),
   );
   const awaitingVerification = resultSets.filter((s) => s.status === "entered");
-  const queueCount = awaitingEntry.length + awaitingVerification.length + pendingMedia.length;
+
+  const queueItems = [
+    ...awaitingEntry.map((e) => (
+      <WorkQueueRow
+        key={`entry-${e.id}`}
+        title={e.programme.name_en}
+        meta={`${e.category.name_en} · ${e.stage.name_en}`}
+        actions={
+          <>
+            <StatusBadge status="completed" label={adminCopy.awaitingEntry} />
+            <form action={createDraftForEventForm}>
+              <input type="hidden" name="eventId" value={e.id} />
+              <input type="hidden" name="from" value="/war-room" />
+              <AdminSubmit variant="secondary">{adminCopy.enterResults}</AdminSubmit>
+            </form>
+          </>
+        }
+      />
+    )),
+    ...awaitingVerification.map((s) => {
+      const event = events.find((e) => e.id === s.scheduled_event_id);
+      return (
+        <WorkQueueRow
+          key={`verify-${s.id}`}
+          title={event?.programme.name_en ?? s.id}
+          meta={adminCopy.awaitingVerification}
+          actions={
+            <>
+              <Link href={`/war-room/results/${s.id}`} className="text-sm font-medium text-zinc-900 hover:underline">
+                {adminCopy.edit}
+              </Link>
+              <form action={transitionResultForm}>
+                <input type="hidden" name="id" value={s.id} />
+                <input type="hidden" name="next" value="published" />
+                <ConfirmSubmit
+                  className="inline-flex min-h-9 items-center rounded-md bg-zinc-900 px-3 text-xs font-medium text-white"
+                  label={adminCopy.confirmAndPublish}
+                  message={adminCopy.confirmPublish}
+                />
+              </form>
+            </>
+          }
+        />
+      );
+    }),
+    ...pendingMedia.slice(0, 6).map((m) => (
+      <WorkQueueRow
+        key={`media-${m.id}`}
+        title={m.title_en}
+        meta={m.submitted_by_name ?? ""}
+        actions={
+          <Link href="/war-room/content?tab=moderation" className="text-sm font-medium text-zinc-900 hover:underline">
+            {adminCopy.reviewNow}
+          </Link>
+        }
+      />
+    )),
+  ];
 
   return (
-    <div className="grid gap-6">
-      <p className="text-sm text-muted">
-        {t.signedInAs}{" "}
-        <span className="font-bold text-fest-ink">{profile?.display_name}</span>
-        <span className="text-muted"> · </span>
-        <span className="font-bold text-fest-red">{profile?.role?.replace(/_/g, " ")}</span>
-      </p>
-
+    <AdminPage
+      title={adminCopy.operations}
+      description={`${adminCopy.signedInAs} ${profile?.display_name} · ${profile?.role?.replace(/_/g, " ")}`}
+    >
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
-        <StatCard label={t.happeningNow} value={live.length} accent="red" href="#live" />
-        <StatCard label={t.completed} value={completed.length} accent="green" />
-        <StatCard
-          label={t.awaitingEntry}
-          value={awaitingEntry.length}
-          accent="gold"
-          href="#queue"
-        />
-        <StatCard
-          label={t.awaitingVerification}
-          value={awaitingVerification.length}
-          accent="gold"
-          href="#queue"
-        />
-        <StatCard
-          label={t.awaitingModeration}
-          value={pendingMedia.length}
-          accent="indigo"
-          href="/war-room/media"
-        />
+        <Stat label={adminCopy.happeningNow} value={live.length} />
+        <Stat label={adminCopy.completed} value={completed.length} />
+        <Stat label={adminCopy.awaitingEntry} value={awaitingEntry.length} />
+        <Stat label={adminCopy.awaitingVerification} value={awaitingVerification.length} />
+        <Stat label={adminCopy.awaitingModeration} value={pendingMedia.length} />
       </div>
 
-      <div id="queue" className="scroll-mt-20">
-      <WrPanel title={`${t.workQueue}${queueCount ? ` · ${queueCount}` : ""}`} accent="gold">
-        <div className="divide-y-2 divide-fest-ink/10">
-          {awaitingEntry.map((e) => (
-            <div key={e.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-              <div className="min-w-0 flex-1">
-                <p className="font-bold">{tName(locale, e.programme)}</p>
-                <p className="text-xs text-muted">
-                  {tName(locale, e.category)} · {tName(locale, e.stage)}
-                </p>
-              </div>
-              <StatusBadge status="completed" label={t.awaitingEntry} />
-              <form action={createDraftForEventForm}>
-                <input type="hidden" name="eventId" value={e.id} />
-                <input type="hidden" name="from" value="/war-room" />
-                <WrSubmit size="sm">{t.enterResults}</WrSubmit>
-              </form>
-            </div>
-          ))}
-          {awaitingVerification.map((s) => {
-            const event = events.find((e) => e.id === s.scheduled_event_id);
-            return (
-              <div key={s.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                <div className="min-w-0 flex-1">
-                  <p className="font-bold">
-                    {event ? tName(locale, event.programme) : s.id}
-                  </p>
-                  <p className="text-xs text-muted">{t.awaitingVerification}</p>
-                </div>
-                <Link
-                  href={`/war-room/results/${s.id}`}
-                  className="text-sm font-bold text-fest-ink underline-offset-2 hover:underline"
-                >
-                  {t.edit}
-                </Link>
-                <form action={transitionResultForm}>
-                  <input type="hidden" name="id" value={s.id} />
-                  <input type="hidden" name="next" value="published" />
-                  <ConfirmSubmit
-                    className="festival-button inline-flex min-h-9 items-center bg-fest-ink px-3 text-xs font-bold text-fest-yellow"
-                    label={t.confirmAndPublish}
-                    message={t.confirmPublish}
-                  />
-                </form>
-              </div>
-            );
-          })}
-          {pendingMedia.slice(0, 6).map((m) => (
-            <div key={m.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-              <div className="min-w-0 flex-1">
-                <p className="font-bold">{locale === "ml" ? m.title_ml : m.title_en}</p>
-                <p className="text-xs text-muted">{m.submitted_by_name}</p>
-              </div>
-              <Link href="/war-room/media">
-                <span className="festival-button inline-flex min-h-9 items-center border-fest-ink bg-paper-white px-3 text-xs font-bold">
-                  {t.reviewNow}
-                </span>
-              </Link>
-            </div>
-          ))}
-          {!awaitingEntry.length && !awaitingVerification.length && !pendingMedia.length ? (
-            <WrEmpty label={t.noItems} />
-          ) : null}
-        </div>
-      </WrPanel>
-      </div>
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-zinc-900">{adminCopy.workQueue}</h2>
+        <WorkQueue items={queueItems} emptyLabel={adminCopy.noItems} />
+      </section>
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        <WrPanel title={t.happeningNow} accent="red" className="scroll-mt-20">
-          <div id="live">
-            {live.length ? (
-              <ul className="divide-y-2 divide-fest-ink/10">
-                {live.map((e) => (
-                  <li
-                    key={e.id}
-                    className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 text-sm"
-                  >
-                    <span className="min-w-0 truncate">
-                      <span className="font-bold">{tName(locale, e.programme)}</span>
-                      <span className="text-muted"> · {tName(locale, e.stage)}</span>
-                    </span>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <StatusBadge status="live" label={t.live} />
-                      <form action={updateEventStatusForm}>
-                        <input type="hidden" name="eventId" value={e.id} />
-                        <input type="hidden" name="status" value="completed" />
-                        <WrSubmit size="sm">{t.markCompleted}</WrSubmit>
-                      </form>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <WrEmpty label={t.noItems} />
-            )}
-          </div>
-        </WrPanel>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <section className="rounded-lg border border-zinc-200 bg-white">
+          <h2 className="border-b border-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-900">{adminCopy.happeningNow}</h2>
+          {live.length ? (
+            <ul className="divide-y divide-zinc-100">
+              {live.map((e) => (
+                <li key={e.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm">
+                  <span>
+                    <span className="font-medium">{e.programme.name_en}</span>
+                    <span className="text-zinc-500"> · {e.stage.name_en}</span>
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <StatusBadge status="live" label={adminCopy.live} />
+                    <form action={updateEventStatusForm}>
+                      <input type="hidden" name="eventId" value={e.id} />
+                      <input type="hidden" name="status" value="completed" />
+                      <AdminSubmit variant="secondary">{adminCopy.markCompleted}</AdminSubmit>
+                    </form>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="px-4 py-8 text-center text-sm text-zinc-500">{adminCopy.noItems}</p>
+          )}
+        </section>
 
-        <WrPanel title={t.recentPublished} accent="green">
+        <section className="rounded-lg border border-zinc-200 bg-white">
+          <h2 className="border-b border-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-900">{adminCopy.recentPublished}</h2>
           {published.length ? (
-            <ul className="divide-y-2 divide-fest-ink/10">
+            <ul className="divide-y divide-zinc-100">
               {published.map((p) => (
                 <li key={p.result_set.id}>
-                  <Link
-                    href={`/events/${p.event.slug}`}
-                    className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-fest-yellow-soft"
-                  >
+                  <Link href={`/events/${p.event.slug}`} className="flex items-center justify-between gap-3 px-4 py-3 text-sm hover:bg-zinc-50">
                     <span>
-                      <span className="font-bold">{tName(locale, p.event.programme)}</span>
-                      <span className="text-muted"> · {tName(locale, p.event.category)}</span>
+                      <span className="font-medium">{p.event.programme.name_en}</span>
+                      <span className="text-zinc-500"> · {p.event.category.name_en}</span>
                     </span>
-                    <span className="text-xs font-bold text-fest-red">{t.viewSite}</span>
+                    <span className="text-xs font-medium text-zinc-600">{adminCopy.viewSite}</span>
                   </Link>
                 </li>
               ))}
             </ul>
           ) : (
-            <WrEmpty label={t.noItems} />
+            <p className="px-4 py-8 text-center text-sm text-zinc-500">{adminCopy.noItems}</p>
           )}
-        </WrPanel>
+        </section>
       </div>
-    </div>
+    </AdminPage>
   );
 }

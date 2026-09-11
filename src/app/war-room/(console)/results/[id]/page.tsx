@@ -1,15 +1,17 @@
 import { notFound } from "next/navigation";
 import { startCorrectionForm, transitionResultForm } from "@/domains/admin/actions";
 import { ResultEntriesEditor } from "@/components/war-room/result-entries-editor";
+import { AdminPage } from "@/components/admin/admin-page";
+import { AdminStepBar } from "@/components/admin/admin-step-bar";
+import { AdminSubmit } from "@/components/admin/admin-submit";
 import { can, getSessionProfile } from "@/lib/auth";
 import { getResultEntries, getResultSetById } from "@/lib/data/admin-queries";
-import { getDictionary, tName, statusLabel } from "@/lib/i18n/dictionaries";
-import { getRequestLocale } from "@/lib/i18n/server";
+import { adminCopy } from "@/lib/admin/copy";
+import { adminStatusLabel } from "@/lib/admin/status";
 import { getHouses, getParticipantsLite, getScheduledEventById } from "@/lib/data/queries";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
 import { ButtonLink } from "@/components/ui/button";
-import { WrStepBar, WrSubmit } from "@/components/war-room/primitives";
 import { isCertificateEligible, certificatePagePath } from "@/lib/certificates";
 
 export default async function ResultEditorPage({
@@ -18,8 +20,6 @@ export default async function ResultEditorPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const locale = await getRequestLocale();
-  const t = getDictionary(locale);
   const profile = await getSessionProfile();
   const set = await getResultSetById(id);
   if (!set) notFound();
@@ -34,9 +34,9 @@ export default async function ResultEditorPage({
   const editor = can(profile?.role, ["war_room"]);
 
   const steps = [
-    { label: t.draft },
-    { label: t.submitForConfirmation },
-    { label: t.published },
+    { label: adminCopy.draft },
+    { label: adminCopy.submitForConfirmation },
+    { label: adminCopy.published },
   ];
   const normalized =
     set.status === "correction_draft"
@@ -47,35 +47,23 @@ export default async function ResultEditorPage({
   const activeStep = steps.findIndex((_, i) => ["draft", "entered", "published"][i] === normalized);
 
   return (
-    <div className="grid gap-5">
-      <div className="card p-4 lg:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="font-display text-xl font-black lg:text-2xl">
-              {tName(locale, event.programme)}
-            </h2>
-            <p className="text-sm text-muted">
-              {tName(locale, event.category)} · {tName(locale, event.stage)}
-            </p>
-          </div>
-          <StatusBadge status={set.status} label={statusLabel(locale, set.status)} />
-        </div>
-        <div className="mt-5">
-          <WrStepBar steps={steps} activeIndex={activeStep} />
-        </div>
-      </div>
+    <AdminPage
+      title={event.programme.name_en}
+      description={`${event.category.name_en} · ${event.stage.name_en}`}
+      actions={<StatusBadge status={set.status} label={adminStatusLabel(set.status)} />}
+    >
+      <AdminStepBar steps={steps} activeIndex={activeStep} />
 
       {editor ? (
         <ResultEntriesEditor
           resultSetId={set.id}
           locked={locked}
-          saveLabel={t.saveDraft}
-          addRowLabel={t.addRow}
-          removeLabel={t.remove}
+          saveLabel={adminCopy.saveDraft}
+          addRowLabel={adminCopy.addRow}
+          removeLabel={adminCopy.remove}
           houses={houses}
           participants={participants}
           initialRows={entries}
-          locale={locale}
         />
       ) : null}
 
@@ -84,7 +72,7 @@ export default async function ResultEditorPage({
           <form action={transitionResultForm}>
             <input type="hidden" name="id" value={set.id} />
             <input type="hidden" name="next" value="entered" />
-            <WrSubmit variant="gold">{t.submitForConfirmation}</WrSubmit>
+            <AdminSubmit>{adminCopy.submitForConfirmation}</AdminSubmit>
           </form>
         ) : null}
         {editor && set.status === "entered" ? (
@@ -92,45 +80,40 @@ export default async function ResultEditorPage({
             <input type="hidden" name="id" value={set.id} />
             <input type="hidden" name="next" value="published" />
             <ConfirmSubmit
-              className="festival-button inline-flex min-h-11 items-center bg-fest-ink px-5 text-sm font-bold text-fest-yellow"
-              label={t.confirmAndPublish}
-              message={t.confirmPublish}
+              className="inline-flex min-h-10 items-center rounded-md bg-zinc-900 px-4 text-sm font-medium text-white"
+              label={adminCopy.confirmAndPublish}
+              message={adminCopy.confirmPublish}
             />
           </form>
         ) : null}
         {editor && set.status === "published" ? (
-          <div className="card flex flex-wrap items-center gap-3 border-fest-green p-4">
-            <p className="min-w-0 flex-1 text-sm font-bold">
-              {t.published}
+          <div className="flex w-full flex-wrap items-center gap-3 rounded-lg border border-zinc-200 bg-white p-4">
+            <p className="min-w-0 flex-1 text-sm font-medium text-zinc-900">
+              {adminCopy.published}
               {entries[0]?.participant_name ? ` · ${entries[0].participant_name}` : ""}
             </p>
             <ButtonLink href={`/events/${event.slug}`} variant="outline" size="sm">
-              {t.viewSite}
+              {adminCopy.viewSite}
             </ButtonLink>
             {entries
               .filter((e) => isCertificateEligible(e.rank))
               .map((e) => (
-                <ButtonLink
-                  key={e.id}
-                  href={certificatePagePath(e.id)}
-                  variant="gold"
-                  size="sm"
-                >
-                  {t.downloadCertificate}
+                <ButtonLink key={e.id} href={certificatePagePath(e.id)} variant="gold" size="sm">
+                  {adminCopy.downloadCertificate}
                   {e.rank ? ` · ${e.rank}` : ""}
                 </ButtonLink>
               ))}
             <form action={startCorrectionForm}>
               <input type="hidden" name="id" value={set.id} />
               <ConfirmSubmit
-                className="festival-button inline-flex min-h-9 items-center border-fest-red bg-paper-white px-4 text-xs font-bold text-fest-red"
-                label={t.startCorrection}
-                message={t.confirmDestructive}
+                className="inline-flex min-h-9 items-center rounded-md border border-red-300 bg-white px-3 text-xs font-medium text-red-700"
+                label={adminCopy.startCorrection}
+                message={adminCopy.confirmDestructive}
               />
             </form>
           </div>
         ) : null}
       </div>
-    </div>
+    </AdminPage>
   );
 }

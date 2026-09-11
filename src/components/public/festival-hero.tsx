@@ -7,8 +7,8 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
 import type { EventSettings, House, Locale } from "@/lib/types";
 
 export function FestivalHero({ locale, t, settings, houses, todayEventsCount, resultsCount, liveCount, isLive, currentDay }: { locale: Locale; t: Dictionary; settings: EventSettings; houses: House[]; todayEventsCount: number; resultsCount: number; liveCount: number; isLive: boolean; currentDay: number }) {
-  const eventTitle = locale === "ml" ? settings.name_ml : settings.name_en;
-  const venue = locale === "ml" ? settings.venue_ml : settings.venue_en;
+  const eventTitle = settings.name_en;
+  const venue = settings.venue_en;
 
   return (
     <section className="festival-hero relative -mt-3 mx-[calc(50%-50vw)] w-screen overflow-hidden text-white sm:-mt-6">

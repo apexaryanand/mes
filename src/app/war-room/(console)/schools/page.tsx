@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function WarRoomSchoolsRedirect() {
-  redirect("/war-room/houses");
+export default function SchoolsRedirect() {
+  redirect("/war-room/catalog?tab=houses");
 }

@@ -83,8 +83,9 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t-2 border-white/15">
-        <div className="mx-auto max-w-6xl px-3 py-4 text-xs text-paper/60 sm:px-4 md:px-6">
-          {t.littleKites}
+        <div className="mx-auto max-w-6xl space-y-1 px-3 py-4 text-xs text-paper/60 sm:px-4 md:px-6">
+          <p className="font-semibold text-paper/80">{t.websiteCredit}</p>
+          <p>{t.operationsCredit}</p>
         </div>
       </div>
     </footer>

@@ -1,26 +1,18 @@
 import { saveScheduledEventForm } from "@/domains/admin/catalog-actions";
 import { updateEventStatusForm } from "@/domains/admin/actions";
-import {
-  TableCard,
-  Th,
-  Td,
-  WrFormCard,
-  WrSubmit,
-  wrInput,
-  wrLabel,
-} from "@/components/war-room/primitives";
+import { AdminField, adminInput } from "@/components/admin/admin-field";
+import { AdminPage } from "@/components/admin/admin-page";
+import { AdminSubmit } from "@/components/admin/admin-submit";
+import { AdminTable, AdminTd, AdminTh } from "@/components/admin/admin-table";
+import { adminCopy } from "@/lib/admin/copy";
+import { adminStatusLabel } from "@/lib/admin/status";
+import { getCategories, getProgrammes, getScheduledEvents, getSettings, getStages } from "@/lib/data/queries";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
-import { getRequestLocale } from "@/lib/i18n/server";
-import { getCategories, getProgrammes, getScheduledEvents, getStages } from "@/lib/data/queries";
-import { getSettings } from "@/lib/data/queries";
 import type { EventStatus } from "@/lib/types";
 
 const STATUSES: EventStatus[] = ["upcoming", "live", "completed", "delayed", "cancelled"];
 
 export default async function ScheduleAdminPage() {
-  const locale = await getRequestLocale();
-  const t = getDictionary(locale);
   const [events, programmes, categories, stages, settings] = await Promise.all([
     getScheduledEvents(),
     getProgrammes(),
@@ -29,113 +21,94 @@ export default async function ScheduleAdminPage() {
     getSettings(),
   ]);
 
-  return (
-    <div className="grid gap-5 xl:grid-cols-[22rem_1fr] xl:items-start">
-      <form action={saveScheduledEventForm}>
-        <WrFormCard title={`${t.create} event`} cols={1}>
-          <label className={wrLabel}>
-            {t.programme}
-            <select name="programme_id" required className={wrInput}>
-              {programmes.map((p) => (
-                <option key={p.id} value={p.id}>{p.name_en}</option>
-              ))}
-            </select>
-          </label>
-          <label className={wrLabel}>
-            {t.category}
-            <select name="category_id" required className={wrInput}>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name_en}</option>
-              ))}
-            </select>
-          </label>
-          <label className={wrLabel}>
-            {t.stage}
-            <select name="stage_id" required className={wrInput}>
-              {stages.map((s) => (
-                <option key={s.id} value={s.id}>{s.name_en}</option>
-              ))}
-            </select>
-          </label>
-          <label className={wrLabel}>
-            {t.day}
-            <input
-              name="day_number"
-              type="number"
-              min={1}
-              max={3}
-              defaultValue={settings.current_day ?? 1}
-              className={wrInput}
-            />
-          </label>
-          <label className={wrLabel}>
-            Date
-            <input
-              name="event_date"
-              type="date"
-              required
-              defaultValue={settings.start_date}
-              className={wrInput}
-            />
-          </label>
-          <label className={wrLabel}>
-            {t.startTime}
-            <input name="start_time" type="time" required className={wrInput} />
-          </label>
-          <label className={wrLabel}>
-            End time
-            <input name="end_time" type="time" className={wrInput} />
-          </label>
-          <WrSubmit className="lg:col-span-2">{t.create}</WrSubmit>
-        </WrFormCard>
-      </form>
+  const byDay = new Map<number, typeof events>();
+  for (const e of events) {
+    const list = byDay.get(e.day_number) ?? [];
+    list.push(e);
+    byDay.set(e.day_number, list);
+  }
 
-      <TableCard>
-        <table className="min-w-[760px] text-left text-sm">
-          <thead>
-            <tr>
-              <Th>{t.day}</Th>
-              <Th>{t.time}</Th>
-              <Th>{t.stage}</Th>
-              <Th>{t.programme}</Th>
-              <Th>{t.status}</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.map((e) => (
-              <tr key={e.id}>
-                <Td className="tabular">{e.day_number}</Td>
-                <Td className="tabular">{e.start_time}</Td>
-                <Td>{tName(locale, e.stage)}</Td>
-                <Td>
-                  <span className="font-bold">{tName(locale, e.programme)}</span>
-                  <span className="text-muted"> · {tName(locale, e.category)}</span>
-                </Td>
-                <Td>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <StatusBadge status={e.status} label={statusLabel(locale, e.status)} />
-                    <form action={updateEventStatusForm} className="flex gap-1.5">
-                      <input type="hidden" name="eventId" value={e.id} />
-                      <select
-                        name="status"
-                        defaultValue={e.status}
-                        className="field-input min-h-9 w-auto px-2 py-1.5 text-sm"
-                      >
-                        {STATUSES.map((s) => (
-                          <option key={s} value={s}>{statusLabel(locale, s)}</option>
-                        ))}
-                      </select>
-                      <button type="submit" className="chip shrink-0 hover:bg-fest-yellow">
-                        {t.edit}
-                      </button>
-                    </form>
-                  </div>
-                </Td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </TableCard>
-    </div>
+  return (
+    <AdminPage title={adminCopy.schedule} description={adminCopy.scheduleHelp}>
+      <details className="rounded-lg border border-zinc-200 bg-white p-4 open:pb-4">
+        <summary className="cursor-pointer text-sm font-medium text-zinc-900">{adminCopy.addEvent}</summary>
+        <form action={saveScheduledEventForm} className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <AdminField label={adminCopy.programme}>
+            <select name="programme_id" required className={adminInput}>
+              {programmes.map((p) => <option key={p.id} value={p.id}>{p.name_en}</option>)}
+            </select>
+          </AdminField>
+          <AdminField label={adminCopy.category}>
+            <select name="category_id" required className={adminInput}>
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.name_en}</option>)}
+            </select>
+          </AdminField>
+          <AdminField label={adminCopy.stage}>
+            <select name="stage_id" required className={adminInput}>
+              {stages.map((s) => <option key={s.id} value={s.id}>{s.name_en}</option>)}
+            </select>
+          </AdminField>
+          <AdminField label={adminCopy.day}>
+            <input name="day_number" type="number" min={1} max={3} defaultValue={settings.current_day ?? 1} className={adminInput} />
+          </AdminField>
+          <AdminField label="Date">
+            <input name="event_date" type="date" required defaultValue={settings.start_date} className={adminInput} />
+          </AdminField>
+          <AdminField label={adminCopy.startTime}>
+            <input name="start_time" type="time" required className={adminInput} />
+          </AdminField>
+          <AdminField label="End time">
+            <input name="end_time" type="time" className={adminInput} />
+          </AdminField>
+          <div className="sm:col-span-2 lg:col-span-3">
+            <AdminSubmit>{adminCopy.create}</AdminSubmit>
+          </div>
+        </form>
+      </details>
+
+      {[...byDay.entries()].sort(([a], [b]) => a - b).map(([day, dayEvents]) => (
+        <section key={day}>
+          <h2 className="mb-2 text-sm font-semibold text-zinc-900">{adminCopy.day} {day}</h2>
+          <AdminTable>
+            <table className="min-w-full text-left text-sm">
+              <thead>
+                <tr>
+                  <AdminTh>{adminCopy.startTime}</AdminTh>
+                  <AdminTh>{adminCopy.stage}</AdminTh>
+                  <AdminTh>{adminCopy.programme}</AdminTh>
+                  <AdminTh>{adminCopy.status}</AdminTh>
+                </tr>
+              </thead>
+              <tbody>
+                {dayEvents.map((e) => (
+                  <tr key={e.id}>
+                    <AdminTd className="tabular-nums">{e.start_time}</AdminTd>
+                    <AdminTd>{e.stage.name_en}</AdminTd>
+                    <AdminTd>
+                      <span className="font-medium">{e.programme.name_en}</span>
+                      <span className="text-zinc-500"> · {e.category.name_en}</span>
+                    </AdminTd>
+                    <AdminTd>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <StatusBadge status={e.status} label={adminStatusLabel(e.status)} />
+                        <form action={updateEventStatusForm} className="flex gap-1.5">
+                          <input type="hidden" name="eventId" value={e.id} />
+                          <select name="status" defaultValue={e.status} className={adminInput}>
+                            {STATUSES.map((s) => (
+                              <option key={s} value={s}>{adminStatusLabel(s)}</option>
+                            ))}
+                          </select>
+                          <AdminSubmit variant="secondary">{adminCopy.saveChanges}</AdminSubmit>
+                        </form>
+                      </div>
+                    </AdminTd>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </AdminTable>
+        </section>
+      ))}
+    </AdminPage>
   );
 }
