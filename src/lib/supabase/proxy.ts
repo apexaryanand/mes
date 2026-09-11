@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseAnonKey, getSupabaseUrl, isSupabaseConfigured } from "@/lib/utils";
+import { safeNextPath } from "@/lib/safe-redirect";
 
 export async function updateSession(request: NextRequest) {
   const response = NextResponse.next({ request });
@@ -36,7 +37,7 @@ export async function updateSession(request: NextRequest) {
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/war-room/login";
-    url.searchParams.set("next", path);
+    url.searchParams.set("next", safeNextPath(path));
     return NextResponse.redirect(url);
   }
 

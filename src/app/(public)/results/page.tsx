@@ -115,7 +115,11 @@ export default async function ResultsPage({
 
       <div className="grid gap-5 sm:gap-10">
         {filtered.length === 0 ? (
-          <EmptyState icon="results" title={t.noResults} description={t.emptyHint} />
+          <EmptyState
+            icon="results"
+            title={results.length ? t.noFilterMatches : t.noResults}
+            description={t.emptyHint}
+          />
         ) : null}
         {filtered.map((block) => (
           <section key={block.result_set.id} className="grid gap-4">
@@ -142,7 +146,16 @@ export default async function ResultsPage({
                 </Link>
               </div>
             </div>
-            <ResultTable entries={block.entries} />
+            <ResultTable
+              entries={
+                filters.house
+                  ? block.entries.filter((e) => e.house?.slug === filters.house)
+                  : block.entries
+              }
+              eventSlug={block.event.slug}
+              programmeName={tName(locale, block.event.programme)}
+              categoryName={tName(locale, block.event.category)}
+            />
           </section>
         ))}
       </div>

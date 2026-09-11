@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import { loginAction } from "@/domains/admin/actions";
+import { safeNextPath } from "@/lib/safe-redirect";
 import { useI18n } from "@/lib/i18n/provider";
 
 export function LoginForm() {
@@ -12,7 +13,7 @@ export function LoginForm() {
 
   return (
     <form action={action} className="grid gap-4">
-      <input type="hidden" name="next" value={params.get("next") ?? "/war-room"} />
+      <input type="hidden" name="next" value={safeNextPath(params.get("next"))} />
       <label className="field-label">
         {t.email}
         <input

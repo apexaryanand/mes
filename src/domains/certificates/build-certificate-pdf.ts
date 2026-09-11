@@ -25,8 +25,25 @@ const PAGE_H = 595;
 const SX = PAGE_W / DESIGN_W;
 const SY = PAGE_H / DESIGN_H;
 
+const CREAM = rgb(0.973, 0.957, 0.91);
 const NAVY = rgb(0.1, 0.2, 0.32);
 const GOLD = rgb(0.72, 0.54, 0.12);
+
+function coverBand(
+  page: ReturnType<PDFDocument["addPage"]>,
+  designX: number,
+  designY: number,
+  designW: number,
+  designH: number,
+) {
+  page.drawRectangle({
+    x: designX * SX,
+    y: toPdfY(designY + designH),
+    width: designW * SX,
+    height: designH * SY,
+    color: CREAM,
+  });
+}
 
 function pdfSafe(text: string): string {
   return text.normalize("NFKD").replace(/[^\x00-\x7F]/g, "");
@@ -94,14 +111,22 @@ export async function buildCertificatePdf(input: CertificatePdfInput): Promise<U
 
   const prize = rankPrizeDisplay(input.rank);
   const certNo = formatCertificateNumber(input.entryId, input.publishedAt);
-  const date = formatCertificateDate(input.publishedAt, input.locale);
+  const date = formatCertificateDate(input.publishedAt, "en");
+  const name = pdfSafe(input.participantName).trim() || input.participantName.replace(/[^\w\s.-]/g, "").trim();
 
-  drawCentered(page, input.participantName, DESIGN_W / 2, 418, 42, serifBold, NAVY);
+  coverBand(page, 220, 360, 1050, 90);
+  coverBand(page, 280, 480, 930, 80);
+  coverBand(page, 260, 560, 970, 70);
+  coverBand(page, 360, 630, 770, 55);
+  coverBand(page, 230, 910, 340, 40);
+  coverBand(page, 300, 965, 360, 36);
+
+  drawCentered(page, name || "Winner", DESIGN_W / 2, 418, 42, serifBold, NAVY);
   drawCentered(page, prize, DESIGN_W / 2, 525, 34, serifBold, GOLD);
   drawCentered(page, input.programme, DESIGN_W / 2, 600, 28, serifBold, NAVY);
   drawCentered(page, input.category, DESIGN_W / 2, 660, 20, serifBold, NAVY);
-  drawLeft(page, date, 112, 935, 16, serif, NAVY);
-  drawLeft(page, certNo, 112, 990, 14, serif, NAVY);
+  drawLeft(page, date, 250, 935, 16, serif, NAVY);
+  drawLeft(page, certNo, 330, 990, 14, serif, NAVY);
 
   return pdfDoc.save();
 }

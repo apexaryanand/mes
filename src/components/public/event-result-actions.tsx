@@ -9,22 +9,25 @@ import type { PublishedResultView } from "@/lib/types";
 
 export function EventResultActions({ result }: { result: PublishedResultView }) {
   const { locale } = useI18n();
-  const winner = result.entries.find((e) => isCertificateEligible(e.rank)) ?? result.entries[0];
-  if (!winner) return <OfficialResultsPanel resultSet={result.result_set} />;
-
+  const winners = result.entries.filter((e) => isCertificateEligible(e.rank));
   const programmeName = tName(locale, result.event.programme);
   const categoryName = tName(locale, result.event.category);
 
   return (
     <div className="grid gap-3">
-      <OfficialResultsPanel resultSet={result.result_set} />
-      {isCertificateEligible(winner.rank) ? (
-        <CertificateActions
-          entry={winner}
-          event={result.event}
-          programmeName={programmeName}
-          categoryName={categoryName}
-        />
+      <OfficialResultsPanel resultSet={result.result_set} eventSlug={result.event.slug} />
+      {winners.length ? (
+        <div className="flex flex-wrap gap-2">
+          {winners.map((entry) => (
+            <CertificateActions
+              key={entry.id}
+              entry={entry}
+              event={result.event}
+              programmeName={programmeName}
+              categoryName={categoryName}
+            />
+          ))}
+        </div>
       ) : null}
     </div>
   );

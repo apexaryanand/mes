@@ -1,9 +1,6 @@
 import { notFound } from "next/navigation";
-import {
-  saveResultDraftForm,
-  startCorrectionForm,
-  transitionResultForm,
-} from "@/domains/admin/actions";
+import { startCorrectionForm, transitionResultForm } from "@/domains/admin/actions";
+import { ResultEntriesEditor } from "@/components/war-room/result-entries-editor";
 import { can, getSessionProfile } from "@/lib/auth";
 import { getResultEntries, getResultSetById } from "@/lib/data/admin-queries";
 import { getDictionary, tName, statusLabel } from "@/lib/i18n/dictionaries";
@@ -11,17 +8,17 @@ import { getRequestLocale } from "@/lib/i18n/server";
 import { getHouses, getParticipants, getScheduledEvents } from "@/lib/data/queries";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
-import { Button } from "@/components/ui/button";
-import { WrStepBar, WrSubmit, TableCard, Th, Td } from "@/components/war-room/primitives";
-import { suggestGrade } from "@/domains/results/scoring";
-import { cn } from "@/lib/utils";
+import { WrStepBar, WrSubmit } from "@/components/war-room/primitives";
 
 export default async function ResultEditorPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const { id } = await params;
+  const { error } = await searchParams;
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
   const profile = await getSessionProfile();
@@ -37,7 +34,6 @@ export default async function ResultEditorPage({
   const entries = await getResultEntries(set.id);
   const locked = set.status === "published";
   const editor = can(profile?.role, ["war_room"]);
-  const defaultHouseId = houses[0]?.id ?? "";
 
   const steps = [
     { label: t.draft },
@@ -51,25 +47,6 @@ export default async function ResultEditorPage({
         ? "entered"
         : set.status;
   const activeStep = steps.findIndex((_, i) => ["draft", "entered", "published"][i] === normalized);
-
-  const inputCls = "field-input min-h-9 w-auto px-2.5 py-1.5 text-sm";
-
-  const rows = entries.length
-    ? entries
-    : [
-        {
-          id: "",
-          house_id: defaultHouseId,
-          participant_id: null,
-          participant_name: "",
-          marks: null,
-          grade: null,
-          rank: 1,
-          points: 0,
-          result_set_id: set.id,
-          house: houses[0],
-        },
-      ];
 
   return (
     <div className="grid gap-5">
@@ -90,100 +67,28 @@ export default async function ResultEditorPage({
         </div>
       </div>
 
-      <form action={saveResultDraftForm}>
-        <input type="hidden" name="resultSetId" value={set.id} />
-        <input type="hidden" name="count" value={Math.max(rows.length, 1)} />
-        <TableCard>
-          <table className="min-w-[860px] text-sm">
-            <thead>
-              <tr>
-                <Th>{t.rank}</Th>
-                <Th>Registered</Th>
-                <Th>{t.participant}</Th>
-                <Th>{t.house}</Th>
-                <Th>{t.marks}</Th>
-                <Th>{t.grade}</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => (
-                <tr key={row.id || i}>
-                  <Td>
-                    <input type="hidden" name={`id_${i}`} defaultValue={row.id} />
-                    <input
-                      name={`rank_${i}`}
-                      defaultValue={row.rank ?? i + 1}
-                      disabled={locked}
-                      className={cn(inputCls, "w-16")}
-                    />
-                  </Td>
-                  <Td>
-                    <select
-                      name={`participant_${i}`}
-                      defaultValue={row.participant_id ?? ""}
-                      disabled={locked}
-                      className={cn(inputCls, "min-w-36")}
-                    >
-                      <option value="">Manual entry</option>
-                      {participants
-                        .filter((p) => p.house_id === row.house_id || !row.house_id)
-                        .map((p) => (
-                          <option key={p.id} value={p.id}>{p.full_name}</option>
-                        ))}
-                    </select>
-                  </Td>
-                  <Td>
-                    <input
-                      name={`name_${i}`}
-                      defaultValue={row.participant_name ?? ""}
-                      disabled={locked}
-                      className={cn(inputCls, "min-w-40 w-full")}
-                    />
-                  </Td>
-                  <Td>
-                    <select
-                      name={`house_${i}`}
-                      defaultValue={row.house_id}
-                      disabled={locked}
-                      className={inputCls}
-                    >
-                      {houses.map((h) => (
-                        <option key={h.id} value={h.id}>{tName(locale, h)}</option>
-                      ))}
-                    </select>
-                  </Td>
-                  <Td>
-                    <input
-                      name={`marks_${i}`}
-                      defaultValue={row.marks ?? ""}
-                      disabled={locked}
-                      className={cn(inputCls, "w-20")}
-                    />
-                  </Td>
-                  <Td>
-                    <select
-                      name={`grade_${i}`}
-                      defaultValue={row.grade ?? suggestGrade(row.marks) ?? ""}
-                      disabled={locked}
-                      className={inputCls}
-                    >
-                      <option value="">—</option>
-                      <option value="A">A</option>
-                      <option value="B">B</option>
-                      <option value="C">C</option>
-                    </select>
-                  </Td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </TableCard>
-        {editor && !locked ? (
-          <div className="mt-4">
-            <WrSubmit>{t.saveDraft}</WrSubmit>
-          </div>
-        ) : null}
-      </form>
+      {error ? (
+        <p
+          role="alert"
+          className="border-2 border-fest-red bg-live-soft px-4 py-3 text-sm font-bold text-fest-red"
+        >
+          {error}
+        </p>
+      ) : null}
+
+      {editor ? (
+        <ResultEntriesEditor
+          resultSetId={set.id}
+          locked={locked}
+          saveLabel={t.saveDraft}
+          addRowLabel={t.addRow}
+          removeLabel={t.remove}
+          houses={houses}
+          participants={participants}
+          initialRows={entries}
+          localeHouseName={(h) => tName(locale, h)}
+        />
+      ) : null}
 
       <div className="flex flex-wrap gap-2">
         {editor && (set.status === "draft" || set.status === "correction_draft") ? (

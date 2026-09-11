@@ -14,6 +14,7 @@ import type {
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/utils";
+import { safeNextPath } from "@/lib/safe-redirect";
 
 async function bump() {
   const { revalidatePath } = await import("next/cache");
@@ -23,7 +24,7 @@ async function bump() {
 export async function loginAction(_prev: { error: string }, formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
-  const next = String(formData.get("next") ?? "/war-room");
+  const next = safeNextPath(String(formData.get("next") ?? "/war-room"));
 
   if (!isSupabaseConfigured()) {
     return { error: "Supabase is not configured. Contact the administrator." };
@@ -32,7 +33,7 @@ export async function loginAction(_prev: { error: string }, formData: FormData) 
   const supabase = await createServerSupabase();
   const { error } = await supabase!.auth.signInWithPassword({ email, password });
   if (error) return { error: error.message };
-  redirect(next || "/war-room");
+  redirect(next);
 }
 
 export async function logoutAction() {
@@ -67,15 +68,24 @@ export async function saveResultDraft(input: {
   if (!set) return { error: "Result set not found." };
   if (set.status === "published") return { error: "Published results cannot be edited." };
 
+  const prepared = input.entries.filter(
+    (e) => e.house_id && (e.participant_name.trim() || e.participant_id),
+  );
+
+  const { data: existing } = await sb
+    .from("result_entries")
+    .select("house_id, participant_id, participant_name, marks, grade, rank, points")
+    .eq("result_set_id", input.resultSetId);
+
   const { error: delError } = await sb
     .from("result_entries")
     .delete()
     .eq("result_set_id", input.resultSetId);
   if (delError) return { error: delError.message };
 
-  if (input.entries.length) {
+  if (prepared.length) {
     const rows = [];
-    for (const e of input.entries) {
+    for (const e of prepared) {
       let participant_name = e.participant_name || null;
       if (e.participant_id) {
         const { data: p } = await sb
@@ -96,12 +106,23 @@ export async function saveResultDraft(input: {
       });
     }
     const { error: insError } = await sb.from("result_entries").insert(rows);
-    if (insError) return { error: insError.message };
+    if (insError) {
+      if (existing?.length) {
+        await sb.from("result_entries").insert(
+          existing.map((e) => ({
+            result_set_id: input.resultSetId,
+            ...e,
+          })),
+        );
+      }
+      return { error: insError.message };
+    }
   }
 
+  const nextStatus = set.status === "correction_draft" ? "correction_draft" : "draft";
   const { error: setError } = await sb
     .from("result_sets")
-    .update({ status: "draft", updated_at: new Date().toISOString() })
+    .update({ status: nextStatus, updated_at: new Date().toISOString() })
     .eq("id", input.resultSetId);
   if (setError) return { error: setError.message };
 
@@ -156,6 +177,16 @@ export async function startCorrection(resultSetId: string) {
   const { data: published } = await sb.from("result_sets").select("*").eq("id", resultSetId).maybeSingle();
   if (!published || published.status !== "published") {
     return { error: "Only published sets can be corrected." };
+  }
+
+  const { data: openDraft } = await sb
+    .from("result_sets")
+    .select("id")
+    .eq("scheduled_event_id", published.scheduled_event_id)
+    .in("status", ["draft", "entered", "correction_draft", "verified"])
+    .maybeSingle();
+  if (openDraft?.id) {
+    return { ok: true, id: openDraft.id as string };
   }
 
   const { data: newSet, error: setError } = await sb
@@ -213,10 +244,39 @@ export async function moderateMedia(id: string, status: MediaStatus) {
   const profile = await getSessionProfile();
   if (!can(profile?.role, ["war_room"])) return { error: "Not allowed." };
   const sb = await requireServerSupabase();
+  const { data: item } = await sb.from("media").select("*").eq("id", id).maybeSingle();
+  if (!item) return { error: "Not found." };
+
+  let url = item.url as string;
+  let storagePath = (item.storage_path as string | null) ?? null;
+
+  if (status === "approved" && storagePath && !storagePath.startsWith("staff/")) {
+    try {
+      const svc = requireServiceSupabase();
+      const { data: file, error: dlError } = await svc.storage
+        .from("media-pending")
+        .download(storagePath);
+      if (!dlError && file) {
+        const dest = `approved/${storagePath.replace(/^public-submissions\//, "")}`;
+        const { error: upError } = await svc.storage
+          .from("media-public")
+          .upload(dest, file, { upsert: true, contentType: file.type });
+        if (!upError) {
+          storagePath = dest;
+          url = dest;
+        }
+      }
+    } catch {
+      /* keep pending path; resolveMediaUrl still tries media-pending */
+    }
+  }
+
   const { error } = await sb
     .from("media")
     .update({
       status,
+      url,
+      storage_path: storagePath,
       published_at: status === "approved" ? new Date().toISOString() : null,
       moderated_by: profile?.id ?? null,
     })
@@ -294,7 +354,7 @@ export async function saveInterview(
 export async function updateUserRole(profileId: string, role: AppRole) {
   const profile = await getSessionProfile();
   if (!can(profile?.role, [])) return { error: "Not allowed." };
-  const sb = requireServiceSupabase();
+  const sb = await requireServerSupabase();
   const { error } = await sb.from("profiles").update({ role }).eq("id", profileId);
   if (error) return { error: error.message };
   return { ok: true };
@@ -367,8 +427,12 @@ export async function saveResultDraftForm(formData: FormData) {
       rank: formData.get(`rank_${i}`) ? Number(formData.get(`rank_${i}`)) : null,
     });
   }
-  await saveResultDraft({ resultSetId, entries });
+  const result = await saveResultDraft({ resultSetId, entries });
+  if (result && "error" in result && result.error) {
+    redirect(`/war-room/results/${resultSetId}?error=${encodeURIComponent(result.error)}`);
+  }
   await bump();
+  redirect(`/war-room/results/${resultSetId}`);
 }
 
 export async function updateUserRoleForm(formData: FormData) {

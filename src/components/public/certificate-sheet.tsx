@@ -19,9 +19,35 @@ export type CertificateSheetProps = {
   className?: string;
 };
 
+function Field({
+  top,
+  width = "78%",
+  height = "7.2%",
+  className,
+  children,
+}: {
+  top: string;
+  width?: string;
+  height?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "absolute left-1/2 flex -translate-x-1/2 items-center justify-center bg-[#f8f4e8] px-2 text-center",
+        className,
+      )}
+      style={{ top, width, height }}
+    >
+      {children}
+    </div>
+  );
+}
+
 /**
  * Official MESTA certificate — template artwork with dynamic text overlaid
- * at fixed positions (1491×1055 design).
+ * on cream bands that cover the baked-in placeholders.
  */
 export function CertificateSheet({
   entryId,
@@ -51,53 +77,35 @@ export function CertificateSheet({
       />
 
       <div className="certificate-overlay absolute inset-0 text-[#1a3352]">
-        {/* Student name — covers [STUDENT NAME] */}
-        <p
-          className="certificate-student absolute left-1/2 w-[78%] -translate-x-1/2 text-center font-display font-black leading-tight"
-          style={{ top: "39.5%" }}
-        >
+        <Field top="37.8%" height="8.4%" className="certificate-student font-display font-black leading-tight">
           {participantName}
-        </p>
-
-        {/* Prize — covers [FIRST PRIZE] */}
-        <p
-          className="certificate-prize absolute left-1/2 w-[85%] -translate-x-1/2 text-center font-display font-black uppercase tracking-wide"
-          style={{ top: "49.8%", color: "#b8891f" }}
+        </Field>
+        <Field
+          top="48.6%"
+          height="7.6%"
+          className="certificate-prize font-display font-black uppercase tracking-wide"
         >
-          {prize}
-        </p>
-
-        {/* Programme — covers Oppana - Girls line */}
-        <p
-          className="certificate-programme absolute left-1/2 w-[82%] -translate-x-1/2 text-center font-display font-black leading-snug"
-          style={{ top: "56.8%" }}
-        >
+          <span style={{ color: "#b8891f" }}>{prize}</span>
+        </Field>
+        <Field top="56.2%" height="6.4%" width="82%" className="certificate-programme font-display font-black leading-snug">
           {programme}
-        </p>
-
-        {/* Category — covers HS S Section */}
-        <p
-          className="certificate-category absolute left-1/2 w-[80%] -translate-x-1/2 text-center text-[0.92em] font-bold uppercase tracking-wide"
-          style={{ top: "62.5%" }}
-        >
+        </Field>
+        <Field top="61.8%" height="5.2%" width="70%" className="certificate-category font-bold uppercase tracking-wide">
           {category}
-        </p>
+        </Field>
 
-        {/* Date — bottom left */}
-        <p
-          className="certificate-date absolute font-semibold tabular"
-          style={{ left: "7.5%", bottom: "11.5%" }}
+        <div
+          className="certificate-date absolute flex items-center bg-[#f8f4e8] px-1 font-semibold tabular"
+          style={{ left: "16.5%", bottom: "11.2%", width: "22%", height: "3.6%" }}
         >
           {date}
-        </p>
-
-        {/* Certificate number */}
-        <p
-          className="certificate-number absolute font-semibold tabular"
-          style={{ left: "7.5%", bottom: "5.8%" }}
+        </div>
+        <div
+          className="certificate-number absolute flex items-center bg-[#f8f4e8] px-1 font-semibold tabular"
+          style={{ left: "22%", bottom: "5.6%", width: "24%", height: "3.4%" }}
         >
           {certNo}
-        </p>
+        </div>
       </div>
     </div>
   );

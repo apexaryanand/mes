@@ -3,14 +3,12 @@ import { buildCertificatePdf } from "@/domains/certificates/build-certificate-pd
 import { isCertificateEligible } from "@/lib/certificates";
 import { getPublishedEntryById } from "@/lib/data/queries";
 import { tName } from "@/lib/i18n/dictionaries";
-import { getRequestLocale } from "@/lib/i18n/server";
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ entryId: string }> },
 ) {
   const { entryId } = await params;
-  const locale = await getRequestLocale();
   const block = await getPublishedEntryById(entryId);
 
   if (
@@ -23,10 +21,10 @@ export async function GET(
 
   const bytes = await buildCertificatePdf({
     entryId: block.entry.id,
-    locale,
+    locale: "en",
     participantName: block.entry.participant_name,
-    programme: tName(locale, block.event.programme),
-    category: tName(locale, block.event.category),
+    programme: tName("en", block.event.programme),
+    category: tName("en", block.event.category),
     rank: block.entry.rank ?? 1,
     publishedAt: block.result_set.published_at,
   });
