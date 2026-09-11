@@ -20,9 +20,9 @@ import { getScheduledEvents } from "@/lib/data/queries";
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white px-4 py-3">
-      <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">{label}</p>
-      <p className="mt-1 text-2xl font-semibold text-zinc-900">{value}</p>
+    <div className="border-2 border-fest-ink bg-paper-white px-4 py-4 shadow-[3px_3px_0_var(--fest-ink)]">
+      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">{label}</p>
+      <p className="tabular mt-2 text-3xl font-bold text-fest-ink">{value}</p>
     </div>
   );
 }
@@ -116,12 +116,18 @@ export default async function OperationsPage() {
       </div>
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900">{adminCopy.workQueue}</h2>
+        <div className="mb-3 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-fest-red">Priority lane</p>
+            <h2 className="mt-1 text-lg font-bold text-fest-ink">{adminCopy.workQueue}</h2>
+          </div>
+          <span className="text-xs font-semibold text-muted">Action required</span>
+        </div>
         <WorkQueue items={queueItems} emptyLabel={adminCopy.noItems} />
       </section>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-lg border border-zinc-200 bg-white">
+        <section className="overflow-hidden border-2 border-fest-ink bg-paper-white shadow-[3px_3px_0_var(--fest-ink)]">
           <h2 className="border-b border-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-900">{adminCopy.happeningNow}</h2>
           {live.length ? (
             <ul className="divide-y divide-zinc-100">
@@ -147,7 +153,7 @@ export default async function OperationsPage() {
           )}
         </section>
 
-        <section className="rounded-lg border border-zinc-200 bg-white">
+        <section className="overflow-hidden border-2 border-fest-ink bg-paper-white shadow-[3px_3px_0_var(--fest-ink)]">
           <h2 className="border-b border-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-900">{adminCopy.recentPublished}</h2>
           {published.length ? (
             <ul className="divide-y divide-zinc-100">
