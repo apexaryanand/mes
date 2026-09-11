@@ -20,8 +20,6 @@ export async function GET(
   }
 
   const bytes = await buildCertificatePdf({
-    entryId: block.entry.id,
-    locale: "en",
     participantName: block.entry.participant_name,
     programme: tName("en", block.event.programme),
     category: tName("en", block.event.category),

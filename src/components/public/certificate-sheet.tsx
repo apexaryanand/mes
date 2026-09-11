@@ -2,18 +2,17 @@ import {
   CERTIFICATE_ASPECT,
   CERTIFICATE_TEMPLATE,
   formatCertificateDate,
-  formatCertificateNumber,
+  formatProgrammeLine,
   rankPrizeDisplay,
 } from "@/lib/certificates";
 import type { Locale } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export type CertificateSheetProps = {
-  entryId: string;
   participantName: string;
   rank: number;
   programme: string;
-  category: string;
+  category?: string | null;
   publishedAt: string | null;
   locale: Locale;
   className?: string;
@@ -21,7 +20,7 @@ export type CertificateSheetProps = {
 
 function Field({
   top,
-  width = "78%",
+  width = "72%",
   height = "7.2%",
   className,
   children,
@@ -35,7 +34,7 @@ function Field({
   return (
     <div
       className={cn(
-        "absolute left-1/2 flex -translate-x-1/2 items-center justify-center bg-[#f8f4e8] px-2 text-center",
+        "absolute left-1/2 flex -translate-x-1/2 items-center justify-center bg-[#fbf8ef] px-2 text-center",
         className,
       )}
       style={{ top, width, height }}
@@ -46,11 +45,10 @@ function Field({
 }
 
 /**
- * Official MESTA certificate — template artwork with dynamic text overlaid
- * on cream bands that cover the baked-in placeholders.
+ * Official MESTA certificate — latest School Kalolsavam artwork
+ * (name, prize, programme line, date). Category rides on the programme line.
  */
 export function CertificateSheet({
-  entryId,
   participantName,
   rank,
   programme,
@@ -60,8 +58,8 @@ export function CertificateSheet({
   className,
 }: CertificateSheetProps) {
   const prize = rankPrizeDisplay(rank);
-  const certNo = formatCertificateNumber(entryId, publishedAt);
   const date = formatCertificateDate(publishedAt, locale);
+  const programmeLine = formatProgrammeLine(programme, category);
 
   return (
     <div
@@ -77,34 +75,37 @@ export function CertificateSheet({
       />
 
       <div className="certificate-overlay absolute inset-0 text-[#1a3352]">
-        <Field top="37.8%" height="8.4%" className="certificate-student font-display font-black leading-tight">
+        {/* [STUDENT NAME] */}
+        <Field top="42.2%" height="8.6%" width="70%" className="certificate-student font-display font-black leading-tight">
           {participantName}
         </Field>
+
+        {/* FIRST / SECOND / THIRD PRIZE */}
         <Field
-          top="48.6%"
-          height="7.6%"
+          top="55.4%"
+          height="8.4%"
+          width="62%"
           className="certificate-prize font-display font-black uppercase tracking-wide"
         >
-          <span style={{ color: "#b8891f" }}>{prize}</span>
-        </Field>
-        <Field top="56.2%" height="6.4%" width="82%" className="certificate-programme font-display font-black leading-snug">
-          {programme}
-        </Field>
-        <Field top="61.8%" height="5.2%" width="70%" className="certificate-category font-bold uppercase tracking-wide">
-          {category}
+          <span style={{ color: "#c4a027" }}>{prize}</span>
         </Field>
 
+        {/* [PROGRAMME / EVENT NAME] */}
+        <Field
+          top="67.6%"
+          height="6.4%"
+          width="68%"
+          className="certificate-programme font-display font-black leading-snug"
+        >
+          {programmeLine}
+        </Field>
+
+        {/* [DATE] after the printed Date: label */}
         <div
-          className="certificate-date absolute flex items-center bg-[#f8f4e8] px-1 font-semibold tabular"
-          style={{ left: "16.5%", bottom: "11.2%", width: "22%", height: "3.6%" }}
+          className="certificate-date absolute flex items-center bg-[#fbf8ef] px-1 font-semibold tabular"
+          style={{ left: "13.2%", bottom: "12.4%", width: "18%", height: "3.8%" }}
         >
           {date}
-        </div>
-        <div
-          className="certificate-number absolute flex items-center bg-[#f8f4e8] px-1 font-semibold tabular"
-          style={{ left: "22%", bottom: "5.6%", width: "24%", height: "3.4%" }}
-        >
-          {certNo}
         </div>
       </div>
     </div>

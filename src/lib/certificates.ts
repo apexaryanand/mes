@@ -28,8 +28,19 @@ export function formatCertificateDate(publishedAt: string | null, locale: Locale
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
 }
 
+/** Single programme line on the new template (category is no longer its own field). */
+export function formatProgrammeLine(programme: string, category?: string | null): string {
+  const p = programme.trim();
+  const c = category?.trim();
+  if (p && c && p.toLowerCase() !== c.toLowerCase()) return `${p}  ·  ${c}`;
+  return p || c || "";
+}
+
 export const CERTIFICATE_TEMPLATE = "/images/certificate-template.png";
-export const CERTIFICATE_ASPECT = 1491 / 1055;
+/** New official artwork: 1221 × 864 */
+export const CERTIFICATE_DESIGN_W = 1221;
+export const CERTIFICATE_DESIGN_H = 864;
+export const CERTIFICATE_ASPECT = CERTIFICATE_DESIGN_W / CERTIFICATE_DESIGN_H;
 
 export function rankPrizeLabel(locale: Locale, rank: number): string {
   if (locale === "ml") {

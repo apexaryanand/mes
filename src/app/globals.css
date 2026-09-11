@@ -1113,15 +1113,10 @@ html[lang="ml"] .certificate-overlay {
 }
 
 .certificate-programme {
-  font-size: clamp(0.85rem, 3.6cqi, 1.55rem);
+  font-size: clamp(0.85rem, 3.4cqi, 1.45rem);
 }
 
-.certificate-category {
-  font-size: clamp(0.7rem, 2.5cqi, 1.1rem);
-}
-
-.certificate-date,
-.certificate-number {
+.certificate-date {
   font-size: clamp(0.55rem, 1.85cqi, 0.85rem);
 }
 

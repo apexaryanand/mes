@@ -2,32 +2,31 @@ import { readFile } from "fs/promises";
 import path from "path";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import {
+  CERTIFICATE_DESIGN_H,
+  CERTIFICATE_DESIGN_W,
   formatCertificateDate,
-  formatCertificateNumber,
+  formatProgrammeLine,
   rankPrizeDisplay,
 } from "@/lib/certificates";
-import type { Locale } from "@/lib/types";
 
 export type CertificatePdfInput = {
-  entryId: string;
-  locale: Locale;
   participantName: string;
   programme: string;
-  category: string;
+  category?: string | null;
   rank: number;
   publishedAt: string | null;
 };
 
-const DESIGN_W = 1491;
-const DESIGN_H = 1055;
+const DESIGN_W = CERTIFICATE_DESIGN_W;
+const DESIGN_H = CERTIFICATE_DESIGN_H;
 const PAGE_W = 842;
 const PAGE_H = 595;
 const SX = PAGE_W / DESIGN_W;
 const SY = PAGE_H / DESIGN_H;
 
-const CREAM = rgb(0.973, 0.957, 0.91);
+const CREAM = rgb(0.984, 0.973, 0.937);
 const NAVY = rgb(0.1, 0.2, 0.32);
-const GOLD = rgb(0.72, 0.54, 0.12);
+const GOLD = rgb(0.77, 0.63, 0.15);
 
 function coverBand(
   page: ReturnType<PDFDocument["addPage"]>,
@@ -96,7 +95,7 @@ function drawLeft(
   });
 }
 
-/** Landscape A4 PDF with the official template image and dynamic text overlays. */
+/** Landscape A4 PDF with the current official template and dynamic text overlays. */
 export async function buildCertificatePdf(input: CertificatePdfInput): Promise<Uint8Array> {
   const templatePath = path.join(process.cwd(), "public/images/certificate-template.png");
   const templateBytes = await readFile(templatePath);
@@ -110,23 +109,22 @@ export async function buildCertificatePdf(input: CertificatePdfInput): Promise<U
   const serif = await pdfDoc.embedFont(StandardFonts.TimesRoman);
 
   const prize = rankPrizeDisplay(input.rank);
-  const certNo = formatCertificateNumber(input.entryId, input.publishedAt);
   const date = formatCertificateDate(input.publishedAt, "en");
-  const name = pdfSafe(input.participantName).trim() || input.participantName.replace(/[^\w\s.-]/g, "").trim();
+  const programmeLine = formatProgrammeLine(input.programme, input.category);
+  const name =
+    pdfSafe(input.participantName).trim() ||
+    input.participantName.replace(/[^\w\s.-]/g, "").trim();
 
-  coverBand(page, 220, 360, 1050, 90);
-  coverBand(page, 280, 480, 930, 80);
-  coverBand(page, 260, 560, 970, 70);
-  coverBand(page, 360, 630, 770, 55);
-  coverBand(page, 230, 910, 340, 40);
-  coverBand(page, 300, 965, 360, 36);
+  // Cover baked-in placeholders on the new 1221×864 artwork
+  coverBand(page, 210, 360, 800, 78);
+  coverBand(page, 280, 470, 660, 78);
+  coverBand(page, 250, 575, 720, 58);
+  coverBand(page, 155, 740, 230, 34);
 
-  drawCentered(page, name || "Winner", DESIGN_W / 2, 418, 42, serifBold, NAVY);
-  drawCentered(page, prize, DESIGN_W / 2, 525, 34, serifBold, GOLD);
-  drawCentered(page, input.programme, DESIGN_W / 2, 600, 28, serifBold, NAVY);
-  drawCentered(page, input.category, DESIGN_W / 2, 660, 20, serifBold, NAVY);
-  drawLeft(page, date, 250, 935, 16, serif, NAVY);
-  drawLeft(page, certNo, 330, 990, 14, serif, NAVY);
+  drawCentered(page, name || "Winner", DESIGN_W / 2, 400, 36, serifBold, NAVY);
+  drawCentered(page, prize, DESIGN_W / 2, 510, 32, serifBold, GOLD);
+  drawCentered(page, programmeLine, DESIGN_W / 2, 608, 22, serifBold, NAVY);
+  drawLeft(page, date, 162, 758, 14, serif, NAVY);
 
   return pdfDoc.save();
 }

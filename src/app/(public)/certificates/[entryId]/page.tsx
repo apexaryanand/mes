@@ -34,7 +34,6 @@ export default async function CertificatePage({
       </p>
 
       <CertificateSheet
-        entryId={entry.id}
         participantName={participantName}
         rank={rank}
         programme={tName(locale, event.programme)}
