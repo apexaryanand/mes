@@ -14,7 +14,7 @@ import type {
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/utils";
-import { revalidatePublicSite, revalidateWarRoom } from "@/lib/revalidate";
+import { revalidatePublicEntity, revalidatePublicSite, revalidateWarRoom } from "@/lib/revalidate";
 import { failWarRoom, redirectWarRoomError } from "@/lib/war-room-error";
 import { safeNextPath } from "@/lib/safe-redirect";
 
@@ -152,7 +152,7 @@ export async function transitionResult(resultSetId: string, next: ResultSetStatu
   const sb = await requireServerSupabase();
   const { data: set } = await sb
     .from("result_sets")
-    .select("id, status, scheduled_event_id")
+    .select("id, status, scheduled_event_id, scheduled_event:scheduled_events(slug)")
     .eq("id", resultSetId)
     .maybeSingle();
   if (!set) return { error: "Result set not found." };
@@ -202,8 +202,9 @@ export async function transitionResult(resultSetId: string, next: ResultSetStatu
   }
 
   const { error } = await sb.from("result_sets").update(patch).eq("id", resultSetId);
-  if (error) return { error: error.message };
-  return { ok: true };
+  if (error) return { error: "Result status could not be updated. Nothing was published." };
+  const scheduledEvent = set.scheduled_event as { slug?: string | null } | null;
+  return { ok: true, eventSlug: scheduledEvent?.slug ?? null };
 }
 
 export async function startCorrection(resultSetId: string) {
@@ -411,7 +412,11 @@ export async function transitionResultForm(formData: FormData) {
   if (result && "error" in result && result.error) {
     redirectWarRoomError(`/war-room/results/${id}`, result.error);
   }
-  await bump({ public: next === "published" });
+  if (next === "published" && result && "eventSlug" in result) {
+    revalidatePublicEntity({ event: result.eventSlug });
+  } else {
+    await bump({ public: next === "published" });
+  }
 }
 
 export async function startCorrectionForm(formData: FormData) {

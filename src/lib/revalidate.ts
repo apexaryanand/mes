@@ -25,3 +25,17 @@ export function revalidateEventPage(slug: string) {
   if (!slug) return;
   revalidatePath(`/events/${slug}`);
 }
+
+export function revalidateArticlePage(slug: string) {
+  if (!slug) return;
+  revalidatePath(`/news/${slug}`);
+}
+
+export function revalidatePublicEntity(slugs: {
+  event?: string | null;
+  article?: string | null;
+}) {
+  if (slugs.event) revalidateEventPage(slugs.event);
+  if (slugs.article) revalidateArticlePage(slugs.article);
+  revalidatePublicSite();
+}
