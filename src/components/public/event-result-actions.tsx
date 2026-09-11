@@ -1,31 +1,31 @@
 "use client";
 
-import { WhatsAppShareButton } from "@/components/public/whatsapp-share";
+import { CertificateActions } from "@/components/public/certificate-actions";
 import { OfficialResultsPanel } from "@/components/public/official-results-panel";
+import { isCertificateEligible } from "@/lib/certificates";
 import { useI18n } from "@/lib/i18n/provider";
 import { tName } from "@/lib/i18n/dictionaries";
-import { absoluteUrl, resultShareMessage } from "@/lib/share";
 import type { PublishedResultView } from "@/lib/types";
 
 export function EventResultActions({ result }: { result: PublishedResultView }) {
   const { locale } = useI18n();
-  const winner = result.entries[0];
+  const winner = result.entries.find((e) => isCertificateEligible(e.rank)) ?? result.entries[0];
   if (!winner) return <OfficialResultsPanel resultSet={result.result_set} />;
 
-  const shareText = resultShareMessage({
-    locale,
-    programme: tName(locale, result.event.programme),
-    category: tName(locale, result.event.category),
-    winner: winner.participant_name ?? undefined,
-    house: tName(locale, winner.house),
-    rank: winner.rank,
-    pageUrl: absoluteUrl(`/events/${result.event.slug}`),
-  });
+  const programmeName = tName(locale, result.event.programme);
+  const categoryName = tName(locale, result.event.category);
 
   return (
     <div className="grid gap-3">
       <OfficialResultsPanel resultSet={result.result_set} />
-      <WhatsAppShareButton text={shareText} />
+      {isCertificateEligible(winner.rank) ? (
+        <CertificateActions
+          entry={winner}
+          event={result.event}
+          programmeName={programmeName}
+          categoryName={categoryName}
+        />
+      ) : null}
     </div>
   );
 }

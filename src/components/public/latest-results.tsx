@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Medal } from "@/components/ui/medal";
-import { WhatsAppShareButton } from "@/components/public/whatsapp-share";
+import { CertificateActions } from "@/components/public/certificate-actions";
+import { isCertificateEligible } from "@/lib/certificates";
 import { useI18n } from "@/lib/i18n/provider";
 import { tName } from "@/lib/i18n/dictionaries";
-import { absoluteUrl, resultShareMessage } from "@/lib/share";
 import type { PublishedResultView } from "@/lib/types";
 import { formatClock } from "@/lib/utils";
 
@@ -29,7 +29,7 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
             <th className="px-4 py-3 font-black">{t.house}</th>
             <th className="px-4 py-3 text-right font-black">{t.marks}</th>
             <th className="px-4 py-3 text-center font-black">{t.grade}</th>
-            <th className="px-4 py-3 text-right font-black" aria-label={t.shareWhatsApp} />
+            <th className="px-4 py-3 text-right font-black" aria-label={t.downloadCertificate} />
           </tr>
         </thead>
         <tbody>
@@ -70,18 +70,15 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                 <td className="px-4 py-3 text-right tabular">{first.marks}</td>
                 <td className="px-4 py-3 text-center font-black">{first.grade}</td>
                 <td className="px-4 py-3 text-right">
-                  <WhatsAppShareButton
-                    compact
-                    text={resultShareMessage({
-                      locale,
-                      programme: tName(locale, block.event.programme),
-                      category: tName(locale, block.event.category),
-                      winner: first.participant_name ?? undefined,
-                      house: tName(locale, first.house),
-                      rank: first.rank,
-                      pageUrl: absoluteUrl(`/events/${block.event.slug}`),
-                    })}
-                  />
+                  {isCertificateEligible(first.rank) ? (
+                    <CertificateActions
+                      entry={first}
+                      event={block.event}
+                      programmeName={tName(locale, block.event.programme)}
+                      categoryName={tName(locale, block.event.category)}
+                      compact
+                    />
+                  ) : null}
                 </td>
               </tr>
             );
@@ -94,15 +91,6 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
         {results.map((block) => {
           const first = block.entries[0];
           if (!first) return null;
-          const shareText = resultShareMessage({
-            locale,
-            programme: tName(locale, block.event.programme),
-            category: tName(locale, block.event.category),
-            winner: first.participant_name ?? undefined,
-            house: tName(locale, first.house),
-            rank: first.rank,
-            pageUrl: absoluteUrl(`/events/${block.event.slug}`),
-          });
           return (
             <li key={block.result_set.id} className="p-3 sm:p-4">
               <div className="flex items-start justify-between gap-2 sm:gap-3">
@@ -132,9 +120,17 @@ export function LatestResults({ results }: { results: PublishedResultView[] }) {
                   <p className="text-muted">{first.grade}</p>
                 </div>
               </div>
-              <div className="mt-2 sm:mt-3">
-                <WhatsAppShareButton text={shareText} compact />
-              </div>
+              {isCertificateEligible(first.rank) ? (
+                <div className="mt-2 sm:mt-3">
+                  <CertificateActions
+                    entry={first}
+                    event={block.event}
+                    programmeName={tName(locale, block.event.programme)}
+                    categoryName={tName(locale, block.event.category)}
+                    compact
+                  />
+                </div>
+              ) : null}
             </li>
           );
         })}

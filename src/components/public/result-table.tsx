@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { Medal } from "@/components/ui/medal";
-import { WhatsAppShareButton } from "@/components/public/whatsapp-share";
+import { CertificateActions } from "@/components/public/certificate-actions";
+import { isCertificateEligible } from "@/lib/certificates";
 import { useI18n } from "@/lib/i18n/provider";
 import { tName } from "@/lib/i18n/dictionaries";
-import { absoluteUrl, resultShareMessage } from "@/lib/share";
 import type { ResultEntryView } from "@/lib/types";
 
 export function ResultTable({
@@ -33,6 +33,9 @@ export function ResultTable({
             <th className="px-4 py-3 text-right font-black">{t.marks}</th>
             <th className="px-4 py-3 text-center font-black">{t.grade}</th>
             <th className="px-4 py-3 text-right font-black">{t.points}</th>
+            {eventSlug ? (
+              <th className="px-4 py-3 text-right font-black" aria-label={t.downloadCertificate} />
+            ) : null}
           </tr>
         </thead>
         <tbody>
@@ -55,6 +58,19 @@ export function ResultTable({
               <td className="px-4 py-3 text-right tabular font-black text-fest-red">
                 {row.points}
               </td>
+              {eventSlug && programmeName && categoryName ? (
+                <td className="px-4 py-3 text-right">
+                  {isCertificateEligible(row.rank) ? (
+                    <CertificateActions
+                      entry={row}
+                      event={{ slug: eventSlug }}
+                      programmeName={programmeName}
+                      categoryName={categoryName}
+                      compact
+                    />
+                  ) : null}
+                </td>
+              ) : null}
             </tr>
           ))}
         </tbody>
@@ -83,18 +99,13 @@ export function ResultTable({
                 <p className="text-[11px] uppercase tracking-wide text-muted">{t.points}</p>
               </div>
             </div>
-            {eventSlug && programmeName && categoryName && row.rank === 1 ? (
+            {eventSlug && programmeName && categoryName && isCertificateEligible(row.rank) ? (
               <div className="mt-3">
-                <WhatsAppShareButton
-                  text={resultShareMessage({
-                    locale,
-                    programme: programmeName,
-                    category: categoryName,
-                    winner: row.participant_name ?? undefined,
-                    house: tName(locale, row.house),
-                    rank: row.rank,
-                    pageUrl: absoluteUrl(`/events/${eventSlug}`),
-                  })}
+                <CertificateActions
+                  entry={row}
+                  event={{ slug: eventSlug }}
+                  programmeName={programmeName}
+                  categoryName={categoryName}
                 />
               </div>
             ) : null}

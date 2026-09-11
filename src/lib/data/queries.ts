@@ -158,6 +158,21 @@ export async function getResultForEvent(eventId: string) {
   return all.find((r) => r.event.id === eventId) ?? null;
 }
 
+export async function getPublishedEntryById(entryId: string) {
+  const all = await getPublishedResults();
+  for (const block of all) {
+    const entry = block.entries.find((e) => e.id === entryId);
+    if (entry) {
+      return {
+        entry,
+        event: block.event,
+        result_set: block.result_set,
+      };
+    }
+  }
+  return null;
+}
+
 export async function getLiveUpdates(): Promise<LiveUpdateView[]> {
   const sb = await remoteClient();
   if (!sb) return [];
