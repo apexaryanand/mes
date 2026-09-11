@@ -21,6 +21,7 @@ export function LoginForm() {
         <input name="password" type="password" required autoComplete="current-password" className={adminInput} />
       </AdminField>
       <button
+        type="submit"
         disabled={pending}
         className="mt-1 min-h-11 rounded-md bg-zinc-900 text-sm font-medium text-white disabled:opacity-60"
       >
