@@ -14,7 +14,7 @@ import type {
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/utils";
-import { revalidatePublicSite, revalidateWarRoom } from "@/lib/revalidate";
+import { revalidatePublicEntity, revalidatePublicSite, revalidateWarRoom } from "@/lib/revalidate";
 import { failWarRoom, redirectWarRoomError } from "@/lib/war-room-error";
 import { safeNextPath } from "@/lib/safe-redirect";
 
@@ -150,20 +150,39 @@ export async function saveResultDraft(input: {
 export async function transitionResult(resultSetId: string, next: ResultSetStatus) {
   const profile = await getSessionProfile();
   const sb = await requireServerSupabase();
-  const { data: set } = await sb.from("result_sets").select("*").eq("id", resultSetId).maybeSingle();
-  if (!set) return { error: "Not found." };
+  const { data: set } = await sb
+    .from("result_sets")
+    .select("id, status, scheduled_event_id, scheduled_event:scheduled_events(slug)")
+    .eq("id", resultSetId)
+    .maybeSingle();
+  if (!set) return { error: "Result set not found." };
 
   const op = profile?.role;
   if (!can(op, ["war_room"])) return { error: "Not allowed." };
 
   if (next === "entered" && !["draft", "correction_draft"].includes(set.status as string)) {
-    return { error: "Can only submit drafts for confirmation." };
+    return { error: "Only draft results can be submitted for verification." };
   }
-  if (next === "published" && set.status !== "entered" && set.status !== "verified") {
-    return { error: "Confirm only after submission for review." };
+  if (next === "verified" && set.status !== "entered") {
+    return { error: "Only submitted results can be verified." };
+  }
+  if (next === "published" && set.status !== "verified") {
+    return { error: "Verify the result before publishing it." };
   }
   if (set.status === "published" && next !== "correction_draft") {
-    return { error: "Published results are locked." };
+    return { error: "Published results are locked. Start a correction instead." };
+  }
+
+  if (next === "verified" || next === "published") {
+    const { data: entries, error: entriesError } = await sb
+      .from("result_entries")
+      .select("house_id, participant_id, participant_name, marks, grade, rank")
+      .eq("result_set_id", resultSetId);
+    if (entriesError) return { error: "Could not validate the result entries. Try again." };
+    if (!entries?.length) return { error: "Add at least one result entry before continuing." };
+    if (entries.some((entry) => !entry.house_id || !(entry.participant_id || entry.participant_name?.trim()))) {
+      return { error: "Every result entry needs a participant and house before it can be verified." };
+    }
   }
 
   const patch: Record<string, unknown> = {
@@ -183,8 +202,9 @@ export async function transitionResult(resultSetId: string, next: ResultSetStatu
   }
 
   const { error } = await sb.from("result_sets").update(patch).eq("id", resultSetId);
-  if (error) return { error: error.message };
-  return { ok: true };
+  if (error) return { error: "Result status could not be updated. Nothing was published." };
+  const scheduledEvent = set.scheduled_event as { slug?: string | null } | null;
+  return { ok: true, eventSlug: scheduledEvent?.slug ?? null };
 }
 
 export async function startCorrection(resultSetId: string) {
@@ -289,6 +309,10 @@ export async function moderateMedia(id: string, status: MediaStatus) {
     }
   }
 
+  if (status === "approved" && storagePath && !storagePath.startsWith("staff/") && url === item.url) {
+    return { error: "The media file could not be promoted to public storage. It remains pending." };
+  }
+
   const { error } = await sb
     .from("media")
     .update({
@@ -299,7 +323,7 @@ export async function moderateMedia(id: string, status: MediaStatus) {
       moderated_by: profile?.id ?? null,
     })
     .eq("id", id);
-  if (error) return { error: error.message };
+  if (error) return { error: "Media moderation could not be saved. Nothing was published." };
   return { ok: true };
 }
 
@@ -388,7 +412,11 @@ export async function transitionResultForm(formData: FormData) {
   if (result && "error" in result && result.error) {
     redirectWarRoomError(`/war-room/results/${id}`, result.error);
   }
-  await bump({ public: next === "published" });
+  if (next === "published" && result && "eventSlug" in result) {
+    revalidatePublicEntity({ event: result.eventSlug });
+  } else {
+    await bump({ public: next === "published" });
+  }
 }
 
 export async function startCorrectionForm(formData: FormData) {

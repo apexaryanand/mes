@@ -158,6 +158,21 @@
 }
 
 /* =========================================================================
+   Admin operations surfaces
+   ========================================================================= */
+
+.admin-control:focus-visible,
+.admin-link:focus-visible,
+main button:focus-visible,
+main a:focus-visible,
+main input:focus-visible,
+main select:focus-visible,
+main textarea:focus-visible {
+  outline: 3px solid var(--fest-red);
+  outline-offset: 2px;
+}
+
+/* =========================================================================
    Base
    ========================================================================= */
 
