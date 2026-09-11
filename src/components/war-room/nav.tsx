@@ -197,7 +197,10 @@ export function WarRoomShell({
         </div>
       </div>
 
-      <nav className="flex-1 space-y-5 overflow-y-auto px-2 pb-4" aria-label={t.quickNav}>
+      <nav
+        className="wr-sidebar-scroll min-h-0 flex-1 space-y-5 overflow-y-auto overflow-x-hidden px-2 pb-4"
+        aria-label={t.quickNav}
+      >
         {groups.map((group) => (
           <div key={group.titleKey}>
             <p className="px-3 pb-1.5 text-[10px] font-black uppercase tracking-widest text-paper/45">
@@ -262,8 +265,8 @@ export function WarRoomShell({
 
   return (
     <div className="war-room-console flex min-h-screen bg-paper text-ink">
-      <aside className="hidden w-[17.5rem] shrink-0 border-r-4 border-fest-ink lg:block">
-        <div className="sticky top-0 h-screen">{sidebar}</div>
+      <aside className="hidden w-[17.5rem] shrink-0 overflow-hidden border-r-4 border-fest-ink lg:block">
+        <div className="sticky top-0 h-screen overflow-hidden">{sidebar}</div>
       </aside>
 
       {/* Tablet / phone fallback */}

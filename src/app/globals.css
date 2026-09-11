@@ -1065,6 +1065,29 @@ html[lang="ml"] .festival-kicker {
   background: color-mix(in srgb, var(--fest-yellow) 18%, transparent);
 }
 
+/* Sidebar nav — thin, in-theme scrollbar (no default light track sticking out) */
+.war-room-console .wr-sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--fest-yellow) 40%, transparent) transparent;
+}
+
+.war-room-console .wr-sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.war-room-console .wr-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.war-room-console .wr-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--paper) 28%, transparent);
+  border-radius: 999px;
+}
+
+.war-room-console .wr-sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--fest-yellow) 55%, transparent);
+}
+
 /* =========================================================================
    Print — result sheets get posted on notice boards
    ========================================================================= */
