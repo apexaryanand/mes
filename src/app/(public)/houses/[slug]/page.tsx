@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CertificateActions } from "@/components/public/certificate-actions";
 import { HouseBadge, houseColorHex } from "@/components/public/house-badge";
+import { isCertificateEligible } from "@/lib/certificates";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Medal } from "@/components/ui/medal";
@@ -61,26 +63,40 @@ export default async function HousePage({
       </div>
 
       {houseResults.length ? (
-        <ul className="card divide-y-2 divide-fest-ink/15 overflow-hidden">
+        <ul className="grid gap-3">
           {houseResults.map(({ block, entry }) => (
-            <li key={entry.id}>
-              <Link
-                href={`/events/${block.event.slug}`}
-                className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-fest-yellow-soft sm:gap-4 sm:px-4 sm:py-3.5"
-              >
-                <Medal rank={entry.rank} className="h-9 w-9 text-sm" />
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 font-bold">{tName(locale, block.event.programme)}</p>
-                  <p className="text-sm text-muted">
-                    {tName(locale, block.event.category)}
-                    {entry.grade ? ` · ${entry.grade} ${t.grade}` : ""}
-                    {entry.participant_name ? ` · ${entry.participant_name}` : ""}
-                  </p>
-                </div>
-                <span className="tabular text-sm font-semibold" style={{ color: hex }}>
-                  {entry.points} {t.points}
-                </span>
-              </Link>
+            <li
+              key={entry.id}
+              className="card flex flex-wrap items-center gap-3 p-4"
+              style={{ borderLeftWidth: 6, borderLeftColor: hex }}
+            >
+              <Medal rank={entry.rank} className="h-10 w-10 text-sm" />
+              <div className="min-w-0 flex-1">
+                <Link
+                  href={`/events/${block.event.slug}`}
+                  className="font-display line-clamp-2 font-black underline-offset-2 hover:underline"
+                >
+                  {tName(locale, block.event.programme)}
+                </Link>
+                <p className="text-sm text-muted">
+                  {entry.participant_name ?? "—"}
+                  {" · "}
+                  {tName(locale, block.event.category)}
+                  {entry.grade ? ` · ${entry.grade}` : ""}
+                </p>
+              </div>
+              <span className="tabular text-sm font-black" style={{ color: hex }}>
+                {entry.points} {t.points}
+              </span>
+              {isCertificateEligible(entry.rank) ? (
+                <CertificateActions
+                  entry={entry}
+                  event={block.event}
+                  programmeName={tName(locale, block.event.programme)}
+                  categoryName={tName(locale, block.event.category)}
+                  compact
+                />
+              ) : null}
             </li>
           ))}
         </ul>
