@@ -140,22 +140,42 @@ export async function getPublishedResults(): Promise<PublishedResultView[]> {
     .is("deleted_at", null)
     .order("published_at", { ascending: false });
   if (!data?.length) return [];
-  return data.map((row) => {
+  const out: PublishedResultView[] = [];
+  for (const row of data) {
     const r = row as {
-      scheduled_event: ScheduledEventView;
-      result_entries: PublishedResultView["entries"];
+      scheduled_event: ScheduledEventView | null;
+      result_entries: PublishedResultView["entries"] | null;
     } & PublishedResultView["result_set"];
-    return {
+    if (!r.scheduled_event) continue;
+    out.push({
       event: r.scheduled_event,
       result_set: r,
-      entries: [...r.result_entries].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99)),
-    };
-  });
+      entries: [...(r.result_entries ?? [])]
+        .filter((e) => Boolean(e?.house))
+        .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99)),
+    });
+  }
+  return out;
 }
 
 export async function getResultForEvent(eventId: string) {
   const all = await getPublishedResults();
   return all.find((r) => r.event.id === eventId) ?? null;
+}
+
+export async function getPublishedEntryById(entryId: string) {
+  const all = await getPublishedResults();
+  for (const block of all) {
+    const entry = block.entries.find((e) => e.id === entryId);
+    if (entry) {
+      return {
+        entry,
+        event: block.event,
+        result_set: block.result_set,
+      };
+    }
+  }
+  return null;
 }
 
 export async function getLiveUpdates(): Promise<LiveUpdateView[]> {

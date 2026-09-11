@@ -4,6 +4,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getMedia } from "@/lib/data/queries";
+import { youtubeEmbedUrl } from "@/lib/media-url";
 
 export default async function VideosPage() {
   const locale = await getRequestLocale();
@@ -28,22 +29,17 @@ export default async function VideosPage() {
       <div className="grid gap-5 md:grid-cols-2">
         {videos.map((item) => (
           <article key={item.id} className="card flex flex-col overflow-hidden">
-            <div className="overflow-hidden border-b-[var(--border-w)] border-fest-ink">
-              {item.url.includes("youtube") ? (
+            <div className="overflow-hidden border-b-[var(--border-w)] border-fest-ink bg-fest-ink">
+              {youtubeEmbedUrl(item.url) ? (
                 <iframe
                   title={item.title_en}
-                  src={item.url}
+                  src={youtubeEmbedUrl(item.url) ?? item.url}
                   className="aspect-video w-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
               ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={item.thumbnail_url ?? item.url}
-                  alt=""
-                  className="aspect-video w-full object-cover"
-                />
+                <video src={item.url} controls className="aspect-video w-full" />
               )}
             </div>
             <h2 className="font-display line-clamp-2 p-4 text-xl font-black">

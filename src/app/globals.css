@@ -1089,6 +1089,57 @@ html[lang="ml"] .festival-kicker {
 }
 
 /* =========================================================================
+   Official certificate — template overlay typography
+   ========================================================================= */
+
+.certificate-frame {
+  container-type: inline-size;
+}
+
+.certificate-overlay {
+  font-family: var(--font-display), var(--font-malayalam), serif;
+}
+
+html[lang="ml"] .certificate-overlay {
+  font-family: var(--font-malayalam), var(--font-display), serif;
+}
+
+.certificate-student {
+  font-size: clamp(1.1rem, 5.8cqi, 2.65rem);
+}
+
+.certificate-prize {
+  font-size: clamp(1rem, 4.8cqi, 2.1rem);
+}
+
+.certificate-programme {
+  font-size: clamp(0.85rem, 3.4cqi, 1.45rem);
+}
+
+.certificate-date {
+  font-size: clamp(0.55rem, 1.85cqi, 0.85rem);
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 8mm;
+  }
+
+  .certificate-page {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .certificate-frame {
+    max-width: none !important;
+    width: 100% !important;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }
+}
+
+/* =========================================================================
    Print — result sheets get posted on notice boards
    ========================================================================= */
 

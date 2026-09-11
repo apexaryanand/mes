@@ -89,7 +89,7 @@ export default async function HomePage() {
       <Reveal as="section">
         <SectionHeader
           eyebrow={t.results}
-          title={t.latestResults}
+          title={t.winners}
           linkHref="/results"
           linkLabel={t.viewAll}
         />

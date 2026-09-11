@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ResultTable } from "@/components/public/result-table";
+import { LatestResults } from "@/components/public/latest-results";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { tName } from "@/lib/i18n/dictionaries";
@@ -47,16 +46,6 @@ export default async function ResultsPage({
     if (filters.status && r.event.status !== filters.status) return false;
     return true;
   });
-
-  function href(next: Record<string, string | undefined>) {
-    const merged = { ...filters, ...next };
-    const params = new URLSearchParams();
-    for (const [k, v] of Object.entries(merged)) {
-      if (v) params.set(k, v);
-    }
-    const q = params.toString();
-    return q ? `/results?${q}` : "/results";
-  }
 
   return (
     <div className="grid gap-8">
@@ -115,36 +104,22 @@ export default async function ResultsPage({
 
       <div className="grid gap-5 sm:gap-10">
         {filtered.length === 0 ? (
-          <EmptyState icon="results" title={t.noResults} description={t.emptyHint} />
+          <EmptyState
+            icon="results"
+            title={results.length ? t.noFilterMatches : t.noResults}
+            description={t.emptyHint}
+          />
         ) : null}
-        {filtered.map((block) => (
-          <section key={block.result_set.id} className="grid gap-4">
-            <div>
-              <Link
-                href={`/events/${block.event.slug}`}
-                className="font-display text-display-md font-black underline-offset-4 hover:underline"
-              >
-                {tName(locale, block.event.programme)}
-              </Link>
-              <p className="mt-1 text-sm text-muted">
-                {tName(locale, block.event.category)} · {tName(locale, block.event.stage)} ·{" "}
-                {t.day} {block.event.day_number}
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Link href={href({ programme: block.event.programme.slug })} className="chip">
-                  {t.programme}
-                </Link>
-                <Link href={href({ category: block.event.category.code })} className="chip">
-                  {t.category}
-                </Link>
-                <Link href={href({ stage: block.event.stage.slug })} className="chip">
-                  {t.stage}
-                </Link>
-              </div>
-            </div>
-            <ResultTable entries={block.entries} />
-          </section>
-        ))}
+        {filtered.length ? (
+          <LatestResults
+            results={filtered.map((block) => ({
+              ...block,
+              entries: filters.house
+                ? block.entries.filter((e) => e.house?.slug === filters.house)
+                : block.entries,
+            }))}
+          />
+        ) : null}
       </div>
     </div>
   );

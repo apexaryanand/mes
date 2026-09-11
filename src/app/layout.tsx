@@ -32,6 +32,10 @@ export const metadata: Metadata = {
   },
   description:
     "Official live platform for MESTA — Mes Track & Arts school kalolsavam at MES HSS Irimbiliyam, Malappuram.",
+  openGraph: {
+    siteName: "MESTA",
+    images: [{ url: "/images/certificate-template.png", width: 1221, height: 864 }],
+  },
 };
 
 export default async function RootLayout({

@@ -52,6 +52,36 @@ export function liveUpdateShareMessage(opts: {
   return [stage ? `📍 ${stage}` : "📢 MESTA Live", body, pageUrl].join("\n");
 }
 
+export function certificateShareMessage(opts: {
+  locale: "ml" | "en";
+  name: string;
+  programme: string;
+  category: string;
+  house: string;
+  rank: number;
+  certificateUrl: string;
+}): string {
+  const { locale, name, programme, category, house, rank, certificateUrl } = opts;
+  const rankEn =
+    rank === 1 ? "1st" : rank === 2 ? "2nd" : rank === 3 ? "3rd" : `${rank}th`;
+  if (locale === "ml") {
+    return [
+      `🏆 MESTA സർട്ടിഫിക്കറ്റ്`,
+      `${name}`,
+      `${programme} · ${category}`,
+      `${rank} സ്ഥാനം · ${house}`,
+      certificateUrl,
+    ].join("\n");
+  }
+  return [
+    `🏆 MESTA Certificate`,
+    `${name}`,
+    `${programme} · ${category}`,
+    `${rankEn} place · ${house}`,
+    certificateUrl,
+  ].join("\n");
+}
+
 export function winnerShareMessage(opts: {
   locale: "ml" | "en";
   name: string;

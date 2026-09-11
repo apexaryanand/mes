@@ -223,7 +223,7 @@ export async function saveStageForm(formData: FormData) {
 
 export async function saveScheduledEventForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) {
+  if (!can(profile?.role, ["war_room"])) {
     return;
   }
 

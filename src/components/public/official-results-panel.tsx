@@ -19,12 +19,18 @@ const appealBadgeStatus: Record<AppealStatus, string> = {
   closed: "verified",
 };
 
-export function OfficialResultsPanel({ resultSet }: { resultSet: ResultSet }) {
+export function OfficialResultsPanel({
+  resultSet,
+  eventSlug,
+}: {
+  resultSet: ResultSet;
+  eventSlug?: string;
+}) {
   const { t } = useI18n();
-  const hasSheet = Boolean(resultSet.official_sheet_url);
+  const sheetHref = resultSet.official_sheet_url || (eventSlug ? `/documents/official-results/${eventSlug}` : null);
   const showAppeal = resultSet.appeal_status !== "none";
 
-  if (!hasSheet && !showAppeal) return null;
+  if (!sheetHref && !showAppeal) return null;
 
   return (
     <div className="card flex flex-wrap items-center justify-between gap-4 p-4">
@@ -47,9 +53,9 @@ export function OfficialResultsPanel({ resultSet }: { resultSet: ResultSet }) {
           </p>
         ) : null}
       </div>
-      {hasSheet ? (
+      {sheetHref ? (
         <Link
-          href={resultSet.official_sheet_url!}
+          href={sheetHref}
           download
           className="festival-button inline-flex min-h-11 items-center gap-2 bg-fest-ink px-5 text-sm font-bold text-fest-yellow"
         >

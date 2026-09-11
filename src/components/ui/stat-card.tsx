@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 type Accent = "green" | "gold" | "red" | "indigo";
@@ -14,20 +15,23 @@ export function StatCard({
   value,
   hint,
   accent = "green",
+  href,
   className,
 }: {
   label: string;
   value: string | number;
   hint?: string;
   accent?: Accent;
+  href?: string;
   className?: string;
 }) {
-  return (
+  const body = (
     <div
       className={cn(
         "card festival-stat-card relative overflow-hidden p-3 pl-4 text-ink sm:p-4 sm:pl-5",
         "before:absolute before:left-0 before:top-0 before:h-full before:w-1.5",
         accents[accent],
+        href && "transition-shadow hover:shadow-[var(--shadow-hard-sm)]",
         className,
       )}
     >
@@ -41,4 +45,14 @@ export function StatCard({
       {hint ? <p className="mt-1.5 text-xs text-muted">{hint}</p> : null}
     </div>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="block">
+        {body}
+      </Link>
+    );
+  }
+
+  return body;
 }
