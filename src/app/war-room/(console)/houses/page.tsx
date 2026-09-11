@@ -1,10 +1,9 @@
 import { saveHouseForm } from "@/domains/admin/catalog-actions";
-import { TableCard, Th, wrInput, wrLabel } from "@/components/war-room/primitives";
+import { TableCard, Th, Td, WrSubmit, wrInput, wrLabel } from "@/components/war-room/primitives";
 import { HouseBadge } from "@/components/public/house-badge";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getHouses } from "@/lib/data/queries";
-import { cn } from "@/lib/utils";
 
 export default async function HousesAdminPage() {
   const locale = await getRequestLocale();
@@ -12,16 +11,16 @@ export default async function HousesAdminPage() {
   const houses = await getHouses();
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-5">
       <p className="text-sm text-muted">
         Four houses are fixed for MESTA. Edit display names only — houses cannot be added or removed.
       </p>
 
       <div className="grid gap-4 lg:grid-cols-2">
         {houses.map((house) => (
-          <form key={house.id} action={saveHouseForm} className="card grid gap-3 p-4 sm:p-5">
+          <form key={house.id} action={saveHouseForm} className="card grid gap-3 p-4">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="font-display text-lg font-bold">{t.edit} {t.house}</h2>
+              <h2 className="font-display text-base font-black">{t.edit} {t.house}</h2>
               <HouseBadge house={house} />
             </div>
             <input type="hidden" name="id" value={house.id} />
@@ -37,16 +36,14 @@ export default async function HousesAdminPage() {
               Short name
               <input name="short_name" className={wrInput} defaultValue={house.short_name ?? ""} />
             </label>
-            <button className="min-h-11 rounded-full bg-kerala-dark text-sm font-semibold text-white">
-              {t.saveChanges}
-            </button>
+            <WrSubmit>{t.saveChanges}</WrSubmit>
           </form>
         ))}
       </div>
 
       <TableCard>
         <table className="w-full text-left text-sm">
-          <thead className="bg-paper">
+          <thead>
             <tr>
               <Th>Slug</Th>
               <Th>{t.house}</Th>
@@ -54,13 +51,13 @@ export default async function HousesAdminPage() {
             </tr>
           </thead>
           <tbody>
-            {houses.map((h, i) => (
-              <tr key={h.id} className={cn("border-t border-line", i % 2 === 1 && "bg-paper/40")}>
-                <td className="px-3 py-2 font-mono text-xs text-muted sm:px-4 sm:py-3">{h.slug}</td>
-                <td className="px-3 py-2 font-medium sm:px-4 sm:py-3">{tName(locale, h)}</td>
-                <td className="px-3 py-2 sm:px-4 sm:py-3">
+            {houses.map((h) => (
+              <tr key={h.id}>
+                <Td className="font-mono text-xs text-muted">{h.slug}</Td>
+                <Td className="font-medium">{tName(locale, h)}</Td>
+                <Td>
                   <HouseBadge house={h} />
-                </td>
+                </Td>
               </tr>
             ))}
           </tbody>

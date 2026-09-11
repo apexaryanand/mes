@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { ButtonLink } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/ui/language-toggle";
 import { logoutAction } from "@/domains/admin/actions";
 import { useI18n } from "@/lib/i18n/provider";
 import type { AppRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { LanguageToggle } from "@/components/ui/language-toggle";
 
 type NavItem = { href: string; key: string; roles: AppRole[]; icon: string };
 type NavGroup = { titleKey: string; items: NavItem[] };
@@ -27,37 +28,117 @@ const GROUPS: NavGroup[] = [
   {
     titleKey: "sectionResults",
     items: [
-      { href: "/war-room/results", key: "resultManagement", roles: ["super_admin", "war_room"], icon: "M9 11l3 3 8-8M4 6h16M4 12h6M4 18h10" },
-      { href: "/war-room/schedule", key: "scheduleManagement", roles: ["super_admin", "war_room"], icon: "M4 5h16v15H4zM4 9h16M8 3v4M16 3v4" },
-      { href: "/war-room/houses", key: "houses", roles: ["super_admin"], icon: "M4 20V9l8-5 8 5v11M9 20v-6h6v6" },
-      { href: "/war-room/participants", key: "participant", roles: ["super_admin"], icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" },
-      { href: "/war-room/programmes", key: "programmes", roles: ["super_admin"], icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
-      { href: "/war-room/categories", key: "category", roles: ["super_admin"], icon: "M4 6h16M4 12h10M4 18h6" },
-      { href: "/war-room/stages", key: "stages", roles: ["super_admin"], icon: "M3 7h18l-2 5H5zM5 12v7M19 12v7" },
+      {
+        href: "/war-room/results",
+        key: "resultManagement",
+        roles: ["super_admin", "war_room"],
+        icon: "M9 11l3 3 8-8M4 6h16M4 12h6M4 18h10",
+      },
+      {
+        href: "/war-room/schedule",
+        key: "scheduleManagement",
+        roles: ["super_admin", "war_room"],
+        icon: "M4 5h16v15H4zM4 9h16M8 3v4M16 3v4",
+      },
+      {
+        href: "/war-room/houses",
+        key: "houses",
+        roles: ["super_admin"],
+        icon: "M4 20V9l8-5 8 5v11M9 20v-6h6v6",
+      },
+      {
+        href: "/war-room/participants",
+        key: "participant",
+        roles: ["super_admin"],
+        icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2",
+      },
+      {
+        href: "/war-room/programmes",
+        key: "programmes",
+        roles: ["super_admin"],
+        icon: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+      },
+      {
+        href: "/war-room/categories",
+        key: "category",
+        roles: ["super_admin"],
+        icon: "M4 6h16M4 12h10M4 18h6",
+      },
+      {
+        href: "/war-room/stages",
+        key: "stages",
+        roles: ["super_admin"],
+        icon: "M3 7h18l-2 5H5zM5 12v7M19 12v7",
+      },
     ],
   },
   {
     titleKey: "sectionEditorial",
     items: [
-      { href: "/war-room/media", key: "mediaModeration", roles: ["super_admin", "war_room"], icon: "M4 6h16v12H4zM8 6l1.5-2h5L16 6M12 15a3 3 0 100-6 3 3 0 000 6z" },
-      { href: "/war-room/articles", key: "articleManagement", roles: ["super_admin", "war_room", "media_team"], icon: "M4 5h16v14H4zM8 9h8M8 13h8M8 17h5" },
-      { href: "/war-room/uploads", key: "mediaUploads", roles: ["super_admin", "media_team"], icon: "M12 16V4m0 0l-4 4m4-4l4 4M4 20h16" },
-      { href: "/war-room/interviews", key: "interviewManagement", roles: ["super_admin", "media_team"], icon: "M4 6h16v10H4zM8 20h8M12 16v4" },
+      {
+        href: "/war-room/media",
+        key: "mediaModeration",
+        roles: ["super_admin", "war_room"],
+        icon: "M4 6h16v12H4zM8 6l1.5-2h5L16 6M12 15a3 3 0 100-6 3 3 0 000 6z",
+      },
+      {
+        href: "/war-room/articles",
+        key: "articleManagement",
+        roles: ["super_admin", "war_room", "media_team"],
+        icon: "M4 5h16v14H4zM8 9h8M8 13h8M8 17h5",
+      },
+      {
+        href: "/war-room/uploads",
+        key: "mediaUploads",
+        roles: ["super_admin", "media_team"],
+        icon: "M12 16V4m0 0l-4 4m4-4l4 4M4 20h16",
+      },
+      {
+        href: "/war-room/interviews",
+        key: "interviewManagement",
+        roles: ["super_admin", "media_team"],
+        icon: "M4 6h16v10H4zM8 20h8M12 16v4",
+      },
     ],
   },
   {
     titleKey: "sectionAdmin",
     items: [
-      { href: "/war-room/settings", key: "settings", roles: ["super_admin"], icon: "M12 8v4m0 4h.01M4.93 4.93l14.14 14.14M12 3a9 9 0 109 9" },
-      { href: "/war-room/users", key: "userManagement", roles: ["super_admin"], icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21v-2a5 5 0 015-5h4a5 5 0 015 5v2" },
-      { href: "/war-room/audit", key: "auditLogs", roles: ["super_admin", "war_room"], icon: "M9 5h6M9 5a2 2 0 012-2h2a2 2 0 012 2M5 5h14v16H5zM9 12l2 2 4-4" },
+      {
+        href: "/war-room/settings",
+        key: "settings",
+        roles: ["super_admin"],
+        icon: "M12 8v4m0 4h.01M4.93 4.93l14.14 14.14M12 3a9 9 0 109 9",
+      },
+      {
+        href: "/war-room/users",
+        key: "userManagement",
+        roles: ["super_admin"],
+        icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21v-2a5 5 0 015-5h4a5 5 0 015 5v2",
+      },
+      {
+        href: "/war-room/audit",
+        key: "auditLogs",
+        roles: ["super_admin", "war_room"],
+        icon: "M9 5h6M9 5a2 2 0 012-2h2a2 2 0 012 2M5 5h14v16H5zM9 12l2 2 4-4",
+      },
     ],
   },
 ];
 
 function NavIcon({ d }: { d: string }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
       <path d={d} />
     </svg>
   );
@@ -101,25 +182,28 @@ export function WarRoomShell({
     : t.warRoom;
 
   const sidebar = (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2.5 px-4 py-4 sm:gap-3 sm:px-5 sm:py-5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 font-display text-sm font-black text-white sm:h-10 sm:w-10">
+    <div className="flex h-full flex-col bg-fest-ink text-paper">
+      <div className="rule-festival shrink-0" aria-hidden />
+
+      <div className="flex items-center gap-3 px-4 py-4">
+        <span className="flex h-10 w-10 shrink-0 -rotate-3 items-center justify-center border-2 border-fest-ink bg-fest-yellow font-display text-sm font-black text-fest-ink shadow-[var(--shadow-hard-xs)]">
           M
         </span>
         <div className="min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-gold-light">
+          <p className="text-[10px] font-black uppercase tracking-widest text-fest-yellow">
             {t.warRoom}
           </p>
-          <p className="font-display truncate text-lg font-bold text-white">
-            {t.brandShort}
-          </p>
+          <p className="font-display truncate text-lg font-black leading-tight">{t.brandShort}</p>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-5 overflow-y-auto px-3 pb-4">
+      <nav
+        className="wr-sidebar-scroll min-h-0 flex-1 space-y-5 overflow-y-auto overflow-x-hidden px-2 pb-4"
+        aria-label={t.quickNav}
+      >
         {groups.map((group) => (
           <div key={group.titleKey}>
-            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+            <p className="px-3 pb-1.5 text-[10px] font-black uppercase tracking-widest text-paper/45">
               {t[group.titleKey as keyof typeof t] as string}
             </p>
             <div className="space-y-0.5">
@@ -132,17 +216,20 @@ export function WarRoomShell({
                   <Link
                     key={item.href}
                     href={item.href}
+                    aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors",
+                      "flex min-h-9 items-center gap-2.5 px-3 text-[13px] font-bold transition-colors",
                       active
-                        ? "bg-white/15 text-white shadow-sm"
-                        : "text-white/70 hover:bg-white/10 hover:text-white",
+                        ? "border-2 border-fest-ink bg-fest-yellow text-fest-ink shadow-[var(--shadow-hard-xs)]"
+                        : "border-2 border-transparent text-paper/75 hover:border-fest-ink/30 hover:bg-fest-ink-soft hover:text-paper",
                     )}
                   >
-                    <span className={cn(active ? "text-gold-light" : "text-white/60")}>
+                    <span className={cn(active ? "text-fest-ink" : "text-fest-yellow/80")}>
                       <NavIcon d={item.icon} />
                     </span>
-                    {(t[item.key as keyof typeof t] as string) || item.key}
+                    <span className="truncate">
+                      {(t[item.key as keyof typeof t] as string) || item.key}
+                    </span>
                   </Link>
                 );
               })}
@@ -151,20 +238,23 @@ export function WarRoomShell({
         ))}
       </nav>
 
-      <div className="border-t border-white/10 px-3 py-2.5 sm:px-4 sm:py-3">
-        <div className="mb-3 flex items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-deep font-semibold text-white">
+      <div className="shrink-0 border-t-4 border-fest-yellow px-3 py-3">
+        <div className="mb-3 flex items-center gap-3 px-1">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-fest-ink bg-fest-yellow font-display text-sm font-black text-fest-ink">
             {name.charAt(0).toUpperCase()}
           </span>
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-white">{name}</p>
-            <p className="truncate text-xs text-gold-light">{ROLE_LABELS[role] ?? role}</p>
+            <p className="truncate text-sm font-bold">{name}</p>
+            <p className="truncate text-xs text-paper/60">{ROLE_LABELS[role] ?? role}</p>
           </div>
         </div>
         <div className="flex items-center justify-between gap-2">
           <LanguageToggle compact />
           <form action={logoutAction}>
-            <button className="rounded-full px-3 py-1.5 text-xs font-semibold text-white/70 transition-colors hover:bg-white/10 hover:text-white">
+            <button
+              type="submit"
+              className="px-2 py-1.5 text-xs font-bold text-paper/70 transition-colors hover:text-fest-yellow"
+            >
               {t.logout}
             </button>
           </form>
@@ -174,19 +264,29 @@ export function WarRoomShell({
   );
 
   return (
-    <div className="flex min-h-screen bg-[#f1f0ec] text-ink">
-      <aside className="hidden w-64 shrink-0 bg-kerala-deep md:block">
-        <div className="sticky top-0 h-screen">{sidebar}</div>
+    <div className="war-room-console flex min-h-screen bg-paper text-ink">
+      <aside className="hidden w-[17.5rem] shrink-0 overflow-hidden border-r-4 border-fest-ink lg:block">
+        <div className="sticky top-0 h-screen overflow-hidden">{sidebar}</div>
       </aside>
 
-      <div className={cn("fixed inset-0 z-50 md:hidden", open ? "pointer-events-auto" : "pointer-events-none")}>
+      {/* Tablet / phone fallback */}
+      <div
+        className={cn(
+          "fixed inset-0 z-50 lg:hidden",
+          open ? "pointer-events-auto" : "pointer-events-none",
+        )}
+        aria-hidden={!open}
+      >
         <div
-          className={cn("absolute inset-0 bg-black/50 transition-opacity", open ? "opacity-100" : "opacity-0")}
+          className={cn(
+            "absolute inset-0 bg-fest-ink/60 transition-opacity",
+            open ? "opacity-100" : "opacity-0",
+          )}
           onClick={() => setOpen(false)}
         />
         <div
           className={cn(
-            "absolute left-0 top-0 h-full w-72 max-w-[82vw] bg-kerala-deep shadow-[var(--shadow-lg)] transition-transform duration-300",
+            "absolute left-0 top-0 h-full w-[17.5rem] max-w-[88vw] border-r-4 border-fest-ink shadow-[var(--shadow-hard-lg)] transition-transform duration-300",
             open ? "translate-x-0" : "-translate-x-full",
           )}
         >
@@ -195,32 +295,55 @@ export function WarRoomShell({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-white/90 px-3 py-2 backdrop-blur sm:gap-3 sm:px-4 sm:py-3 md:px-6">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b-4 border-fest-ink bg-paper-white px-4 lg:px-8">
           <button
             type="button"
-            className="flex min-h-9 min-w-9 items-center justify-center rounded-xl border border-line text-kerala-dark md:hidden"
+            className="flex h-9 w-9 items-center justify-center border-2 border-fest-ink bg-paper-white text-fest-ink shadow-[var(--shadow-hard-xs)] lg:hidden"
             aria-label={t.menu}
             onClick={() => setOpen(true)}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+            >
               <path d="M4 7h16M4 12h16M4 17h16" />
             </svg>
           </button>
-          <h1 className="font-display flex-1 truncate text-base font-bold sm:text-xl">{title}</h1>
-          <Link
-            href="/"
-            aria-label={t.viewSite}
-            className="chip gap-1 px-2.5 py-1.5 text-xs sm:gap-1.5 sm:px-3.5 sm:py-2 sm:text-sm"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-black uppercase tracking-widest text-fest-red">
+              {t.warRoom}
+            </p>
+            <h1 className="font-display truncate text-lg font-black leading-tight lg:text-xl">
+              {title}
+            </h1>
+          </div>
+
+          <ButtonLink href="/" variant="outline" size="sm">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              aria-hidden
+            >
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
-            <span className="hidden sm:inline">{t.viewSite}</span>
-            <span className="sm:hidden" aria-hidden>↗</span>
-          </Link>
+            {t.viewSite}
+          </ButtonLink>
         </header>
 
-        <main className="min-w-0 flex-1 p-3 sm:p-4 md:p-6">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-5 lg:px-8 lg:py-6">
+          <div className="mx-auto w-full max-w-[90rem]">{children}</div>
+        </main>
       </div>
     </div>
   );

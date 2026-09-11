@@ -1037,6 +1037,58 @@ html[lang="ml"] .festival-kicker {
 }
 
 /* =========================================================================
+   War Room — desktop-first console density
+   ========================================================================= */
+
+.war-room-console {
+  /* Counter the public-site 125% html bump so tables stay dense on desktop. */
+  font-size: 1rem;
+  line-height: var(--lh-body);
+}
+
+@media (min-width: 1024px) {
+  .war-room-console {
+    font-size: 0.875rem;
+  }
+}
+
+.war-room-console .festival-table-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.war-room-console .festival-table-card tbody tr {
+  border-top: 2px solid color-mix(in srgb, var(--fest-ink) 12%, transparent);
+}
+
+.war-room-console .festival-table-card tbody tr:hover {
+  background: color-mix(in srgb, var(--fest-yellow) 18%, transparent);
+}
+
+/* Sidebar nav — thin, in-theme scrollbar (no default light track sticking out) */
+.war-room-console .wr-sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--fest-yellow) 40%, transparent) transparent;
+}
+
+.war-room-console .wr-sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.war-room-console .wr-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.war-room-console .wr-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--paper) 28%, transparent);
+  border-radius: 999px;
+}
+
+.war-room-console .wr-sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--fest-yellow) 55%, transparent);
+}
+
+/* =========================================================================
    Print — result sheets get posted on notice boards
    ========================================================================= */
 
