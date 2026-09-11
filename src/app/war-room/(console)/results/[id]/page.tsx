@@ -5,7 +5,7 @@ import { can, getSessionProfile } from "@/lib/auth";
 import { getResultEntries, getResultSetById } from "@/lib/data/admin-queries";
 import { getDictionary, tName, statusLabel } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
-import { getHouses, getParticipants, getScheduledEvents } from "@/lib/data/queries";
+import { getHouses, getParticipantsLite, getScheduledEventById } from "@/lib/data/queries";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
 import { ButtonLink } from "@/components/ui/button";
@@ -14,26 +14,22 @@ import { isCertificateEligible, certificatePagePath } from "@/lib/certificates";
 
 export default async function ResultEditorPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
 }) {
   const { id } = await params;
-  const { error } = await searchParams;
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
   const profile = await getSessionProfile();
   const set = await getResultSetById(id);
   if (!set) notFound();
-  const [events, houses, participants] = await Promise.all([
-    getScheduledEvents(),
+  const [event, houses, participants, entries] = await Promise.all([
+    getScheduledEventById(set.scheduled_event_id),
     getHouses(),
-    getParticipants(),
+    getParticipantsLite(),
+    getResultEntries(set.id),
   ]);
-  const event = events.find((e) => e.id === set.scheduled_event_id);
   if (!event) notFound();
-  const entries = await getResultEntries(set.id);
   const locked = set.status === "published";
   const editor = can(profile?.role, ["war_room"]);
 
@@ -69,15 +65,6 @@ export default async function ResultEditorPage({
         </div>
       </div>
 
-      {error ? (
-        <p
-          role="alert"
-          className="border-2 border-fest-red bg-live-soft px-4 py-3 text-sm font-bold text-fest-red"
-        >
-          {error}
-        </p>
-      ) : null}
-
       {editor ? (
         <ResultEntriesEditor
           resultSetId={set.id}
@@ -88,7 +75,7 @@ export default async function ResultEditorPage({
           houses={houses}
           participants={participants}
           initialRows={entries}
-          localeHouseName={(h) => tName(locale, h)}
+          locale={locale}
         />
       ) : null}
 

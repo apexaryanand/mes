@@ -73,6 +73,17 @@ export async function getAllMediaAdmin(): Promise<MediaItem[]> {
   return (data ?? []) as MediaItem[];
 }
 
+export async function getPendingMediaAdmin(limit = 50): Promise<MediaItem[]> {
+  const sb = await requireServerSupabase();
+  const { data } = await sb
+    .from("media")
+    .select("*")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  return (data ?? []) as MediaItem[];
+}
+
 export async function getAllArticlesAdmin(): Promise<Article[]> {
   const sb = await requireServerSupabase();
   const { data } = await sb.from("articles").select("*").order("created_at", { ascending: false });
@@ -114,6 +125,8 @@ export async function getActiveResultSetForEvent(eventId: string) {
     .eq("scheduled_event_id", eventId)
     .in("status", ["draft", "entered", "verified", "correction_draft"])
     .is("deleted_at", null)
+    .order("updated_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
   return (data as ResultSet | null) ?? null;
 }

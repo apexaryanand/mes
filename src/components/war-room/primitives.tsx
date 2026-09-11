@@ -1,3 +1,6 @@
+"use client";
+
+import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -8,21 +11,72 @@ import { cn } from "@/lib/utils";
 export const wrInput = "field-input text-sm";
 export const wrLabel = "field-label";
 
+function Spinner({ className }: { className?: string }) {
+  return (
+    <svg
+      className={cn("animate-spin", className)}
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.25" strokeWidth="3" />
+      <path d="M21 12a9 9 0 00-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function WrSubmit({
   children,
   className,
   variant = "primary",
   size = "md",
+  appearance = "button",
 }: {
   children: React.ReactNode;
   className?: string;
   variant?: "primary" | "gold" | "danger";
   size?: "sm" | "md" | "lg";
+  appearance?: "button" | "link";
 }) {
+  const { pending } = useFormStatus();
+  const label = pending ? "Working…" : children;
+
+  if (appearance === "link") {
+    return (
+      <button
+        type="submit"
+        disabled={pending}
+        aria-busy={pending}
+        className={cn(
+          "inline-flex items-center gap-1.5 font-bold text-fest-ink hover:text-fest-red disabled:opacity-60",
+          className,
+        )}
+      >
+        {pending ? <Spinner /> : null}
+        {label}
+      </button>
+    );
+  }
+
   return (
-    <Button type="submit" variant={variant} size={size} className={className}>
-      {children}
+    <Button type="submit" variant={variant} size={size} className={className} disabled={pending} aria-busy={pending}>
+      {pending ? <Spinner /> : null}
+      <span className={pending ? "opacity-80" : undefined}>{label}</span>
     </Button>
+  );
+}
+
+export function WrFlashError({ message }: { message?: string | null }) {
+  if (!message) return null;
+  return (
+    <p
+      role="alert"
+      className="border-2 border-fest-red bg-live-soft px-4 py-3 text-sm font-bold text-fest-red"
+    >
+      {message}
+    </p>
   );
 }
 

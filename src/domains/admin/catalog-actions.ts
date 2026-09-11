@@ -3,10 +3,12 @@
 import { can, getSessionProfile } from "@/lib/auth";
 import { requireServerSupabase } from "@/lib/supabase/require";
 import type { EventSettings, ItemKind, ScoringRules } from "@/lib/types";
+import { revalidatePublicSite, revalidateWarRoom } from "@/lib/revalidate";
+import { failWarRoom } from "@/lib/war-room-error";
 
-async function bump() {
-  const { revalidatePath } = await import("next/cache");
-  revalidatePath("/", "layout");
+function bump(opts?: { public?: boolean }) {
+  revalidateWarRoom();
+  if (opts?.public) revalidatePublicSite();
 }
 
 function parseCsv(text: string) {
@@ -19,29 +21,28 @@ function parseCsv(text: string) {
 
 export async function saveHouseForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
+  if (!can(profile?.role, [])) await failWarRoom("Not allowed.", "/war-room/houses");
 
   const name_en = String(formData.get("name_en") ?? "").trim();
   const name_ml = String(formData.get("name_ml") ?? "").trim();
   const short_name = String(formData.get("short_name") ?? "").trim() || null;
   const id = String(formData.get("id") ?? "");
 
-  if (!name_en || !name_ml || !id) return;
+  if (!name_en || !name_ml || !id) await failWarRoom("House name is required.", "/war-room/houses");
 
   const sb = await requireServerSupabase();
   const { error } = await sb
     .from("houses")
     .update({ name_en, name_ml, short_name })
     .eq("id", id);
-  if (error) return;
+  if (error) await failWarRoom(error.message, "/war-room/houses");
 
-  await bump();
-  return;
+  bump({ public: true });
 }
 
 export async function saveParticipantForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
+  if (!can(profile?.role, [])) await failWarRoom("Not allowed.", "/war-room/participants");
 
   const house_id = String(formData.get("house_id") ?? "");
   const full_name = String(formData.get("full_name") ?? "").trim();
@@ -50,7 +51,9 @@ export async function saveParticipantForm(formData: FormData) {
   const chest_number = String(formData.get("chest_number") ?? "").trim() || null;
   const id = String(formData.get("id") ?? "");
 
-  if (!house_id || !full_name) return;
+  if (!house_id || !full_name) {
+    await failWarRoom("House and name are required.", "/war-room/participants");
+  }
 
   const sb = await requireServerSupabase();
   if (id) {
@@ -58,7 +61,7 @@ export async function saveParticipantForm(formData: FormData) {
       .from("participants")
       .update({ house_id, full_name, full_name_ml, class_name, chest_number })
       .eq("id", id);
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/participants");
   } else {
     const { error } = await sb.from("participants").insert({
       house_id,
@@ -67,30 +70,28 @@ export async function saveParticipantForm(formData: FormData) {
       class_name,
       chest_number,
     });
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/participants");
   }
 
-  await bump();
-  return;
+  bump();
 }
 
 export async function deleteParticipantForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
+  if (!can(profile?.role, [])) await failWarRoom("Not allowed.", "/war-room/participants");
   const id = String(formData.get("id"));
   const sb = await requireServerSupabase();
   const { error } = await sb.from("participants").delete().eq("id", id);
-  if (error) return;
-  await bump();
-  return;
+  if (error) await failWarRoom(error.message, "/war-room/participants");
+  bump();
 }
 
 export async function importParticipantsCsvForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
+  if (!can(profile?.role, [])) await failWarRoom("Not allowed.", "/war-room/participants");
   const csv = String(formData.get("csv") ?? "");
   const rows = parseCsv(csv);
-  if (!rows.length) return;
+  if (!rows.length) await failWarRoom("CSV is empty.", "/war-room/participants");
 
   const sb = await requireServerSupabase();
   const { data: houses } = await sb.from("houses").select("id, slug");
@@ -110,16 +111,17 @@ export async function importParticipantsCsvForm(formData: FormData) {
     });
   }
 
-  if (!inserts.length) return;
+  if (!inserts.length) {
+    await failWarRoom("No valid CSV rows. Use house_slug,full_name,…", "/war-room/participants");
+  }
   const { error } = await sb.from("participants").insert(inserts);
-  if (error) return;
-  await bump();
-  return;
+  if (error) await failWarRoom(error.message, "/war-room/participants");
+  bump();
 }
 
 export async function saveCategoryForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
+  if (!can(profile?.role, [])) await failWarRoom("Not allowed.", "/war-room/categories");
 
   const code = String(formData.get("code") ?? "").trim();
   const name_en = String(formData.get("name_en") ?? "").trim();
@@ -127,7 +129,9 @@ export async function saveCategoryForm(formData: FormData) {
   const sort_order = Number(formData.get("sort_order") ?? 0);
   const id = String(formData.get("id") ?? "");
 
-  if (!code || !name_en || !name_ml) return;
+  if (!code || !name_en || !name_ml) {
+    await failWarRoom("Code and names are required.", "/war-room/categories");
+  }
 
   const sb = await requireServerSupabase();
   if (id) {
@@ -135,19 +139,18 @@ export async function saveCategoryForm(formData: FormData) {
       .from("categories")
       .update({ code, name_en, name_ml, sort_order })
       .eq("id", id);
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/categories");
   } else {
     const { error } = await sb.from("categories").insert({ code, name_en, name_ml, sort_order });
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/categories");
   }
 
-  await bump();
-  return;
+  bump({ public: true });
 }
 
 export async function saveProgrammeForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
+  if (!can(profile?.role, [])) await failWarRoom("Not allowed.", "/war-room/programmes");
 
   const name_en = String(formData.get("name_en") ?? "").trim();
   const name_ml = String(formData.get("name_ml") ?? "").trim();
@@ -155,7 +158,7 @@ export async function saveProgrammeForm(formData: FormData) {
   const item_kind = String(formData.get("item_kind") ?? "individual") as ItemKind;
   const id = String(formData.get("id") ?? "");
 
-  if (!name_en || !name_ml) return;
+  if (!name_en || !name_ml) await failWarRoom("Programme names are required.", "/war-room/programmes");
 
   const sb = await requireServerSupabase();
   if (id) {
@@ -163,7 +166,7 @@ export async function saveProgrammeForm(formData: FormData) {
       .from("programmes")
       .update({ name_en, name_ml, code, item_kind })
       .eq("id", id);
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/programmes");
   } else {
     const { uniqueSlug } = await import("@/lib/slug");
     const { data: existing } = await sb.from("programmes").select("slug");
@@ -175,16 +178,15 @@ export async function saveProgrammeForm(formData: FormData) {
       code,
       item_kind,
     });
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/programmes");
   }
 
-  await bump();
-  return;
+  bump({ public: true });
 }
 
 export async function saveStageForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
+  if (!can(profile?.role, [])) await failWarRoom("Not allowed.", "/war-room/stages");
 
   const name_en = String(formData.get("name_en") ?? "").trim();
   const name_ml = String(formData.get("name_ml") ?? "").trim();
@@ -193,7 +195,7 @@ export async function saveStageForm(formData: FormData) {
   const sort_order = Number(formData.get("sort_order") ?? 0);
   const id = String(formData.get("id") ?? "");
 
-  if (!name_en || !name_ml) return;
+  if (!name_en || !name_ml) await failWarRoom("Stage names are required.", "/war-room/stages");
 
   const sb = await requireServerSupabase();
   if (id) {
@@ -201,7 +203,7 @@ export async function saveStageForm(formData: FormData) {
       .from("stages")
       .update({ name_en, name_ml, location_en, location_ml, sort_order })
       .eq("id", id);
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/stages");
   } else {
     const { uniqueSlug } = await import("@/lib/slug");
     const { data: existing } = await sb.from("stages").select("slug");
@@ -214,17 +216,16 @@ export async function saveStageForm(formData: FormData) {
       location_ml,
       sort_order,
     });
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/stages");
   }
 
-  await bump();
-  return;
+  bump({ public: true });
 }
 
 export async function saveScheduledEventForm(formData: FormData) {
   const profile = await getSessionProfile();
   if (!can(profile?.role, ["war_room"])) {
-    return;
+    await failWarRoom("Not allowed.", "/war-room/schedule");
   }
 
   const programme_id = String(formData.get("programme_id") ?? "");
@@ -238,7 +239,7 @@ export async function saveScheduledEventForm(formData: FormData) {
   const id = String(formData.get("id") ?? "");
 
   if (!programme_id || !category_id || !stage_id || !event_date || !start_time) {
-    return;
+    await failWarRoom("Programme, category, stage, date and start time are required.", "/war-room/schedule");
   }
 
   const sb = await requireServerSupabase();
@@ -262,7 +263,7 @@ export async function saveScheduledEventForm(formData: FormData) {
         status,
       })
       .eq("id", id);
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/schedule");
   } else {
     const { uniqueSlug } = await import("@/lib/slug");
     const { data: existing } = await sb.from("scheduled_events").select("slug");
@@ -278,16 +279,15 @@ export async function saveScheduledEventForm(formData: FormData) {
       end_time,
       status,
     });
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/schedule");
   }
 
-  await bump();
-  return;
+  bump({ public: true });
 }
 
 export async function saveEventSettingsForm(formData: FormData) {
   const profile = await getSessionProfile();
-  if (!can(profile?.role, [])) return;
+  if (!can(profile?.role, [])) await failWarRoom("Not allowed.", "/war-room/settings");
 
   const payload: Partial<EventSettings> = {
     name_en: String(formData.get("name_en") ?? "").trim(),
@@ -307,7 +307,7 @@ export async function saveEventSettingsForm(formData: FormData) {
 
   if (existing?.id) {
     const { error } = await sb.from("event_settings").update(payload).eq("id", existing.id);
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/settings");
   } else {
     const { error } = await sb.from("event_settings").insert({
       slug: "mesta-2026",
@@ -320,9 +320,8 @@ export async function saveEventSettingsForm(formData: FormData) {
         max_marks: 100,
       } satisfies ScoringRules,
     });
-    if (error) return;
+    if (error) await failWarRoom(error.message, "/war-room/settings");
   }
 
-  await bump();
-  return;
+  bump({ public: true });
 }

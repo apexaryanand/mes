@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState, useTransition } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { LanguageToggle } from "@/components/ui/language-toggle";
+import { WrFlashError } from "@/components/war-room/primitives";
 import { logoutAction } from "@/domains/admin/actions";
 import { useI18n } from "@/lib/i18n/provider";
 import type { AppRole } from "@/lib/types";
@@ -144,11 +145,48 @@ function NavIcon({ d }: { d: string }) {
   );
 }
 
+function SidebarLink({
+  href,
+  active,
+  children,
+  onNavigate,
+}: {
+  href: string;
+  active: boolean;
+  children: React.ReactNode;
+  onNavigate: (href: string) => void;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      onClick={(e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        onNavigate(href);
+      }}
+      className={cn(
+        "flex min-h-9 items-center gap-2.5 px-3 text-[13px] font-bold transition-colors",
+        active
+          ? "border-2 border-fest-ink bg-fest-yellow text-fest-ink shadow-[var(--shadow-hard-xs)]"
+          : "border-2 border-transparent text-paper/75 hover:border-fest-ink/30 hover:bg-fest-ink-soft hover:text-paper",
+      )}
+    >
+      {children}
+    </Link>
+  );
+}
+
 const ROLE_LABELS: Record<AppRole, string> = {
   super_admin: "Super Admin",
   war_room: "War Room",
   media_team: "Media Team",
 };
+
+function WrQueryError() {
+  const searchParams = useSearchParams();
+  return <WrFlashError message={searchParams.get("error")} />;
+}
 
 export function WarRoomShell({
   role,
@@ -161,8 +199,18 @@ export function WarRoomShell({
 }) {
   const { t } = useI18n();
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [lastPath, setLastPath] = useState(pathname);
+  const [navPending, startNav] = useTransition();
+
+  function navigate(href: string) {
+    if (href === pathname) return;
+    setOpen(false);
+    startNav(() => {
+      router.push(href);
+    });
+  }
 
   if (pathname !== lastPath) {
     setLastPath(pathname);
@@ -213,16 +261,11 @@ export function WarRoomShell({
                     ? pathname === item.href
                     : pathname.startsWith(item.href);
                 return (
-                  <Link
+                  <SidebarLink
                     key={item.href}
                     href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={cn(
-                      "flex min-h-9 items-center gap-2.5 px-3 text-[13px] font-bold transition-colors",
-                      active
-                        ? "border-2 border-fest-ink bg-fest-yellow text-fest-ink shadow-[var(--shadow-hard-xs)]"
-                        : "border-2 border-transparent text-paper/75 hover:border-fest-ink/30 hover:bg-fest-ink-soft hover:text-paper",
-                    )}
+                    active={active}
+                    onNavigate={navigate}
                   >
                     <span className={cn(active ? "text-fest-ink" : "text-fest-yellow/80")}>
                       <NavIcon d={item.icon} />
@@ -230,7 +273,7 @@ export function WarRoomShell({
                     <span className="truncate">
                       {(t[item.key as keyof typeof t] as string) || item.key}
                     </span>
-                  </Link>
+                  </SidebarLink>
                 );
               })}
             </div>
@@ -265,6 +308,13 @@ export function WarRoomShell({
 
   return (
     <div className="war-room-console flex min-h-screen bg-paper text-ink">
+      {navPending ? (
+        <div
+          className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-1 bg-fest-yellow"
+          role="progressbar"
+          aria-label="Loading"
+        />
+      ) : null}
       <aside className="hidden w-[17.5rem] shrink-0 overflow-hidden border-r-4 border-fest-ink lg:block">
         <div className="sticky top-0 h-screen overflow-hidden">{sidebar}</div>
       </aside>
@@ -342,7 +392,12 @@ export function WarRoomShell({
         </header>
 
         <main className="min-w-0 flex-1 px-4 py-5 lg:px-8 lg:py-6">
-          <div className="mx-auto w-full max-w-[90rem]">{children}</div>
+          <div className="mx-auto grid w-full max-w-[90rem] gap-4">
+            <Suspense fallback={null}>
+              <WrQueryError />
+            </Suspense>
+            {children}
+          </div>
         </main>
       </div>
     </div>
