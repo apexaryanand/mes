@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { HouseBadge } from "@/components/public/house-badge";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -25,7 +26,13 @@ export function FestivalHero({ locale, t, settings, houses, todayEventsCount, re
             <p className="mt-3 flex flex-wrap items-center gap-x-2 text-sm font-semibold text-white/85"><span>{venue}</span><span aria-hidden>•</span><span>{t.day} {currentDay} · {settings.start_date} – {settings.end_date}</span></p>
             {houses.length ? <div className="mt-5 flex flex-wrap gap-2" role="list" aria-label={t.houses}>{houses.map((house) => <Link key={house.id} href={`/houses/${house.slug}`} role="listitem" className="transition-transform hover:-translate-y-1"><HouseBadge house={house} /></Link>)}</div> : null}
           </div>
-          <div className="festival-poster hidden lg:block"><span className="festival-poster-top">SCHOOL ARTS FEST</span><strong>FEEL<br />THE<br /><em>WONDER</em></strong><span className="festival-poster-bottom">3000+ STUDENTS · ONE STAGE</span></div>
+          <div className="festival-poster hidden lg:flex lg:flex-col lg:items-center lg:justify-between">
+            <div className="w-full border-b-2 border-fest-ink/30 pb-3">
+              <Image src="/images/mesta-logo.png" alt="MESTA — Mes Track & Arts" width={220} height={165} className="mx-auto h-auto w-36 rounded-sm object-contain" />
+            </div>
+            <strong>FEEL<br />THE<br /><em>WONDER</em></strong>
+            <span className="festival-poster-bottom">3000+ STUDENTS · ONE STAGE</span>
+          </div>
         </div>
         <div className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">{[[t.housesCompeting, houses.length], [t.eventsToday, todayEventsCount], [t.resultsPublished, resultsCount], [t.liveNow, liveCount]].map(([label, value], i) => <StatCard key={String(label)} label={String(label)} value={Number(value)} accent={(["green", "gold", "indigo", "red"] as const)[i]} className="festival-stat" />)}</div>
         <div className="mt-5 flex gap-2"><ButtonLink href="/results" variant="gold" size="sm" className="flex-1 justify-center sm:flex-none">{t.exploreResults}</ButtonLink><ButtonLink href="/schedule" variant="outline" size="sm" className="flex-1 justify-center border-white/60 bg-transparent text-white hover:bg-white hover:text-ink sm:flex-none">{t.viewSchedule}</ButtonLink></div>

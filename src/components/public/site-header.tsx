@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -66,15 +67,15 @@ export function SiteHeader() {
           className="group flex min-w-0 shrink-0 items-center gap-2 sm:gap-2.5"
           aria-label={t.brand}
         >
-          <span className="flex h-9 w-9 shrink-0 -rotate-3 items-center justify-center border-2 border-fest-ink bg-fest-yellow shadow-[var(--shadow-hard-xs)] transition-transform duration-200 group-hover:rotate-0 sm:h-10 sm:w-10">
-            <span className="font-display text-sm font-black leading-none text-fest-ink">M</span>
+          <span className="flex h-10 w-16 shrink-0 items-center justify-center overflow-hidden border-2 border-fest-ink bg-paper-white shadow-[var(--shadow-hard-xs)] transition-transform duration-200 group-hover:-rotate-2 sm:h-11 sm:w-[4.5rem]">
+            <Image src="/images/mesta-logo.png" alt="MESTA — Mes Track & Arts" width={144} height={108} className="h-full w-full object-contain" priority />
           </span>
           <span className="min-w-0">
             <span className="font-display block truncate text-base font-black leading-tight text-fest-ink sm:text-lg">
               {t.brand}
             </span>
             <span className="hidden truncate text-[0.6875rem] leading-tight text-muted lg:block">
-              {t.hostedAt}
+              MES HSS Irimbiliyam · {t.hostedAt}
             </span>
           </span>
         </Link>
