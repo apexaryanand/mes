@@ -1,56 +1,36 @@
 import Link from "next/link";
-import { LanguageToggle } from "@/components/ui/language-toggle";
 import { LoginForm } from "@/components/war-room/login-form";
-import { getDictionary } from "@/lib/i18n/dictionaries";
-import { getRequestLocale } from "@/lib/i18n/server";
+import { adminCopy } from "@/lib/admin/copy";
 import { Suspense } from "react";
 
-export default async function LoginPage() {
-  const locale = await getRequestLocale();
-  const t = getDictionary(locale);
+export default function LoginPage() {
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
-      {/* Brand panel */}
-      <div className="relative hidden overflow-hidden bg-fest-ink text-paper lg:flex lg:flex-col lg:justify-between">
-        <div
-          className="absolute inset-0 opacity-[0.14] [background-image:radial-gradient(var(--fest-yellow)_1.5px,transparent_1.5px)] [background-size:26px_26px]"
-          aria-hidden
-        />
-        <div className="relative p-10">
-          <span className="section-eyebrow text-fest-yellow before:bg-fest-yellow">
-            {t.official}
-          </span>
+    <div className="grid min-h-screen lg:grid-cols-[1fr_1fr]">
+      <div className="hidden flex-col justify-between bg-zinc-900 p-10 text-white lg:flex">
+        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">{adminCopy.official}</p>
+        <div>
+          <p className="text-3xl font-semibold">MESTA Ops</p>
+          <p className="mt-3 max-w-sm text-sm text-zinc-400">{adminCopy.footerNote}</p>
         </div>
-        <div className="relative p-10">
-          <p className="font-display text-display-lg font-black text-paper-white">{t.brand}</p>
-          <div className="rule-festival mt-5 w-40" aria-hidden />
-          <p className="mt-4 max-w-sm text-paper/70">{t.footerNote}</p>
+        <div className="space-y-1 text-sm text-zinc-500">
+          <p>{adminCopy.websiteByLittleKites}</p>
+          <p>{adminCopy.operationsByLittleKites}</p>
         </div>
-        <div className="relative p-10 text-sm text-paper/50">{t.littleKites}</div>
       </div>
-
-      {/* Form panel */}
-      <div className="festival-main flex items-center justify-center bg-paper px-3 py-8 sm:px-4 sm:py-10">
+      <div className="flex items-center justify-center bg-zinc-50 px-4 py-10">
         <div className="w-full max-w-md">
-          <div className="mb-4 flex items-end justify-between gap-3 sm:mb-6">
-            <div className="min-w-0">
-              <p className="section-eyebrow">{t.warRoom}</p>
-              <h1 className="font-display text-display-md mt-1.5 font-black">{t.login}</h1>
-            </div>
-            <LanguageToggle compact />
+          <div className="mb-6">
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">{adminCopy.warRoom}</p>
+            <h1 className="mt-1 text-2xl font-semibold text-zinc-900">{adminCopy.login}</h1>
           </div>
-          <div className="card p-4 sm:p-6">
+          <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
             <Suspense>
               <LoginForm />
             </Suspense>
           </div>
           <p className="mt-6 text-sm">
-            <Link
-              href="/"
-              className="nav-underline inline-flex items-center gap-1.5 font-bold text-fest-ink"
-            >
-              <span aria-hidden>&larr;</span>
-              {t.home}
+            <Link href="/" className="font-medium text-zinc-700 hover:text-zinc-900">
+              ← {adminCopy.home}
             </Link>
           </p>
         </div>

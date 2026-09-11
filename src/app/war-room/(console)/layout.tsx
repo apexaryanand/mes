@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { WarRoomShell } from "@/components/war-room/nav";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { getSessionProfile } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -13,8 +13,8 @@ export default async function WarRoomConsoleLayout({
   if (!profile) redirect("/war-room/login");
 
   return (
-    <WarRoomShell role={profile.role} name={profile.display_name}>
+    <AdminShell role={profile.role} name={profile.display_name}>
       {children}
-    </WarRoomShell>
+    </AdminShell>
   );
 }

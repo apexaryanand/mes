@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function WarRoomLiveRedirect() {
+export default function LiveRedirect() {
   redirect("/war-room");
 }
