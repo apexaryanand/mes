@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { saveResultDraftForm } from "@/domains/admin/actions";
-import { TableCard, Th, Td, WrSubmit } from "@/components/war-room/primitives";
+import { AdminSubmit } from "@/components/admin/admin-submit";
+import { AdminTable, AdminTd, AdminTh } from "@/components/admin/admin-table";
 import { suggestGrade } from "@/domains/results/scoring";
-import { tName } from "@/lib/i18n/dictionaries";
+import { adminCopy } from "@/lib/admin/copy";
 import { cn } from "@/lib/utils";
-import type { House, Locale, ResultEntryView } from "@/lib/types";
+import type { House, ResultEntryView } from "@/lib/types";
 
 export type ParticipantLite = {
   id: string;
@@ -83,7 +84,6 @@ export function ResultEntriesEditor({
   houses,
   participants,
   initialRows,
-  locale,
 }: {
   resultSetId: string;
   locked: boolean;
@@ -93,7 +93,6 @@ export function ResultEntriesEditor({
   houses: House[];
   participants: ParticipantLite[];
   initialRows: ResultEntryView[];
-  locale: Locale;
 }) {
   const defaultHouse = houses[0]?.id ?? "";
   const [rows, setRows] = useState<DraftRow[]>(() => {
@@ -104,7 +103,7 @@ export function ResultEntriesEditor({
 
   const byId = useMemo(() => new Map(participants.map((p) => [p.id, p])), [participants]);
 
-  const inputCls = "field-input min-h-9 w-auto px-2.5 py-1.5 text-sm";
+  const inputCls = "w-full min-h-9 rounded-md border border-zinc-300 bg-white px-2.5 py-1.5 text-sm";
 
   function patch(key: string, next: Partial<DraftRow>) {
     setRows((prev) => prev.map((row) => (row.key === key ? { ...row, ...next } : row)));
@@ -140,17 +139,17 @@ export function ResultEntriesEditor({
           {formError}
         </p>
       ) : null}
-      <TableCard>
+      <AdminTable>
         <table className="min-w-[860px] text-sm">
           <thead>
             <tr>
-              <Th>Rank</Th>
-              <Th>Registered</Th>
-              <Th>Participant</Th>
-              <Th>House</Th>
-              <Th>Marks</Th>
-              <Th>Grade</Th>
-              {!locked ? <Th /> : null}
+              <AdminTh>Rank</AdminTh>
+              <AdminTh>Registered</AdminTh>
+              <AdminTh>Participant</AdminTh>
+              <AdminTh>House</AdminTh>
+              <AdminTh>Marks</AdminTh>
+              <AdminTh>Grade</AdminTh>
+              {!locked ? <AdminTh /> : null}
             </tr>
           </thead>
           <tbody>
@@ -161,7 +160,7 @@ export function ResultEntriesEditor({
                 : [];
               return (
                 <tr key={row.key}>
-                  <Td>
+                  <AdminTd>
                     <input type="hidden" name={`id_${i}`} value={row.id} />
                     <input
                       name={`rank_${i}`}
@@ -170,8 +169,8 @@ export function ResultEntriesEditor({
                       disabled={locked}
                       className={cn(inputCls, "w-16")}
                     />
-                  </Td>
-                  <Td>
+                  </AdminTd>
+                  <AdminTd>
                     <input type="hidden" name={`participant_${i}`} value={row.participant_id} />
                     {row.participant_id ? (
                       <div className="flex min-w-36 items-center gap-2">
@@ -186,7 +185,7 @@ export function ResultEntriesEditor({
                               patch(row.key, { participant_id: "", query: "", participant_name: row.participant_name })
                             }
                           >
-                            Clear
+                            {adminCopy.clear}
                           </button>
                         ) : null}
                       </div>
@@ -217,8 +216,8 @@ export function ResultEntriesEditor({
                         ) : null}
                       </div>
                     )}
-                  </Td>
-                  <Td>
+                  </AdminTd>
+                  <AdminTd>
                     <input
                       name={`name_${i}`}
                       value={row.participant_name}
@@ -226,8 +225,8 @@ export function ResultEntriesEditor({
                       disabled={locked || Boolean(row.participant_id)}
                       className={cn(inputCls, "min-w-40 w-full")}
                     />
-                  </Td>
-                  <Td>
+                  </AdminTd>
+                  <AdminTd>
                     <select
                       name={`house_${i}`}
                       value={row.house_id}
@@ -237,12 +236,12 @@ export function ResultEntriesEditor({
                     >
                       {houses.map((h) => (
                         <option key={h.id} value={h.id}>
-                          {tName(locale, h)}
+                          {h.short_name ?? h.name_en}
                         </option>
                       ))}
                     </select>
-                  </Td>
-                  <Td>
+                  </AdminTd>
+                  <AdminTd>
                     <input
                       name={`marks_${i}`}
                       value={row.marks}
@@ -257,8 +256,8 @@ export function ResultEntriesEditor({
                       disabled={locked}
                       className={cn(inputCls, "w-20")}
                     />
-                  </Td>
-                  <Td>
+                  </AdminTd>
+                  <AdminTd>
                     <select
                       name={`grade_${i}`}
                       value={row.grade}
@@ -271,9 +270,9 @@ export function ResultEntriesEditor({
                       <option value="B">B</option>
                       <option value="C">C</option>
                     </select>
-                  </Td>
+                  </AdminTd>
                   {!locked ? (
-                    <Td className="text-right">
+                    <AdminTd className="text-right">
                       <button
                         type="button"
                         className="text-xs font-bold text-fest-red hover:underline"
@@ -282,14 +281,14 @@ export function ResultEntriesEditor({
                       >
                         {removeLabel}
                       </button>
-                    </Td>
+                    </AdminTd>
                   ) : null}
                 </tr>
               );
             })}
           </tbody>
         </table>
-      </TableCard>
+      </AdminTable>
       {!locked ? (
         <div className="mt-4 flex flex-wrap gap-2">
           <button
@@ -299,7 +298,7 @@ export function ResultEntriesEditor({
           >
             {addRowLabel}
           </button>
-          <WrSubmit>{saveLabel}</WrSubmit>
+          <AdminSubmit>{saveLabel}</AdminSubmit>
         </div>
       ) : null}
     </form>

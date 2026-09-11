@@ -115,6 +115,8 @@ export const dictionaries = {
     confirmDestructive: "ഇത് പഴയപടിയാക്കാൻ കഴിഞ്ഞേക്കില്ല. തുടരണോ?",
     official: "ഔദ്യോഗിക ലൈവ് പ്ലാറ്റ്‌ഫോം",
     littleKites: "Little KITES · MES HSS ഇരിമ്പിളിയം",
+    websiteCredit: "ഈ വെബ്സൈറ്റ് Little KITES നിർമ്മിച്ചത്",
+    operationsCredit: "മുഴുവൻ പ്രവർത്തനം Little KITES സംഘടിപ്പിക്കുന്നു · MES HSS ഇരിമ്പിളിയം",
     footerNote: "വിദ്യാർത്ഥികൾ നടത്തുന്ന വാർ റൂം · ജെആർസി / സ്കൗട്ട് റിപ്പോർട്ടിംഗ്",
     selectStage: "വേദി തിരഞ്ഞെടുക്കുക",
     selectEvent: "ഇനം തിരഞ്ഞെടുക്കുക",
@@ -296,6 +298,8 @@ export const dictionaries = {
     confirmDestructive: "This cannot be easily undone. Continue?",
     official: "Official live platform",
     littleKites: "Little KITES · MES HSS Irimbiliyam",
+    websiteCredit: "Website by Little KITES",
+    operationsCredit: "Festival operations organized by Little KITES · MES HSS Irimbiliyam",
     footerNote: "Student-operated War Room · JRC / Scout reporting",
     selectStage: "Select stage",
     selectEvent: "Select programme",
@@ -370,11 +374,16 @@ export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale];
 }
 
+/** Catalogue entity names are always shown in English. */
+export function entityName(item: { name_en: string }): string {
+  return item.name_en;
+}
+
 export function tName(
-  locale: Locale,
-  item: { name_en: string; name_ml: string },
+  _locale: Locale,
+  item: { name_en: string; name_ml?: string },
 ): string {
-  return locale === "ml" ? item.name_ml : item.name_en;
+  return item.name_en;
 }
 
 export function tTitle(

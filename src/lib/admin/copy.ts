@@ -1,0 +1,52 @@
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { ADMIN_LOCALE } from "@/lib/admin/locale";
+
+const base = getDictionary(ADMIN_LOCALE);
+
+export const adminCopy = {
+  ...base,
+  operations: "Operations",
+  catalog: "Catalog",
+  content: "Content",
+  system: "System",
+  moderation: "Moderation",
+  uploads: "Uploads",
+  users: "Users",
+  audit: "Audit log",
+  housesTab: "Houses",
+  programmesTab: "Programmes",
+  categoriesTab: "Categories",
+  stagesTab: "Stages",
+  participantsTab: "Participants",
+  articlesTab: "Articles",
+  interviewsTab: "Interviews",
+  settingsTab: "Settings",
+  addEvent: "Add event",
+  addProgramme: "Add programme",
+  addCategory: "Add category",
+  addStage: "Add stage",
+  addParticipant: "Add participant",
+  importCsv: "Import CSV",
+  bulkImport: "Bulk import",
+  working: "Working…",
+  signedInAs: "Signed in as",
+  viewPublicSite: "View public site",
+  menu: "Menu",
+  noAccess: "Not allowed.",
+  saved: "Saved.",
+  searchParticipants: "Search or skip",
+  clear: "Clear",
+  websiteByLittleKites: "Website by Little KITES",
+  operationsByLittleKites: "Festival operations organized by Little KITES",
+  warRoomLoginHelp: "Staff accounts are managed in Supabase Auth. Ask your super admin if you need access.",
+  catalogHelp: "Manage houses, programmes, categories, stages, and participants.",
+  contentHelp: "Moderate submissions, publish articles, upload media, and manage interviews.",
+  systemHelp: "Festival settings, staff roles, and audit history.",
+  scheduleHelp: "Create events and update live status during the festival.",
+  resultsHelp: "Enter, verify, and publish official results.",
+  mediaHelp: "Public photo and video submissions awaiting approval.",
+  housesHelp: "Four houses are fixed for MESTA. Edit display names only.",
+  participantsCsvFormat: "Format: house_slug,full_name,class_name,chest_number",
+} as const;
+
+export type AdminCopy = typeof adminCopy;
