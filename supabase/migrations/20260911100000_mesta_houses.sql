@@ -30,7 +30,7 @@ security definer
 set search_path = public
 as $$
 begin
-  delete from public.house_standings;
+  delete from public.house_standings where house_id is not null;
 
   insert into public.house_standings (
     house_id, total_points, grade_a_count, grade_b_count, grade_c_count, wins_count, overall_rank, updated_at
