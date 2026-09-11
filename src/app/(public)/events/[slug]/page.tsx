@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { EventResultActions } from "@/components/public/event-result-actions";
+import type { Metadata } from "next";
+import { LatestResults } from "@/components/public/latest-results";
+import { OfficialResultsPanel } from "@/components/public/official-results-panel";
 import { ResultTable } from "@/components/public/result-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -16,7 +18,37 @@ import {
   getMedia,
   getResultForEvent,
 } from "@/lib/data/queries";
+import { shareMetadata, winnerShareCopy } from "@/lib/share-metadata";
 import { formatTime } from "@/lib/utils";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const event = await getEventBySlug(slug);
+  if (!event) return { title: "Event" };
+  const result = await getResultForEvent(event.id);
+  const winner = result?.entries[0];
+  if (winner?.participant_name) {
+    const copy = winnerShareCopy({
+      name: winner.participant_name,
+      programme: tName("en", event.programme),
+      rank: winner.rank ?? 1,
+    });
+    return shareMetadata({
+      title: copy.title,
+      description: copy.description,
+      path: `/events/${slug}`,
+    });
+  }
+  return shareMetadata({
+    title: tName("en", event.programme),
+    description: `${tName("en", event.category)} · MESTA Kalolsavam`,
+    path: `/events/${slug}`,
+  });
+}
 
 export default async function EventPage({
   params,
@@ -78,7 +110,8 @@ export default async function EventPage({
 
       {result ? (
         <>
-          <EventResultActions result={result} />
+          <LatestResults results={[result]} />
+          <OfficialResultsPanel resultSet={result.result_set} eventSlug={event.slug} />
           <ResultTable
             entries={result.entries}
             eventSlug={event.slug}

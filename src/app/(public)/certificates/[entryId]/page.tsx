@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CertificateActions } from "@/components/public/certificate-actions";
@@ -6,6 +7,27 @@ import { certificatePdfPath, isCertificateEligible } from "@/lib/certificates";
 import { getPublishedEntryById } from "@/lib/data/queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
+import { shareMetadata, winnerShareCopy } from "@/lib/share-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ entryId: string }>;
+}): Promise<Metadata> {
+  const { entryId } = await params;
+  const block = await getPublishedEntryById(entryId);
+  if (!block?.entry.participant_name) return { title: "Certificate" };
+  const copy = winnerShareCopy({
+    name: block.entry.participant_name,
+    programme: tName("en", block.event.programme),
+    rank: block.entry.rank ?? 1,
+  });
+  return shareMetadata({
+    title: copy.title,
+    description: copy.description,
+    path: `/certificates/${entryId}`,
+  });
+}
 
 export default async function CertificatePage({
   params,

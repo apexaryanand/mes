@@ -1121,6 +1121,11 @@ html[lang="ml"] .certificate-overlay {
 }
 
 @media print {
+  @page {
+    size: landscape;
+    margin: 8mm;
+  }
+
   .certificate-page {
     max-width: none !important;
     padding: 0 !important;
@@ -1128,7 +1133,9 @@ html[lang="ml"] .certificate-overlay {
 
   .certificate-frame {
     max-width: none !important;
+    width: 100% !important;
     page-break-inside: avoid;
+    box-shadow: none !important;
   }
 }
 

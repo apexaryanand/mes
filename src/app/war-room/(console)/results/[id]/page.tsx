@@ -8,7 +8,9 @@ import { getRequestLocale } from "@/lib/i18n/server";
 import { getHouses, getParticipants, getScheduledEvents } from "@/lib/data/queries";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
+import { ButtonLink } from "@/components/ui/button";
 import { WrStepBar, WrSubmit } from "@/components/war-room/primitives";
+import { isCertificateEligible, certificatePagePath } from "@/lib/certificates";
 
 export default async function ResultEditorPage({
   params,
@@ -110,14 +112,36 @@ export default async function ResultEditorPage({
           </form>
         ) : null}
         {editor && set.status === "published" ? (
-          <form action={startCorrectionForm}>
-            <input type="hidden" name="id" value={set.id} />
-            <ConfirmSubmit
-              className="festival-button inline-flex min-h-11 items-center border-fest-red bg-paper-white px-5 text-sm font-bold text-fest-red"
-              label={t.startCorrection}
-              message={t.confirmDestructive}
-            />
-          </form>
+          <div className="card flex flex-wrap items-center gap-3 border-fest-green p-4">
+            <p className="min-w-0 flex-1 text-sm font-bold">
+              {t.published}
+              {entries[0]?.participant_name ? ` · ${entries[0].participant_name}` : ""}
+            </p>
+            <ButtonLink href={`/events/${event.slug}`} variant="outline" size="sm">
+              {t.viewSite}
+            </ButtonLink>
+            {entries
+              .filter((e) => isCertificateEligible(e.rank))
+              .map((e) => (
+                <ButtonLink
+                  key={e.id}
+                  href={certificatePagePath(e.id)}
+                  variant="gold"
+                  size="sm"
+                >
+                  {t.downloadCertificate}
+                  {e.rank ? ` · ${e.rank}` : ""}
+                </ButtonLink>
+              ))}
+            <form action={startCorrectionForm}>
+              <input type="hidden" name="id" value={set.id} />
+              <ConfirmSubmit
+                className="festival-button inline-flex min-h-9 items-center border-fest-red bg-paper-white px-4 text-xs font-bold text-fest-red"
+                label={t.startCorrection}
+                message={t.confirmDestructive}
+              />
+            </form>
+          </div>
         ) : null}
       </div>
     </div>
