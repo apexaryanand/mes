@@ -14,11 +14,13 @@ import type {
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/utils";
+import { revalidatePublicSite, revalidateWarRoom } from "@/lib/revalidate";
+import { failWarRoom, redirectWarRoomError } from "@/lib/war-room-error";
 import { safeNextPath } from "@/lib/safe-redirect";
 
-async function bump() {
-  const { revalidatePath } = await import("next/cache");
-  revalidatePath("/", "layout");
+async function bump(opts?: { public?: boolean }) {
+  revalidateWarRoom();
+  if (opts?.public) revalidatePublicSite();
 }
 
 export async function loginAction(_prev: { error: string }, formData: FormData) {
@@ -68,14 +70,41 @@ export async function saveResultDraft(input: {
   if (!set) return { error: "Result set not found." };
   if (set.status === "published") return { error: "Published results cannot be edited." };
 
+  const incomplete = input.entries.filter(
+    (e) =>
+      (e.participant_name.trim() || e.participant_id || e.marks != null || e.grade) &&
+      !(e.house_id && (e.participant_name.trim() || e.participant_id)),
+  );
+  if (incomplete.length) {
+    return { error: "Each filled row needs a participant name (or registered pick) and a house." };
+  }
+
   const prepared = input.entries.filter(
     (e) => e.house_id && (e.participant_name.trim() || e.participant_id),
   );
+
+  const seen = new Set<string>();
+  for (const e of prepared) {
+    if (!e.participant_id) continue;
+    if (seen.has(e.participant_id)) {
+      return { error: "The same registered participant cannot appear twice." };
+    }
+    seen.add(e.participant_id);
+  }
 
   const { data: existing } = await sb
     .from("result_entries")
     .select("house_id, participant_id, participant_name, marks, grade, rank, points")
     .eq("result_set_id", input.resultSetId);
+
+  const nameById = new Map<string, string>();
+  const ids = [...new Set(prepared.map((e) => e.participant_id).filter(Boolean))] as string[];
+  if (ids.length) {
+    const { data: people } = await sb.from("participants").select("id, full_name").in("id", ids);
+    for (const p of people ?? []) {
+      nameById.set(p.id as string, p.full_name as string);
+    }
+  }
 
   const { error: delError } = await sb
     .from("result_entries")
@@ -84,27 +113,15 @@ export async function saveResultDraft(input: {
   if (delError) return { error: delError.message };
 
   if (prepared.length) {
-    const rows = [];
-    for (const e of prepared) {
-      let participant_name = e.participant_name || null;
-      if (e.participant_id) {
-        const { data: p } = await sb
-          .from("participants")
-          .select("full_name")
-          .eq("id", e.participant_id)
-          .maybeSingle();
-        if (p?.full_name) participant_name = p.full_name as string;
-      }
-      rows.push({
-        result_set_id: input.resultSetId,
-        house_id: e.house_id,
-        participant_id: e.participant_id ?? null,
-        participant_name,
-        marks: e.marks,
-        grade: e.grade,
-        rank: e.rank,
-      });
-    }
+    const rows = prepared.map((e) => ({
+      result_set_id: input.resultSetId,
+      house_id: e.house_id,
+      participant_id: e.participant_id ?? null,
+      participant_name: (e.participant_id && nameById.get(e.participant_id)) || e.participant_name || null,
+      marks: e.marks,
+      grade: e.grade,
+      rank: e.rank,
+    }));
     const { error: insError } = await sb.from("result_entries").insert(rows);
     if (insError) {
       if (existing?.length) {
@@ -119,11 +136,12 @@ export async function saveResultDraft(input: {
     }
   }
 
-  const nextStatus = set.status === "correction_draft" ? "correction_draft" : "draft";
-  const { error: setError } = await sb
-    .from("result_sets")
-    .update({ status: nextStatus, updated_at: new Date().toISOString() })
-    .eq("id", input.resultSetId);
+  const status = set.status as ResultSetStatus;
+  const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (status !== "entered" && status !== "verified" && status !== "correction_draft") {
+    patch.status = "draft";
+  }
+  const { error: setError } = await sb.from("result_sets").update(patch).eq("id", input.resultSetId);
   if (setError) return { error: setError.message };
 
   return { ok: true };
@@ -363,38 +381,58 @@ export async function updateUserRole(profileId: string, role: AppRole) {
 export async function transitionResultForm(formData: FormData) {
   const id = String(formData.get("id"));
   const next = String(formData.get("next")) as ResultSetStatus;
-  await transitionResult(id, next);
-  await bump();
+  const result = await transitionResult(id, next);
+  if (result && "error" in result && result.error) {
+    redirectWarRoomError(`/war-room/results/${id}`, result.error);
+  }
+  await bump({ public: next === "published" });
 }
 
 export async function startCorrectionForm(formData: FormData) {
   const id = String(formData.get("id"));
   const result = await startCorrection(id);
+  if (result && "error" in result && result.error) {
+    redirectWarRoomError(`/war-room/results/${id}`, result.error);
+  }
   await bump();
   if (result && "id" in result && result.id) {
     redirect(`/war-room/results/${result.id}`);
   }
+  await failWarRoom("Could not start correction.", `/war-room/results/${id}`);
 }
 
 export async function updateEventStatusForm(formData: FormData) {
   const eventId = String(formData.get("eventId"));
   const status = String(formData.get("status")) as EventStatus;
-  await updateEventStatus(eventId, status);
-  await bump();
+  const result = await updateEventStatus(eventId, status);
+  if (result && "error" in result && result.error) {
+    await failWarRoom(result.error);
+  }
+  await bump({ public: true });
 }
 
 export async function moderateMediaForm(formData: FormData) {
   const id = String(formData.get("id"));
   const status = String(formData.get("status")) as MediaStatus;
-  await moderateMedia(id, status);
-  await bump();
+  const result = await moderateMedia(id, status);
+  if (result && "error" in result && result.error) {
+    await failWarRoom(result.error, "/war-room/media");
+  }
+  await bump({ public: status === "approved" });
 }
 
 export async function createDraftForEventForm(formData: FormData) {
+  const from = safeNextPath(String(formData.get("from") ?? "/war-room"));
   const profile = await getSessionProfile();
-  if (!can(profile?.role, ["war_room"])) return;
+  if (!can(profile?.role, ["war_room"])) {
+    redirectWarRoomError(from, "Not allowed.");
+  }
 
   const eventId = String(formData.get("eventId"));
+  if (!eventId) {
+    redirectWarRoomError(from, "Missing event.");
+  }
+
   const existing = await getActiveResultSetForEvent(eventId);
   if (existing) {
     redirect(`/war-room/results/${existing.id}`);
@@ -406,7 +444,9 @@ export async function createDraftForEventForm(formData: FormData) {
     .insert({ scheduled_event_id: eventId, status: "draft", version: 1 })
     .select("id")
     .single();
-  if (error || !data) return;
+  if (error || !data) {
+    redirectWarRoomError(from, error?.message ?? "Could not create a result draft.");
+  }
 
   await bump();
   redirect(`/war-room/results/${data.id}`);
@@ -429,7 +469,7 @@ export async function saveResultDraftForm(formData: FormData) {
   }
   const result = await saveResultDraft({ resultSetId, entries });
   if (result && "error" in result && result.error) {
-    redirect(`/war-room/results/${resultSetId}?error=${encodeURIComponent(result.error)}`);
+    redirectWarRoomError(`/war-room/results/${resultSetId}`, result.error);
   }
   await bump();
   redirect(`/war-room/results/${resultSetId}`);
@@ -438,6 +478,9 @@ export async function saveResultDraftForm(formData: FormData) {
 export async function updateUserRoleForm(formData: FormData) {
   const profileId = String(formData.get("profileId"));
   const role = String(formData.get("role")) as AppRole;
-  await updateUserRole(profileId, role);
+  const result = await updateUserRole(profileId, role);
+  if (result && "error" in result && result.error) {
+    await failWarRoom(result.error, "/war-room/users");
+  }
   await bump();
 }

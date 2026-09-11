@@ -10,7 +10,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { StatCard } from "@/components/ui/stat-card";
 import { getSessionProfile } from "@/lib/auth";
 import {
-  getAllMediaAdmin,
+  getPendingMediaAdmin,
   getAllResultSets,
   getRecentPublished,
 } from "@/lib/data/admin-queries";
@@ -21,19 +21,21 @@ import { getScheduledEvents } from "@/lib/data/queries";
 export default async function WarRoomDashboard() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
-  const profile = await getSessionProfile();
-  const events = await getScheduledEvents();
+  const [profile, events, resultSets, pendingMedia, published] = await Promise.all([
+    getSessionProfile(),
+    getScheduledEvents(),
+    getAllResultSets(),
+    getPendingMediaAdmin(8),
+    getRecentPublished(6),
+  ]);
   const live = events.filter((e) => e.status === "live");
   const completed = events.filter((e) => e.status === "completed");
-  const resultSets = await getAllResultSets();
   const awaitingEntry = events.filter(
     (e) =>
       e.status === "completed" &&
       !resultSets.some((s) => s.scheduled_event_id === e.id && s.status !== "archived"),
   );
   const awaitingVerification = resultSets.filter((s) => s.status === "entered");
-  const pendingMedia = (await getAllMediaAdmin()).filter((m) => m.status === "pending");
-  const published = await getRecentPublished(6);
   const queueCount = awaitingEntry.length + awaitingVerification.length + pendingMedia.length;
 
   return (
@@ -82,6 +84,7 @@ export default async function WarRoomDashboard() {
               <StatusBadge status="completed" label={t.awaitingEntry} />
               <form action={createDraftForEventForm}>
                 <input type="hidden" name="eventId" value={e.id} />
+                <input type="hidden" name="from" value="/war-room" />
                 <WrSubmit size="sm">{t.enterResults}</WrSubmit>
               </form>
             </div>

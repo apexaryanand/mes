@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { TableCard, Th, Td } from "@/components/war-room/primitives";
+import { TableCard, Th, Td, WrSubmit } from "@/components/war-room/primitives";
 import { createDraftForEventForm } from "@/domains/admin/actions";
 import { getAllResultSets } from "@/lib/data/admin-queries";
 import { getDictionary, statusLabel, tName } from "@/lib/i18n/dictionaries";
@@ -51,12 +51,8 @@ export default async function ResultsIndexPage() {
                   ) : (
                     <form action={createDraftForEventForm} className="inline">
                       <input type="hidden" name="eventId" value={event.id} />
-                      <button
-                        type="submit"
-                        className="font-bold text-fest-ink hover:text-fest-red"
-                      >
-                        {t.create}
-                      </button>
+                      <input type="hidden" name="from" value="/war-room/results" />
+                      <WrSubmit appearance="link">{t.create}</WrSubmit>
                     </form>
                   )}
                 </Td>

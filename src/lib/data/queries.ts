@@ -100,6 +100,18 @@ export async function getParticipants(): Promise<Participant[]> {
   return (data ?? []) as Participant[];
 }
 
+export async function getParticipantsLite(): Promise<
+  Array<{ id: string; full_name: string; house_id: string }>
+> {
+  const sb = await remoteClient();
+  if (!sb) return [];
+  const { data } = await sb
+    .from("participants")
+    .select("id, full_name, house_id")
+    .order("full_name");
+  return (data ?? []) as Array<{ id: string; full_name: string; house_id: string }>;
+}
+
 export async function getScheduledEvents(): Promise<ScheduledEventView[]> {
   const sb = await remoteClient();
   if (!sb) return [];
@@ -109,6 +121,19 @@ export async function getScheduledEvents(): Promise<ScheduledEventView[]> {
     .order("day_number")
     .order("start_time");
   return (data ?? []) as ScheduledEventView[];
+}
+
+const EVENT_SELECT = "*, programme:programmes(*), category:categories(*), stage:stages(*)";
+
+export async function getScheduledEventById(id: string): Promise<ScheduledEventView | null> {
+  const sb = await remoteClient();
+  if (!sb) return null;
+  const { data } = await sb
+    .from("scheduled_events")
+    .select(EVENT_SELECT)
+    .eq("id", id)
+    .maybeSingle();
+  return (data as ScheduledEventView | null) ?? null;
 }
 
 export async function getEventBySlug(slug: string) {

@@ -5,11 +5,12 @@ import { getAllArticlesAdmin } from "@/lib/data/admin-queries";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { slugify } from "@/lib/utils";
-import { revalidatePath } from "next/cache";
+import { revalidatePublicSite, revalidateWarRoom } from "@/lib/revalidate";
+import { failWarRoom } from "@/lib/war-room-error";
 
 async function createArticle(formData: FormData) {
   "use server";
-  await saveArticle({
+  const result = await saveArticle({
     title_en: String(formData.get("title_en") ?? ""),
     title_ml: String(formData.get("title_ml") ?? ""),
     excerpt_en: String(formData.get("excerpt_en") ?? ""),
@@ -20,7 +21,11 @@ async function createArticle(formData: FormData) {
     category: String(formData.get("category") ?? "News"),
     is_published: formData.get("publish") === "on",
   });
-  revalidatePath("/", "layout");
+  if (result && "error" in result && result.error) {
+    await failWarRoom(result.error, "/war-room/articles");
+  }
+  revalidateWarRoom();
+  revalidatePublicSite();
 }
 
 export default async function ArticlesAdminPage() {

@@ -1,6 +1,6 @@
 import { moderateMediaForm } from "@/domains/admin/actions";
 import { WrEmpty, WrSubmit } from "@/components/war-room/primitives";
-import { getAllMediaAdmin } from "@/lib/data/admin-queries";
+import { getPendingMediaAdmin } from "@/lib/data/admin-queries";
 import { getDictionary, statusLabel } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { resolveMediaUrl } from "@/lib/media-url";
@@ -9,7 +9,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 export default async function MediaAdminPage() {
   const locale = await getRequestLocale();
   const t = getDictionary(locale);
-  const items = (await getAllMediaAdmin()).filter((item) => item.status === "pending");
+  const items = await getPendingMediaAdmin();
 
   return (
     <div className="grid gap-4">

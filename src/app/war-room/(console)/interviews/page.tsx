@@ -4,11 +4,12 @@ import { getAllInterviewsAdmin } from "@/lib/data/admin-queries";
 import { getDictionary, tName } from "@/lib/i18n/dictionaries";
 import { getRequestLocale } from "@/lib/i18n/server";
 import { getHouses, getProgrammes } from "@/lib/data/queries";
-import { revalidatePath } from "next/cache";
+import { revalidatePublicSite, revalidateWarRoom } from "@/lib/revalidate";
+import { failWarRoom } from "@/lib/war-room-error";
 
 async function createInterview(formData: FormData) {
   "use server";
-  await saveInterview({
+  const result = await saveInterview({
     winner_name: String(formData.get("winner_name") ?? ""),
     video_url: String(formData.get("video_url") ?? ""),
     house_id: String(formData.get("house_id") ?? ""),
@@ -17,7 +18,11 @@ async function createInterview(formData: FormData) {
     description_ml: String(formData.get("description_ml") ?? ""),
     rank: Number(formData.get("rank") ?? 1),
   });
-  revalidatePath("/", "layout");
+  if (result && "error" in result && result.error) {
+    await failWarRoom(result.error, "/war-room/interviews");
+  }
+  revalidateWarRoom();
+  revalidatePublicSite();
 }
 
 export default async function InterviewsAdminPage() {
