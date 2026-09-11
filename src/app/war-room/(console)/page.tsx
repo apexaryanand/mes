@@ -28,13 +28,22 @@ function Stat({ label, value }: { label: string; value: number }) {
 }
 
 export default async function OperationsPage() {
-  const [profile, events, resultSets, pendingMedia, published] = await Promise.all([
-    getSessionProfile(),
-    getScheduledEvents(),
-    getAllResultSets(),
-    getPendingMediaAdmin(8),
-    getRecentPublished(6),
-  ]);
+  const profile = await getSessionProfile();
+  let events: Awaited<ReturnType<typeof getScheduledEvents>> = [];
+  let resultSets: Awaited<ReturnType<typeof getAllResultSets>> = [];
+  let pendingMedia: Awaited<ReturnType<typeof getPendingMediaAdmin>> = [];
+  let published: Awaited<ReturnType<typeof getRecentPublished>> = [];
+
+  try {
+    [events, resultSets, pendingMedia, published] = await Promise.all([
+      getScheduledEvents(),
+      getAllResultSets(),
+      getPendingMediaAdmin(8),
+      getRecentPublished(6),
+    ]);
+  } catch {
+    // Preview-only access remains useful when the local Supabase connection is unavailable.
+  }
   const live = events.filter((e) => e.status === "live");
   const completed = events.filter((e) => e.status === "completed");
   const awaitingEntry = events.filter(

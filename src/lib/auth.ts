@@ -3,6 +3,17 @@ import type { AppRole } from "@/lib/types";
 import { isSupabaseConfigured } from "@/lib/utils";
 
 export async function getSessionProfile() {
+  // Temporary preview-only access for operations review. Production always requires Supabase Auth.
+  if (process.env.NODE_ENV !== "production") {
+    return {
+      id: "preview-admin",
+      display_name: "Preview Admin",
+      role: "super_admin" as AppRole,
+      email: "preview@kalotsavam.local",
+      is_active: true,
+    };
+  }
+
   if (!isSupabaseConfigured()) return null;
   const supabase = await createServerSupabase();
   if (!supabase) return null;
