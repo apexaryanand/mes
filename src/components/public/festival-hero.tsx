@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { HouseBadge } from "@/components/public/house-badge";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -27,9 +26,6 @@ export function FestivalHero({ locale, t, settings, houses, todayEventsCount, re
             {houses.length ? <div className="mt-5 flex flex-wrap gap-2" role="list" aria-label={t.houses}>{houses.map((house) => <Link key={house.id} href={`/houses/${house.slug}`} role="listitem" className="transition-transform hover:-translate-y-1"><HouseBadge house={house} /></Link>)}</div> : null}
           </div>
           <div className="festival-poster hidden lg:flex lg:flex-col lg:items-center lg:justify-between">
-            <div className="w-full border-b-2 border-fest-ink/30 pb-3">
-              <Image src="/images/mesta-logo.png" alt="MESTA — Mes Track & Arts" width={220} height={165} className="mx-auto h-auto w-36 rounded-sm object-contain" />
-            </div>
             <strong>FEEL<br />THE<br /><em>WONDER</em></strong>
             <span className="festival-poster-bottom">3000+ STUDENTS · ONE STAGE</span>
           </div>
