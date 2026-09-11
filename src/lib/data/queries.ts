@@ -236,7 +236,12 @@ export async function getArticles(): Promise<Article[]> {
 export async function getArticleBySlug(slug: string) {
   const sb = await remoteClient();
   if (!sb) return null;
-  const { data } = await sb.from("articles").select("*").eq("slug", slug).maybeSingle();
+  const { data } = await sb
+    .from("articles")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_published", true)
+    .maybeSingle();
   return (data as Article | null) ?? null;
 }
 
